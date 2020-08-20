@@ -1,13 +1,13 @@
 package thingspeak_client
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
-	"bytes"
 )
 
 type ChannelWriter struct {
-  Key    string `json:"key"`
+	Key    string  `json:"key"`
 	Field1 float64 `json:"field1"`
 }
 
@@ -21,6 +21,11 @@ func (w *ChannelWriter) AddField(n int, value float64) {
 	w.Field1 = value
 }
 
+func (w *ChannelWriter) SendWeight(weight float64) error {
+	w.AddField(1, weight)
+	_, err := w.Update()
+	return err
+}
 func (w *ChannelWriter) Update() (resp *http.Response, err error) {
 	requestBody, err := json.Marshal(w)
 	if err != nil {
