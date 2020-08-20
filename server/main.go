@@ -45,8 +45,10 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-  out, err := scale.String()
-	log.Println(string(out))
+	out, err := scale.String()
+	if *debug {
+		log.Println(string(out))
+	}
 }
 
 func main() {
