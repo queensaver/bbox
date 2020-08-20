@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"github.com/wogri/bbox/thingspeak_client"
+	scale "github.com/wogri/bbox/structs"
 	"log"
 	"net/http"
 )
@@ -12,15 +13,6 @@ var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
 var debug = flag.Bool("debug", false, "debug mode")
 var thingspeakKey = flag.String("thingspeak_api_key", "48PCU5CAQ0BSP4CL", "API key for Thingspeak")
 var thingspeakActive = flag.Bool("thingspeak", false, "Activate thingspeak API if set to true")
-
-type Scale struct {
-	Weight float64
-	BBoxID string //BBoxID is usually the Mac address of the raspberry pi in the bHive.
-}
-
-func (s *Scale) String() ([]byte, error) {
-	return json.MarshalIndent(s, "", "  ")
-}
 
 func thingSpeakUpdate(weight float64) error {
 	if *thingspeakActive {
@@ -40,12 +32,12 @@ func thingSpeakUpdate(weight float64) error {
 
 func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
-	var scale Scale
-	err := decoder.Decode(&scale)
+	var s scale.Scale
+	err := decoder.Decode(&s)
 	if err != nil {
 		log.Println(err)
 	}
-	out, err := scale.String()
+	out, err := s.String()
 	if *debug {
 		log.Println(string(out))
 	}
