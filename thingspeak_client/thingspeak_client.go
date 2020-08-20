@@ -26,6 +26,7 @@ func (w *ChannelWriter) SendWeight(weight float64) error {
 	_, err := w.Update()
 	return err
 }
+
 func (w *ChannelWriter) Update() (resp *http.Response, err error) {
 	requestBody, err := json.Marshal(w)
 	if err != nil {
