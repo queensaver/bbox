@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"github.com/wogri/bbox/thingspeak_client"
 	scale "github.com/wogri/bbox/structs"
+	"github.com/wogri/bbox/thingspeak_client"
 	"log"
 	"net/http"
 )
@@ -17,17 +17,11 @@ var thingspeakActive = flag.Bool("thingspeak", false, "Activate thingspeak API i
 func thingSpeakUpdate(weight float64) error {
 	if *thingspeakActive {
 		thing := thingspeak_client.NewChannelWriter(*thingspeakKey)
-		thing.AddField(1, weight)
-		if *debug {
-			log.Println("uploading data to Thingspeak...")
-		}
-		_, err := thing.Update()
-		if err != nil {
-			return err
-		}
+    err := thing.SendWeight(weight)
+		return err
+
 	}
 	return nil
-
 }
 
 func scaleHandler(w http.ResponseWriter, req *http.Request) {
