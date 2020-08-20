@@ -18,6 +18,10 @@ type Scale struct {
 	BBoxID string //BBoxID is usually the Mac address of the raspberry pi in the bHive.
 }
 
+func (s *Scale) String() ([]byte, error) {
+	return json.MarshalIndent(s, "", "  ")
+}
+
 func thingSpeakUpdate(weight float64) error {
 	if *thingspeakActive {
 		thing := thingspeak_client.NewChannelWriter(*thingspeakKey)
@@ -41,7 +45,8 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(scale.Weight)
+  out, err := scale.String()
+	log.Println(string(out))
 }
 
 func main() {
