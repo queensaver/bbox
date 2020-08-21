@@ -18,16 +18,12 @@ func NewChannelWriter(key string) *ChannelWriter {
 	return w
 }
 
-func (w *ChannelWriter) SendTemperature(temperature float64) error {
+func (w *ChannelWriter) SetTemperature(temperature float64) {
 	w.Temperature = temperature
-	_, err := w.Update()
-	return err
 }
 
-func (w *ChannelWriter) SendWeight(weight float64) error {
+func (w *ChannelWriter) SetWeight(weight float64) {
 	w.Weight = weight
-	_, err := w.Update()
-	return err
 }
 
 func (w *ChannelWriter) Update() (resp *http.Response, err error) {
