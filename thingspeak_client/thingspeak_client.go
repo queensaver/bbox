@@ -7,8 +7,9 @@ import (
 )
 
 type ChannelWriter struct {
-	Key    string  `json:"key"`
-	Field1 float64 `json:"field1"`
+	Key         string  `json:"key"`
+	Weight      float64 `json:"field1"`
+	Temperature float64 `json:"field2"`
 }
 
 func NewChannelWriter(key string) *ChannelWriter {
@@ -17,18 +18,14 @@ func NewChannelWriter(key string) *ChannelWriter {
 	return w
 }
 
-func (w *ChannelWriter) AddField(n int, value float64) {
-	w.Field1 = value
-}
-
 func (w *ChannelWriter) SendTemperature(temperature float64) error {
-	w.AddField(2, temperature)
+	w.Temperature = temperature
 	_, err := w.Update()
 	return err
 }
 
 func (w *ChannelWriter) SendWeight(weight float64) error {
-	w.AddField(1, weight)
+	w.Weight = weight
 	_, err := w.Update()
 	return err
 }

@@ -35,11 +35,11 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 		log.Println(err)
 	}
 	if *debug {
-	  out, err := t.String()
+	  out, _ := t.String()
 		log.Println(string(out))
 	}
 	if *thingspeakActive {
-		err = thingSpeakWeightUpdate(t.Temperature)
+		err = thingSpeakTemperatureUpdate(t.Temperature)
 		if err != nil {
 			log.Println(err)
 		}
@@ -54,11 +54,11 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 		log.Println(err)
 	}
 	if *debug {
-	  out, err := s.String()
+	  out, _ := s.String()
 		log.Println(string(out))
 	}
 	if *thingspeakActive {
-		err = thingSpeakUpdate(s.Weight)
+		err = thingSpeakWeightUpdate(s.Weight)
 		if err != nil {
 			log.Println(err)
 		}
