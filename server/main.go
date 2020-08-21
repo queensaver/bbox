@@ -3,7 +3,8 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	scale "github.com/wogri/bbox/structs"
+	"github.com/wogri/bbox/structs/scale"
+	"github.com/wogri/bbox/structs/temperature"
 	"github.com/wogri/bbox/thingspeak_client"
 	"log"
 	"net/http"
@@ -14,10 +15,35 @@ var debug = flag.Bool("debug", false, "debug mode")
 var thingspeakKey = flag.String("thingspeak_api_key", "48PCU5CAQ0BSP4CL", "API key for Thingspeak")
 var thingspeakActive = flag.Bool("thingspeak", false, "Activate thingspeak API if set to true")
 
-func thingSpeakUpdate(weight float64) error {
+func thingSpeakTemperatureUpdate(temperature float64) error {
+	thing := thingspeak_client.NewChannelWriter(*thingspeakKey)
+	err := thing.SendTemperature(temperature)
+	return err
+}
+
+func thingSpeakWeightUpdate(weight float64) error {
 	thing := thingspeak_client.NewChannelWriter(*thingspeakKey)
 	err := thing.SendWeight(weight)
 	return err
+}
+
+func temperatureHandler(w http.ResponseWriter, req *http.Request) {
+	decoder := json.NewDecoder(req.Body)
+	var t temperature.Temperature
+	err := decoder.Decode(&t)
+	if err != nil {
+		log.Println(err)
+	}
+	if *debug {
+	  out, err := t.String()
+		log.Println(string(out))
+	}
+	if *thingspeakActive {
+		err = thingSpeakWeightUpdate(t.Temperature)
+		if err != nil {
+			log.Println(err)
+		}
+	}
 }
 
 func scaleHandler(w http.ResponseWriter, req *http.Request) {
@@ -27,8 +53,8 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	out, err := s.String()
 	if *debug {
+	  out, err := s.String()
 		log.Println(string(out))
 	}
 	if *thingspeakActive {
@@ -43,5 +69,6 @@ func main() {
 	flag.Parse()
 
 	http.HandleFunc("/scale", scaleHandler)
+	http.HandleFunc("/temperature", temperatureHandler)
 	log.Fatal(http.ListenAndServe(":"+*httpServerPort, nil))
 }
