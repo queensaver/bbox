@@ -21,6 +21,12 @@ func (w *ChannelWriter) AddField(n int, value float64) {
 	w.Field1 = value
 }
 
+func (w *ChannelWriter) SendTemperature(temperature float64) error {
+	w.AddField(2, temperature)
+	_, err := w.Update()
+	return err
+}
+
 func (w *ChannelWriter) SendWeight(weight float64) error {
 	w.AddField(1, weight)
 	_, err := w.Update()
