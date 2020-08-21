@@ -6,8 +6,12 @@ github.com/wogri/bbox/structs v0.0.0-20200821195214-07e7c1664007 h1:g6DUsT2GIkfv
 github.com/wogri/bbox/structs v0.0.0-20200821195214-07e7c1664007/go.mod h1:FbMhM3Sd/rilSzMtq/HIXBdU904RtY21v649hkKdL/M=
 github.com/wogri/bbox/structs/scale v0.0.0-20200821195800-6ac29f1ecf94 h1:QlNB8slnxcwAduNcgBuXVAZQOnKSqQ31ldq+FFpeQvw=
 github.com/wogri/bbox/structs/scale v0.0.0-20200821195800-6ac29f1ecf94/go.mod h1:8kaHOmBRBlAA+DhVEAbbxjgAZRtzxr2/Au6aS8wQW9E=
+github.com/wogri/bbox/structs/scale v0.0.0-20200821203500-ff99ac93695b h1:WapZgOpB2SBQeTdGYwf0Lga2x6/TwSGrU9elpFmuXyo=
+github.com/wogri/bbox/structs/scale v0.0.0-20200821203500-ff99ac93695b/go.mod h1:8kaHOmBRBlAA+DhVEAbbxjgAZRtzxr2/Au6aS8wQW9E=
 github.com/wogri/bbox/structs/temperature v0.0.0-20200821195800-6ac29f1ecf94 h1:ynqfzZKHgqpyzzpQDM9P7jGplOmYi+Ia5c9sxjBUfoo=
 github.com/wogri/bbox/structs/temperature v0.0.0-20200821195800-6ac29f1ecf94/go.mod h1:AAiSxNer8lo3U/0wLg4hOYOv28p/y0nHcTWIqVIc0vg=
+github.com/wogri/bbox/structs/temperature v0.0.0-20200821203500-ff99ac93695b h1:teKIchBneoAiZAEUaJ2pu5PnEJfwQGqOiD/E9BaT1Rw=
+github.com/wogri/bbox/structs/temperature v0.0.0-20200821203500-ff99ac93695b/go.mod h1:AAiSxNer8lo3U/0wLg4hOYOv28p/y0nHcTWIqVIc0vg=
 github.com/wogri/bbox/thingspeak_client v0.0.0-20200819201122-559f8326d9a6 h1:IWZ2UxSguXr93FOlAhGtenN1GibpmRm3L8bCT6fcJzA=
 github.com/wogri/bbox/thingspeak_client v0.0.0-20200819201122-559f8326d9a6/go.mod h1:iaiMFuQnWEfF4XTRgQwAHvvnzjd9phSJyZpSrR6w9ZY=
 github.com/wogri/bbox/thingspeak_client v0.0.0-20200820094801-4f5f43abb314 h1:u6dulO1pe683bjOq1ZkMXyMVhs6vMFEQEwOeNzFfAJ0=
@@ -16,3 +20,5 @@ github.com/wogri/bbox/thingspeak_client v0.0.0-20200821195214-07e7c1664007 h1:TE
 github.com/wogri/bbox/thingspeak_client v0.0.0-20200821195214-07e7c1664007/go.mod h1:iaiMFuQnWEfF4XTRgQwAHvvnzjd9phSJyZpSrR6w9ZY=
 github.com/wogri/bbox/thingspeak_client v0.0.0-20200821195800-6ac29f1ecf94 h1:8C5ys4ri8qK7Ja8BoEIRohjX6tjlSK16wOu+BCAhLhI=
 github.com/wogri/bbox/thingspeak_client v0.0.0-20200821195800-6ac29f1ecf94/go.mod h1:iaiMFuQnWEfF4XTRgQwAHvvnzjd9phSJyZpSrR6w9ZY=
+github.com/wogri/bbox/thingspeak_client v0.0.0-20200821203500-ff99ac93695b h1:ygDDj/igNZtkxaejSi7RS45iOCwKI3IyQA/I1Xt3p/U=
+github.com/wogri/bbox/thingspeak_client v0.0.0-20200821203500-ff99ac93695b/go.mod h1:iaiMFuQnWEfF4XTRgQwAHvvnzjd9phSJyZpSrR6w9ZY=
