@@ -15,13 +15,9 @@ var thingspeakKey = flag.String("thingspeak_api_key", "48PCU5CAQ0BSP4CL", "API k
 var thingspeakActive = flag.Bool("thingspeak", false, "Activate thingspeak API if set to true")
 
 func thingSpeakUpdate(weight float64) error {
-	if *thingspeakActive {
-		thing := thingspeak_client.NewChannelWriter(*thingspeakKey)
-    err := thing.SendWeight(weight)
-		return err
-
-	}
-	return nil
+	thing := thingspeak_client.NewChannelWriter(*thingspeakKey)
+	err := thing.SendWeight(weight)
+	return err
 }
 
 func scaleHandler(w http.ResponseWriter, req *http.Request) {
@@ -34,6 +30,12 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	out, err := s.String()
 	if *debug {
 		log.Println(string(out))
+	}
+	if *thingspeakActive {
+		err = thingSpeakUpdate(s.Weight)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
 
