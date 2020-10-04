@@ -1,0 +1,4 @@
+github.com/wogri/bbox/structs/scale v0.0.0-20200822185204-898e12cd2b1a h1:ssucTT20VC8w2edfGgPR6nWUHe2t7ktA7qxNhvS0+Oc=
+github.com/wogri/bbox/structs/scale v0.0.0-20200822185204-898e12cd2b1a/go.mod h1:8kaHOmBRBlAA+DhVEAbbxjgAZRtzxr2/Au6aS8wQW9E=
+github.com/wogri/bbox/structs/temperature v0.0.0-20200822185204-898e12cd2b1a h1:nAELMvTlxLwveJ4eaX6Rx9AWEUVisugYU2f5KTMCTM4=
+github.com/wogri/bbox/structs/temperature v0.0.0-20200822185204-898e12cd2b1a/go.mod h1:AAiSxNer8lo3U/0wLg4hOYOv28p/y0nHcTWIqVIc0vg=

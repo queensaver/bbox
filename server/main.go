@@ -7,11 +7,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/wogri/bbox/structs/scale"
 	"github.com/wogri/bbox/structs/temperature"
+	"github.com/wogri/bbox/structs/buffer"
 	"github.com/wogri/bbox/thingspeak_client"
 	"log"
 	"net/http"
 )
 
+var apiServerAddr = flag.String("api_server_addr", "https://bCloud.azure.wogri.com", "API Server Address")
 var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
 var debug = flag.Bool("debug", false, "debug mode")
 var thingspeakKey = flag.String("thingspeak_api_key", "48PCU5CAQ0BSP4CL", "API key for Thingspeak")
