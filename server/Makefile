@@ -4,6 +4,7 @@ integration_test: server
 	go test ./...
 	./server --http_server_port=8123 --debug=true & echo $$! > /tmp/server.pid
 	curl -X POST -d '{"weight": 15.2244, "BBoxID": "aa:bb:cc:dd:ee:ff"}' http://localhost:8123/scale
+	curl -X POST -d '{"temperature": 22.24, "BBoxID": "aa:bb:cc:dd:ee:ff", "SensorID": "xyz"}' http://localhost:8123/temperature
 	kill `cat /tmp/server.pid`
 
 server: main.go

@@ -10,8 +10,8 @@ import (
 )
 
 type Buffer struct {
-	BufferTemperature temperature.Temperature
-	BufferWeight      scale.Scale
+	temperatures []temperature.Temperature
+	bufferScales []scale.Scale
 }
 type BufferError struct{}
 
@@ -51,11 +51,17 @@ func postData(apiServer string, token string, data interface{}) (string, error) 
 }
 
 func (b *Buffer) Flush(apiServer string, token string) error {
-	status, err := postData(apiServer+"temperature", token, b.BufferTemperature)
-	if status != "200" || err != nil {
-		log.Println("%s / Status %s", err, status)
-		return &BufferError{}
+	for _, t := range b.temperatures {
+		status, err := postData(apiServer+"temperature", token, t)
+		if status != "200" || err != nil {
+			log.Println("%s / Status %s", err, status)
+			return &BufferError{}
+		}
 	}
 	// TODO: implement the same shit for scale.
 	return nil
+}
+
+func (b *Buffer) AppendTemperature(t temperature.Temperature) {
+	b.temperatures = append(b.temperatures, t)
 }

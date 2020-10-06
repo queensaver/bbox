@@ -37,8 +37,8 @@ var bBuffer []buffer.Buffer
 func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var t temperature.Temperature
-	bBuffer = append(bBuffer, buffer.Buffer{bufferTemperature: t})
 	err := decoder.Decode(&t)
+	bBuffer = append(bBuffer, buffer.Buffer{BufferTemperature: t})
 	if err != nil {
 		log.Println(err)
 	}
