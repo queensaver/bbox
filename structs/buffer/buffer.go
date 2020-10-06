@@ -60,7 +60,7 @@ func (b *Buffer) Flush(apiServer string, token string) error {
       return err
     }
 		if status != "200" {
-      log.Println("Status: %s", status)
+      log.Println("Status: ", status)
 			return &BufferError{}
 		}
 	}
