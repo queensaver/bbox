@@ -1,12 +1,12 @@
 package buffer
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/wogri/bbox/structs/scale"
 	"github.com/wogri/bbox/structs/temperature"
+	"log"
 	"net/http"
-  "bytes"
-  "log"
 )
 
 type Buffer struct {
@@ -51,11 +51,11 @@ func postData(apiServer string, token string, data interface{}) (string, error) 
 }
 
 func (b *Buffer) Flush(apiServer string, token string) error {
-  status, err := postData(apiServer+"temperature", token, b.bufferTemperature)
-  if status != "200" || err != nil {
-    log.Println("%s / Status %s", err, status)
-    return &BufferError{}
+	status, err := postData(apiServer+"temperature", token, b.bufferTemperature)
+	if status != "200" || err != nil {
+		log.Println("%s / Status %s", err, status)
+		return &BufferError{}
 	}
 	// TODO: implement the same shit for scale.
-  return nil
+	return nil
 }
