@@ -39,6 +39,9 @@ func postData(apiServer string, token string, data interface{}) (string, error) 
 		return "", err
 	}
 	req, err := http.NewRequest("POST", apiServer, bytes.NewBuffer(j))
+	if err != nil {
+		return "", err
+	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Token", token)
 	client := &http.Client{}
@@ -53,8 +56,11 @@ func postData(apiServer string, token string, data interface{}) (string, error) 
 func (b *Buffer) Flush(apiServer string, token string) error {
 	for _, t := range b.temperatures {
 		status, err := postData(apiServer+"temperature", token, t)
-		if status != "200" || err != nil {
-			log.Println("%s / Status %s", err, status)
+    if err != nil {
+      return err
+    }
+		if status != "200" {
+      log.Println("Status: %s", status)
 			return &BufferError{}
 		}
 	}
