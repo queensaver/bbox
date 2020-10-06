@@ -32,13 +32,13 @@ var (
 	)
 )
 
-var bBuffer []buffer.Buffer
+var bBuffer buffer.Buffer
 
 func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var t temperature.Temperature
 	err := decoder.Decode(&t)
-	bBuffer = append(bBuffer, buffer.Buffer{BufferTemperature: t})
+	bBuffer.AppendTemperature(t)
 	if err != nil {
 		log.Println(err)
 	}
@@ -50,6 +50,7 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 		promTemperature.WithLabelValues(t.BBoxID, t.SensorID).Set(t.Temperature)
 	}
 	log.Println(bBuffer)
+	bBuffer.Flush(*apiServerAddr, "token")
 }
 
 func scaleHandler(w http.ResponseWriter, req *http.Request) {
