@@ -10,8 +10,8 @@ import (
 )
 
 type Buffer struct {
-	bufferTemperature temperature.Temperature
-	bufferWeight      scale.Scale
+	BufferTemperature temperature.Temperature
+	BufferWeight      scale.Scale
 }
 type BufferError struct{}
 
@@ -51,7 +51,7 @@ func postData(apiServer string, token string, data interface{}) (string, error) 
 }
 
 func (b *Buffer) Flush(apiServer string, token string) error {
-	status, err := postData(apiServer+"temperature", token, b.bufferTemperature)
+	status, err := postData(apiServer+"temperature", token, b.BufferTemperature)
 	if status != "200" || err != nil {
 		log.Println("%s / Status %s", err, status)
 		return &BufferError{}
