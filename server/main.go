@@ -50,7 +50,10 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 		promTemperature.WithLabelValues(t.BBoxID, t.SensorID).Set(t.Temperature)
 	}
 	log.Println(bBuffer)
-	bBuffer.Flush(*apiServerAddr, "token")
+	err = bBuffer.Flush(*apiServerAddr, "token")
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func scaleHandler(w http.ResponseWriter, req *http.Request) {
