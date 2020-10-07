@@ -82,6 +82,8 @@ github.com/wogri/bbox/structs/buffer v0.0.0-20201006200515-988a29884349 h1:lCnbI
 github.com/wogri/bbox/structs/buffer v0.0.0-20201006200515-988a29884349/go.mod h1:hZ6a3TpsHjsGyNCwD/eaxcdhx4GcRo4dNzRKfC7rbT0=
 github.com/wogri/bbox/structs/buffer v0.0.0-20201006201620-5f99a69fe148 h1:W0Z+g6QMRUsxKMY6t9Kma0QOLVad5Z9hx3+sk1speok=
 github.com/wogri/bbox/structs/buffer v0.0.0-20201006201620-5f99a69fe148/go.mod h1:hZ6a3TpsHjsGyNCwD/eaxcdhx4GcRo4dNzRKfC7rbT0=
+github.com/wogri/bbox/structs/buffer v0.0.0-20201006201956-4a6498921f3a h1:rzEXar+BXSyDfgbGfpXCFDj7GnQUuCSMoj60/GotXys=
+github.com/wogri/bbox/structs/buffer v0.0.0-20201006201956-4a6498921f3a/go.mod h1:hZ6a3TpsHjsGyNCwD/eaxcdhx4GcRo4dNzRKfC7rbT0=
 github.com/wogri/bbox/structs/scale v0.0.0-20200822185204-898e12cd2b1a h1:ssucTT20VC8w2edfGgPR6nWUHe2t7ktA7qxNhvS0+Oc=
 github.com/wogri/bbox/structs/scale v0.0.0-20200822185204-898e12cd2b1a/go.mod h1:8kaHOmBRBlAA+DhVEAbbxjgAZRtzxr2/Au6aS8wQW9E=
 github.com/wogri/bbox/structs/temperature v0.0.0-20200822185204-898e12cd2b1a h1:nAELMvTlxLwveJ4eaX6Rx9AWEUVisugYU2f5KTMCTM4=

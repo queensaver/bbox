@@ -54,12 +54,17 @@ func postData(apiServer string, token string, data interface{}) (string, error) 
 }
 
 func (b *Buffer) Flush(apiServer string, token string) error {
-	for _, t := range b.temperatures {
+  var temperatures = make([]temperature.Temperature, len(b.temperatures))
+  // empty the slice.
+  b.temperatures = b.temperatures[:0]
+	for _, t := range temperatures {
 		status, err := postData(apiServer+"temperature", token, t)
     if err != nil {
+      b.temperatures = append(b.temperatures, t)
       return err
     }
 		if status != "200" {
+      b.temperatures = append(b.temperatures, t)
       log.Println("Status: ", status)
 			return &BufferError{}
 		}
