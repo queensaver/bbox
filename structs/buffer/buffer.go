@@ -7,16 +7,27 @@ import (
 	"github.com/wogri/bbox/structs/temperature"
 	"log"
 	"net/http"
+  "fmt"
 )
 
 type Buffer struct {
 	temperatures []temperature.Temperature
-	bufferScales []scale.Scale
+	scales []scale.Scale
 }
+
 type BufferError struct{}
 
 func (m *BufferError) Error() string {
 	return "Could not flush Buffer to API server."
+}
+
+type HttpClientPoster interface {
+  PostData(interface{}) (string, error)
+}
+
+type HttpClient struct {
+  ApiServer string
+  Token string
 }
 
 type DiskBuffer interface {
@@ -29,21 +40,17 @@ type DiskBuffer interface {
 	*/
 }
 
-func (b *Buffer) String() ([]byte, error) {
-	return json.MarshalIndent(b, "", "  ")
-}
-
-func postData(apiServer string, token string, data interface{}) (string, error) {
+func (h *HttpClient) PostData(data interface{}) (string, error) {
 	j, err := json.Marshal(data)
 	if err != nil {
 		return "", err
 	}
-	req, err := http.NewRequest("POST", apiServer, bytes.NewBuffer(j))
+	req, err := http.NewRequest("POST", h.ApiServer, bytes.NewBuffer(j))
 	if err != nil {
 		return "", err
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Token", token)
+	req.Header.Set("Token", h.Token)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -53,12 +60,18 @@ func postData(apiServer string, token string, data interface{}) (string, error) 
 	return resp.Status, nil
 }
 
-func (b *Buffer) Flush(apiServer string, token string) error {
+func (b *Buffer) String() string {
+  //r, _ := json.MarshalIndent(b, "", "  ")
+  //return string(r[:])
+  return fmt.Sprintf("%v\n%v", b.temperatures, b.scales)
+}
+
+func (b *Buffer) Flush(poster HttpClientPoster) error {
   var temperatures = make([]temperature.Temperature, len(b.temperatures))
   // empty the slice.
   b.temperatures = b.temperatures[:0]
 	for _, t := range temperatures {
-		status, err := postData(apiServer+"temperature", token, t)
+		status, err := poster.PostData(t)
     if err != nil {
       b.temperatures = append(b.temperatures, t)
       return err
@@ -75,4 +88,8 @@ func (b *Buffer) Flush(apiServer string, token string) error {
 
 func (b *Buffer) AppendTemperature(t temperature.Temperature) {
 	b.temperatures = append(b.temperatures, t)
+}
+
+func (b *Buffer) GetTemperatures() []temperature.Temperature {
+  return b.temperatures
 }
