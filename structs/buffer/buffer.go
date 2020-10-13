@@ -68,11 +68,15 @@ func (b *Buffer) String() string {
 
 func (b *Buffer) Flush(poster HttpClientPoster) error {
   var temperatures = make([]temperature.Temperature, len(b.temperatures))
+  for i, t := range b.temperatures {
+    temperatures[i] = t
+  }
   // empty the slice.
-  b.temperatures = b.temperatures[:0]
+  b.temperatures = make([]temperature.Temperature, 0)
 	for _, t := range temperatures {
 		status, err := poster.PostData(t)
     if err != nil {
+      log.Println("Error ", err)
       b.temperatures = append(b.temperatures, t)
       return err
     }
