@@ -25,7 +25,7 @@ type HttpClientPoster interface {
   PostData(interface{}) (string, error)
 }
 
-type HttpClient struct {
+type HttpPostClient struct {
   ApiServer string
   Token string
 }
@@ -40,7 +40,7 @@ type DiskBuffer interface {
 	*/
 }
 
-func (h *HttpClient) PostData(data interface{}) (string, error) {
+func (h *HttpPostClient) PostData(data interface{}) (string, error) {
 	j, err := json.Marshal(data)
 	if err != nil {
 		return "", err

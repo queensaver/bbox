@@ -86,10 +86,16 @@ github.com/wogri/bbox/structs/buffer v0.0.0-20201006201956-4a6498921f3a h1:rzEXa
 github.com/wogri/bbox/structs/buffer v0.0.0-20201006201956-4a6498921f3a/go.mod h1:hZ6a3TpsHjsGyNCwD/eaxcdhx4GcRo4dNzRKfC7rbT0=
 github.com/wogri/bbox/structs/buffer v0.0.0-20201007092456-d01b341974a4 h1:QDuieCNA+205B7t6WyKHdPEWX2pNwrZydu4oA6Efpao=
 github.com/wogri/bbox/structs/buffer v0.0.0-20201007092456-d01b341974a4/go.mod h1:hZ6a3TpsHjsGyNCwD/eaxcdhx4GcRo4dNzRKfC7rbT0=
+github.com/wogri/bbox/structs/buffer v0.0.0-20201014181325-4742bb20949e h1:0P42gZtjUMCPhOwFAUdp8yEe6yEQL7ZRmTez9XveP14=
+github.com/wogri/bbox/structs/buffer v0.0.0-20201014181325-4742bb20949e/go.mod h1:hZ6a3TpsHjsGyNCwD/eaxcdhx4GcRo4dNzRKfC7rbT0=
 github.com/wogri/bbox/structs/scale v0.0.0-20200822185204-898e12cd2b1a h1:ssucTT20VC8w2edfGgPR6nWUHe2t7ktA7qxNhvS0+Oc=
 github.com/wogri/bbox/structs/scale v0.0.0-20200822185204-898e12cd2b1a/go.mod h1:8kaHOmBRBlAA+DhVEAbbxjgAZRtzxr2/Au6aS8wQW9E=
+github.com/wogri/bbox/structs/scale v0.0.0-20201014181325-4742bb20949e h1:KwwlJ3S/idWU6CxJN7VBEb2LXExX2zbVWUEGWQCdCm4=
+github.com/wogri/bbox/structs/scale v0.0.0-20201014181325-4742bb20949e/go.mod h1:8kaHOmBRBlAA+DhVEAbbxjgAZRtzxr2/Au6aS8wQW9E=
 github.com/wogri/bbox/structs/temperature v0.0.0-20200822185204-898e12cd2b1a h1:nAELMvTlxLwveJ4eaX6Rx9AWEUVisugYU2f5KTMCTM4=
 github.com/wogri/bbox/structs/temperature v0.0.0-20200822185204-898e12cd2b1a/go.mod h1:AAiSxNer8lo3U/0wLg4hOYOv28p/y0nHcTWIqVIc0vg=
+github.com/wogri/bbox/structs/temperature v0.0.0-20201014181325-4742bb20949e h1:JTRXJ8I4hOERwGZ8vqbJTn0NzXhhbIgoWF0yIT1PcZM=
+github.com/wogri/bbox/structs/temperature v0.0.0-20201014181325-4742bb20949e/go.mod h1:AAiSxNer8lo3U/0wLg4hOYOv28p/y0nHcTWIqVIc0vg=
 github.com/wogri/bbox/thingspeak_client v0.0.0-20200821205622-01ceebf07c9d/go.mod h1:iaiMFuQnWEfF4XTRgQwAHvvnzjd9phSJyZpSrR6w9ZY=
 golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
