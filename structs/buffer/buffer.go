@@ -8,6 +8,7 @@ import (
 	"github.com/wogri/bbox/structs/temperature"
 	"log"
 	"net/http"
+	"path"
 )
 
 type Buffer struct {
@@ -40,13 +41,14 @@ type DiskBuffer interface {
 	*/
 }
 
-func (h HttpPostClient) PostData(path string, data interface{}) (string, error) {
+func (h HttpPostClient) PostData(request string, data interface{}) (string, error) {
 	j, err := json.Marshal(data)
 	if err != nil {
 		return "", err
 	}
-	req, err := http.NewRequest("POST", h.ApiServer + path, bytes.NewBuffer(j))
-  log.Println("Posting to ", h.ApiServer + path)
+	url := path.Join(h.ApiServer, request)
+	log.Println("Posting to ", url)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(j))
 	if err != nil {
 		return "", err
 	}
