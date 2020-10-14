@@ -9,6 +9,7 @@ import (
 	"github.com/wogri/bbox/structs/scale"
 	"github.com/wogri/bbox/structs/temperature"
 	"log"
+  "time"
 	"net/http"
 )
 
@@ -38,10 +39,12 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var t temperature.Temperature
 	err := decoder.Decode(&t)
-	bBuffer.AppendTemperature(t)
 	if err != nil {
 		log.Println(err)
+    return
 	}
+  t.Timestamp = int64(time.Now().Unix())
+	bBuffer.AppendTemperature(t)
 	if *debug {
 		out, _ := t.String()
 		log.Println(string(out))
@@ -53,6 +56,7 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	err = bBuffer.Flush(*apiServerAddr, "token")
 	if err != nil {
 		log.Println(err)
+    return
 	}
 }
 
@@ -62,7 +66,9 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	err := decoder.Decode(&s)
 	if err != nil {
 		log.Println(err)
+    return
 	}
+  s.Timestamp = int64(time.Now().Unix())
 	if *debug {
 		out, _ := s.String()
 		log.Println(string(out))

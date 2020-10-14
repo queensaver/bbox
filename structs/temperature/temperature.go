@@ -8,6 +8,7 @@ type Temperature struct {
 	Temperature float64
 	BBoxID string //BBoxID is usually the Mac address of the raspberry pi in the bHive.
   SensorID string
+  Timestamp int64
 }
 
 func (t *Temperature) String() ([]byte, error) {
