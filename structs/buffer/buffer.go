@@ -46,6 +46,7 @@ func (h HttpPostClient) PostData(path string, data interface{}) (string, error) 
 		return "", err
 	}
 	req, err := http.NewRequest("POST", h.ApiServer + path, bytes.NewBuffer(j))
+  log.Println("Posting to ", h.ApiServer + path)
 	if err != nil {
 		return "", err
 	}
