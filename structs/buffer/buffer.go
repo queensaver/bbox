@@ -40,7 +40,7 @@ type DiskBuffer interface {
 	*/
 }
 
-func (h *HttpPostClient) PostData(data interface{}) (string, error) {
+func (h HttpPostClient) PostData(data interface{}) (string, error) {
 	j, err := json.Marshal(data)
 	if err != nil {
 		return "", err
