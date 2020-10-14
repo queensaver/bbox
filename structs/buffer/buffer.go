@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/wogri/bbox/structs/scale"
 	"github.com/wogri/bbox/structs/temperature"
-	"log"
 	"net/http"
 	"path"
 )
@@ -16,14 +15,16 @@ type Buffer struct {
 	scales       []scale.Scale
 }
 
-type BufferError struct{}
+type BufferError struct{
+  message string
+}
 
 func (m *BufferError) Error() string {
-	return "Could not flush Buffer to API server."
+	return "Could not flush Buffer to API server:" + m.message
 }
 
 type HttpClientPoster interface {
-	PostData(string, interface{}) (string, error)
+	PostData(string, interface{}) error
 }
 
 type HttpPostClient struct {
@@ -41,26 +42,28 @@ type DiskBuffer interface {
 	*/
 }
 
-func (h HttpPostClient) PostData(request string, data interface{}) (string, error) {
+func (h HttpPostClient) PostData(request string, data interface{}) error {
 	j, err := json.Marshal(data)
 	if err != nil {
-		return "", err
+		return err
 	}
 	url := path.Join(h.ApiServer, request)
-	log.Println("Posting to ", url)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(j))
 	if err != nil {
-		return "", err
+		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Token", h.Token)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer resp.Body.Close()
-	return resp.Status, nil
+  if resp.Status != "200" {
+    return &BufferError{fmt.Sprintf("HTTP return code: %s; URL: %s", resp.Status, url)}
+  }
+	return nil
 }
 
 func (b *Buffer) String() string {
@@ -77,16 +80,10 @@ func (b *Buffer) Flush(poster HttpClientPoster) error {
 	// empty the slice.
 	b.temperatures = make([]temperature.Temperature, 0)
 	for _, t := range temperatures {
-		status, err := poster.PostData("temperature", t)
+		err := poster.PostData("temperature", t)
 		if err != nil {
-			log.Println("Error ", err)
 			b.temperatures = append(b.temperatures, t)
 			return err
-		}
-		if status != "200" {
-			b.temperatures = append(b.temperatures, t)
-			log.Println("Status: ", status)
-			return &BufferError{}
 		}
 	}
 	// TODO: implement the same shit for scale.

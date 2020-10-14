@@ -27,8 +27,8 @@ type HttpClientMock struct {
 	Error  error
 }
 
-func (h *HttpClientMock) PostData(string, interface{}) (string, error) {
-	return h.Status, h.Error
+func (h *HttpClientMock) PostData(string, interface{}) error {
+	return h.Error
 }
 
 func TestBufferSuccessfulFlush(t *testing.T) {
