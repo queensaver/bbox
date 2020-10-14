@@ -9,8 +9,8 @@ import (
 	"github.com/wogri/bbox/structs/scale"
 	"github.com/wogri/bbox/structs/temperature"
 	"log"
-  "time"
 	"net/http"
+	"time"
 )
 
 var apiServerAddr = flag.String("api_server_addr", "https://bcloud.azure.wogri.com", "API Server Address")
@@ -41,9 +41,9 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	err := decoder.Decode(&t)
 	if err != nil {
 		log.Println(err)
-    return
+		return
 	}
-  t.Timestamp = int64(time.Now().Unix())
+	t.Timestamp = int64(time.Now().Unix())
 	bBuffer.AppendTemperature(t)
 	if *debug {
 		out, _ := t.String()
@@ -53,11 +53,11 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 		promTemperature.WithLabelValues(t.BBoxID, t.SensorID).Set(t.Temperature)
 	}
 	log.Println(bBuffer)
-  postClient := buffer.HttpPostClient{*apiServerAddr, "token"}
+	postClient := buffer.HttpPostClient{*apiServerAddr, "token"}
 	err = bBuffer.Flush(postClient)
 	if err != nil {
 		log.Println(err)
-    return
+		return
 	}
 }
 
@@ -67,9 +67,9 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	err := decoder.Decode(&s)
 	if err != nil {
 		log.Println(err)
-    return
+		return
 	}
-  s.Timestamp = int64(time.Now().Unix())
+	s.Timestamp = int64(time.Now().Unix())
 	if *debug {
 		out, _ := s.String()
 		log.Println(string(out))

@@ -3,16 +3,16 @@ package buffer
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/wogri/bbox/structs/scale"
 	"github.com/wogri/bbox/structs/temperature"
 	"log"
 	"net/http"
-  "fmt"
 )
 
 type Buffer struct {
 	temperatures []temperature.Temperature
-	scales []scale.Scale
+	scales       []scale.Scale
 }
 
 type BufferError struct{}
@@ -22,12 +22,12 @@ func (m *BufferError) Error() string {
 }
 
 type HttpClientPoster interface {
-  PostData(interface{}) (string, error)
+	PostData(interface{}) (string, error)
 }
 
 type HttpPostClient struct {
-  ApiServer string
-  Token string
+	ApiServer string
+	Token     string
 }
 
 type DiskBuffer interface {
@@ -61,28 +61,28 @@ func (h HttpPostClient) PostData(data interface{}) (string, error) {
 }
 
 func (b *Buffer) String() string {
-  //r, _ := json.MarshalIndent(b, "", "  ")
-  //return string(r[:])
-  return fmt.Sprintf("%v\n%v", b.temperatures, b.scales)
+	//r, _ := json.MarshalIndent(b, "", "  ")
+	//return string(r[:])
+	return fmt.Sprintf("%v\n%v", b.temperatures, b.scales)
 }
 
 func (b *Buffer) Flush(poster HttpClientPoster) error {
-  var temperatures = make([]temperature.Temperature, len(b.temperatures))
-  for i, t := range b.temperatures {
-    temperatures[i] = t
-  }
-  // empty the slice.
-  b.temperatures = make([]temperature.Temperature, 0)
+	var temperatures = make([]temperature.Temperature, len(b.temperatures))
+	for i, t := range b.temperatures {
+		temperatures[i] = t
+	}
+	// empty the slice.
+	b.temperatures = make([]temperature.Temperature, 0)
 	for _, t := range temperatures {
 		status, err := poster.PostData(t)
-    if err != nil {
-      log.Println("Error ", err)
-      b.temperatures = append(b.temperatures, t)
-      return err
-    }
+		if err != nil {
+			log.Println("Error ", err)
+			b.temperatures = append(b.temperatures, t)
+			return err
+		}
 		if status != "200" {
-      b.temperatures = append(b.temperatures, t)
-      log.Println("Status: ", status)
+			b.temperatures = append(b.temperatures, t)
+			log.Println("Status: ", status)
 			return &BufferError{}
 		}
 	}
@@ -95,5 +95,5 @@ func (b *Buffer) AppendTemperature(t temperature.Temperature) {
 }
 
 func (b *Buffer) GetTemperatures() []temperature.Temperature {
-  return b.temperatures
+	return b.temperatures
 }
