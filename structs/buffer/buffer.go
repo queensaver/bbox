@@ -22,7 +22,7 @@ func (m *BufferError) Error() string {
 }
 
 type HttpClientPoster interface {
-	PostData(interface{}) (string, error)
+	PostData(string, interface{}) (string, error)
 }
 
 type HttpPostClient struct {
@@ -40,12 +40,12 @@ type DiskBuffer interface {
 	*/
 }
 
-func (h HttpPostClient) PostData(data interface{}) (string, error) {
+func (h HttpPostClient) PostData(path string, data interface{}) (string, error) {
 	j, err := json.Marshal(data)
 	if err != nil {
 		return "", err
 	}
-	req, err := http.NewRequest("POST", h.ApiServer, bytes.NewBuffer(j))
+	req, err := http.NewRequest("POST", h.ApiServer + path, bytes.NewBuffer(j))
 	if err != nil {
 		return "", err
 	}
@@ -74,7 +74,7 @@ func (b *Buffer) Flush(poster HttpClientPoster) error {
 	// empty the slice.
 	b.temperatures = make([]temperature.Temperature, 0)
 	for _, t := range temperatures {
-		status, err := poster.PostData(t)
+		status, err := poster.PostData("temperature", t)
 		if err != nil {
 			log.Println("Error ", err)
 			b.temperatures = append(b.temperatures, t)

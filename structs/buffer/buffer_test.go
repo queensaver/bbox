@@ -27,7 +27,7 @@ type HttpClientMock struct {
 	Error  error
 }
 
-func (h *HttpClientMock) PostData(interface{}) (string, error) {
+func (h *HttpClientMock) PostData(string, interface{}) (string, error) {
 	return h.Status, h.Error
 }
 
