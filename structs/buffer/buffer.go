@@ -79,15 +79,15 @@ func (b *Buffer) Flush(poster HttpClientPoster) error {
 	}
 	// empty the slice.
 	b.temperatures = make([]temperature.Temperature, 0)
+  var err error
 	for _, t := range temperatures {
-		err := poster.PostData("temperature", t)
+		err = poster.PostData("temperature", t)
 		if err != nil {
 			b.temperatures = append(b.temperatures, t)
-			return err
 		}
 	}
+	return err
 	// TODO: implement the same shit for scale.
-	return nil
 }
 
 func (b *Buffer) AppendTemperature(t temperature.Temperature) {
