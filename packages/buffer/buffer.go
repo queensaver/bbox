@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/wogri/bbox/structs/scale"
-	"github.com/wogri/bbox/structs/temperature"
-  log "github.com/sirupsen/logrus"
+	"github.com/wogri/bbox/packages/scale"
+	"github.com/wogri/bbox/packages/temperature"
+	"github.com/wogri/bbox/packages/logger"
 	"net/http"
 	"path"
 )

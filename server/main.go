@@ -5,9 +5,9 @@ import (
 	"flag"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/wogri/bbox/structs/buffer"
-	"github.com/wogri/bbox/structs/scale"
-	"github.com/wogri/bbox/structs/temperature"
+	"github.com/wogri/bbox/packages/buffer"
+	"github.com/wogri/bbox/packages/scale"
+	"github.com/wogri/bbox/packages/temperature"
   log "github.com/sirupsen/logrus"
 	"net/http"
 	"time"
@@ -81,7 +81,7 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	flag.Parse()
-  bBuffer.Log = log
+  bBuffer.Log = &log
 	if *prometheusActive {
 		prometheus.MustRegister(promTemperature)
 		prometheus.MustRegister(promWeight)
