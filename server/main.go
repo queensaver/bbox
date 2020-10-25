@@ -8,7 +8,8 @@ import (
 	"github.com/wogri/bbox/packages/buffer"
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
-  log "github.com/sirupsen/logrus"
+  logger "github.com/sirupsen/logrus"
+  "log"
 	"net/http"
 	"time"
 )
