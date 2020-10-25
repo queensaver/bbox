@@ -8,9 +8,9 @@ import (
 	"github.com/wogri/bbox/packages/buffer"
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
-  logger "github.com/sirupsen/logrus"
-  "log"
+	"github.com/wogri/bbox/packages/logger"
 	"net/http"
+  "log"
 	"time"
 )
 
@@ -41,23 +41,23 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	var t temperature.Temperature
 	err := decoder.Decode(&t)
 	if err != nil {
-		log.Println(err)
+		logger.Error(req.RemoteAddr, err)
 		return
 	}
 	t.Timestamp = int64(time.Now().Unix())
 	bBuffer.AppendTemperature(t)
 	if *debug {
-		out, _ := t.String()
-		log.Println(string(out))
+		//out, _ := t.String()
+		//logger.Info(string(out))
 	}
 	if *prometheusActive {
 		promTemperature.WithLabelValues(t.BBoxID, t.SensorID).Set(t.Temperature)
 	}
-	log.Println(bBuffer)
+	//logger.Info(bBuffer)
 	postClient := buffer.HttpPostClient{*apiServerAddr, "token"}
 	err = bBuffer.Flush(postClient)
 	if err != nil {
-		log.Println(err)
+		//logger.Info(err)
 		return
 	}
 }
@@ -67,13 +67,13 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	var s scale.Scale
 	err := decoder.Decode(&s)
 	if err != nil {
-		log.Println(err)
+		//logger.Info(err)
 		return
 	}
 	s.Timestamp = int64(time.Now().Unix())
 	if *debug {
-		out, _ := s.String()
-		log.Println(string(out))
+		//out, _ := s.String()
+		//logger.Info(string(out))
 	}
 	if *prometheusActive {
 		promWeight.WithLabelValues(s.BBoxID).Set(s.Weight)
@@ -82,7 +82,6 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	flag.Parse()
-  bBuffer.Log = &log
 	if *prometheusActive {
 		prometheus.MustRegister(promTemperature)
 		prometheus.MustRegister(promWeight)

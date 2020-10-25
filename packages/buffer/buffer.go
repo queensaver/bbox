@@ -74,7 +74,7 @@ func (b *Buffer) String() string {
 }
 
 func (b *Buffer) Flush(poster HttpClientPoster) error {
-  logger.Info("Flushing")
+  logger.Error("none", "Flushing")
 	var temperatures = make([]temperature.Temperature, len(b.temperatures))
 	for i, t := range b.temperatures {
 		temperatures[i] = t

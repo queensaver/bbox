@@ -11,20 +11,22 @@ var (
 func init() {
     log = logrus.New()
     log.Formatter = &logrus.JSONFormatter{}
+    //log.Formatter = &logrus.TextFormatter{}
 
-    log.SetReportCaller(true)
+    // TODO: Remove. This is a huge performance penalty.
+    // log.SetReportCaller(true)
 }
 
-func Info(format string, v ...interface{}) {
-    log.Infof(format, v...)
+func Info(ip string, msg string) {
+  log.WithFields(logrus.Fields{
+    "ip": ip,
+  }).Info(msg)
 }
 
-func Warn(format string, v ...interface{}) {
-    log.Warnf(format, v...)
-}
-
-func Error(format string, v ...interface{}) {
-    log.Errorf(format, v...)
+func Error(ip string, err error) {
+  log.WithFields(logrus.Fields{
+    "ip": ip,
+  }).Error(err)
 }
 
 var (
