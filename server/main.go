@@ -55,7 +55,7 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	//logger.Info(bBuffer)
 	postClient := buffer.HttpPostClient{*apiServerAddr, "token"}
-	err = bBuffer.Flush(postClient)
+	err = bBuffer.Flush(req.RemoteAddr, postClient)
 	if err != nil {
 		//logger.Info(err)
 		return

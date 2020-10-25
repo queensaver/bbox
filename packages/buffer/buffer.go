@@ -73,8 +73,8 @@ func (b *Buffer) String() string {
 	return fmt.Sprintf("%v\n%v", b.temperatures, b.scales)
 }
 
-func (b *Buffer) Flush(poster HttpClientPoster) error {
-  logger.Error("none", "Flushing")
+func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
+  logger.Info(ip, "Flushing")
 	var temperatures = make([]temperature.Temperature, len(b.temperatures))
 	for i, t := range b.temperatures {
 		temperatures[i] = t
