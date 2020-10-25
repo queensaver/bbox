@@ -73,6 +73,13 @@ github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
+github.com/wogri/bbox v0.0.0-20201025190026-09aa290478c7 h1:5L/9rHOkIk5r0CtFlEtB/jxlGsgTawNXKx+o7vw2Nvw=
+github.com/wogri/bbox/packages/buffer v0.0.0-20201025190026-09aa290478c7 h1:Ep8UcFNgaAXw6G13r57m5IR+w90MatEBWvUVlsyLTRU=
+github.com/wogri/bbox/packages/buffer v0.0.0-20201025190026-09aa290478c7/go.mod h1:unFDpGxcnL0JXRiaXG2OZLqxIooBw4hD9WpqgtANsgU=
+github.com/wogri/bbox/packages/scale v0.0.0-20201025190026-09aa290478c7 h1:Yg1pr9GsN88g+N1vrAAvj5JaEnGuK4Asa0Dhzr6t02w=
+github.com/wogri/bbox/packages/scale v0.0.0-20201025190026-09aa290478c7/go.mod h1:BoJNdP3GSQN21BlztW362Ot6ngctP5CobE0+0QD3Yho=
+github.com/wogri/bbox/packages/temperature v0.0.0-20201025190026-09aa290478c7 h1:KdsyH70uj6bb31bxEdLfQ5umJgyReqh7vr2egOiE1dk=
+github.com/wogri/bbox/packages/temperature v0.0.0-20201025190026-09aa290478c7/go.mod h1:wEmpLQ7jsaVt5GIQD/mJLPeJBlyOPS3fY6syExBcZs4=
 github.com/wogri/bbox/structs v0.0.0-20200821195214-07e7c1664007 h1:g6DUsT2GIkfvXC9lgCyzFrd5IYuaYgby++yMZOJ/khU=
 github.com/wogri/bbox/structs v0.0.0-20200821195214-07e7c1664007/go.mod h1:FbMhM3Sd/rilSzMtq/HIXBdU904RtY21v649hkKdL/M=
 github.com/wogri/bbox/structs/buffer v0.0.0-20201004200552-fd56c9d96d88 h1:eJeKJJnZK6vob4MdgxBnZg4Z84iWIlS1IqD/F/Y5k+4=
