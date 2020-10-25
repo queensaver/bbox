@@ -8,7 +8,7 @@ import (
 	"github.com/wogri/bbox/structs/buffer"
 	"github.com/wogri/bbox/structs/scale"
 	"github.com/wogri/bbox/structs/temperature"
-	"log"
+  log "github.com/sirupsen/logrus"
 	"net/http"
 	"time"
 )
@@ -81,6 +81,7 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	flag.Parse()
+  bBuffer.Log = log
 	if *prometheusActive {
 		prometheus.MustRegister(promTemperature)
 		prometheus.MustRegister(promWeight)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/wogri/bbox/structs/scale"
 	"github.com/wogri/bbox/structs/temperature"
+  log "github.com/sirupsen/logrus"
 	"net/http"
 	"path"
 )
@@ -13,6 +14,7 @@ import (
 type Buffer struct {
 	temperatures []temperature.Temperature
 	scales       []scale.Scale
+  Log          *log.Logger
 }
 
 type BufferError struct{
