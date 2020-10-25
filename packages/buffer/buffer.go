@@ -14,7 +14,6 @@ import (
 type Buffer struct {
 	temperatures []temperature.Temperature
 	scales       []scale.Scale
-  Log          *log.Logger
 }
 
 type BufferError struct{
@@ -75,6 +74,7 @@ func (b *Buffer) String() string {
 }
 
 func (b *Buffer) Flush(poster HttpClientPoster) error {
+  logger.Info("Flushing")
 	var temperatures = make([]temperature.Temperature, len(b.temperatures))
 	for i, t := range b.temperatures {
 		temperatures[i] = t

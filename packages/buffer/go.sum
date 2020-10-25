@@ -3,6 +3,12 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/sirupsen/logrus v1.7.0 h1:ShrD1U9pZB12TX0cVy0DtePoCH97K8EtX+mg7ZARUtM=
 github.com/sirupsen/logrus v1.7.0/go.mod h1:yWOB1SBYBC5VeMP7gHvWumXLIWorT60ONWic61uBYv0=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
+github.com/wogri/bbox/packages/logger v0.0.0-20201025190320-6a32eb947b50 h1:cCGUqclG2xKmBDNi659XfXzNYx/vshJEzIKkh+0Gh18=
+github.com/wogri/bbox/packages/logger v0.0.0-20201025190320-6a32eb947b50/go.mod h1:ChbjUyUndj5SoKpnHRtLl9C6+n06ahymb1+71akQM7o=
+github.com/wogri/bbox/packages/scale v0.0.0-20201025190320-6a32eb947b50 h1:8z7a1I9ZUdOsPkUa5FKNJVesTWctZ5IEZ/5/AASBg90=
+github.com/wogri/bbox/packages/scale v0.0.0-20201025190320-6a32eb947b50/go.mod h1:BoJNdP3GSQN21BlztW362Ot6ngctP5CobE0+0QD3Yho=
+github.com/wogri/bbox/packages/temperature v0.0.0-20201025190320-6a32eb947b50 h1:zlogfTOsstAH7HCVAkEk+5TohSZznZNfom8tPofDC+o=
+github.com/wogri/bbox/packages/temperature v0.0.0-20201025190320-6a32eb947b50/go.mod h1:wEmpLQ7jsaVt5GIQD/mJLPeJBlyOPS3fY6syExBcZs4=
 github.com/wogri/bbox/structs/scale v0.0.0-20200822185204-898e12cd2b1a h1:ssucTT20VC8w2edfGgPR6nWUHe2t7ktA7qxNhvS0+Oc=
 github.com/wogri/bbox/structs/scale v0.0.0-20200822185204-898e12cd2b1a/go.mod h1:8kaHOmBRBlAA+DhVEAbbxjgAZRtzxr2/Au6aS8wQW9E=
 github.com/wogri/bbox/structs/temperature v0.0.0-20200822185204-898e12cd2b1a h1:nAELMvTlxLwveJ4eaX6Rx9AWEUVisugYU2f5KTMCTM4=

@@ -76,6 +76,8 @@ github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81P
 github.com/wogri/bbox v0.0.0-20201025190026-09aa290478c7 h1:5L/9rHOkIk5r0CtFlEtB/jxlGsgTawNXKx+o7vw2Nvw=
 github.com/wogri/bbox/packages/buffer v0.0.0-20201025190026-09aa290478c7 h1:Ep8UcFNgaAXw6G13r57m5IR+w90MatEBWvUVlsyLTRU=
 github.com/wogri/bbox/packages/buffer v0.0.0-20201025190026-09aa290478c7/go.mod h1:unFDpGxcnL0JXRiaXG2OZLqxIooBw4hD9WpqgtANsgU=
+github.com/wogri/bbox/packages/logger v0.0.0-20201025190320-6a32eb947b50 h1:cCGUqclG2xKmBDNi659XfXzNYx/vshJEzIKkh+0Gh18=
+github.com/wogri/bbox/packages/logger v0.0.0-20201025190320-6a32eb947b50/go.mod h1:ChbjUyUndj5SoKpnHRtLl9C6+n06ahymb1+71akQM7o=
 github.com/wogri/bbox/packages/scale v0.0.0-20201025190026-09aa290478c7 h1:Yg1pr9GsN88g+N1vrAAvj5JaEnGuK4Asa0Dhzr6t02w=
 github.com/wogri/bbox/packages/scale v0.0.0-20201025190026-09aa290478c7/go.mod h1:BoJNdP3GSQN21BlztW362Ot6ngctP5CobE0+0QD3Yho=
 github.com/wogri/bbox/packages/temperature v0.0.0-20201025190026-09aa290478c7 h1:KdsyH70uj6bb31bxEdLfQ5umJgyReqh7vr2egOiE1dk=
