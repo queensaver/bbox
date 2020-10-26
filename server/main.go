@@ -6,11 +6,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/wogri/bbox/packages/buffer"
+	"github.com/wogri/bbox/packages/logger"
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
-	"github.com/wogri/bbox/packages/logger"
+	"log"
 	"net/http"
-  "log"
 	"time"
 )
 
@@ -57,7 +57,7 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	postClient := buffer.HttpPostClient{*apiServerAddr, "token"}
 	err = bBuffer.Flush(req.RemoteAddr, postClient)
 	if err != nil {
-		//logger.Info(err)
+		logger.Error(req.RemoteAddr, err)
 		return
 	}
 }
