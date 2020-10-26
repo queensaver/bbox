@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/wogri/bbox/packages/logger"
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
-	"github.com/wogri/bbox/packages/logger"
 	"net/http"
-	"path"
+	"net/url"
+	"strings"
 )
 
 type Buffer struct {
@@ -16,8 +17,8 @@ type Buffer struct {
 	scales       []scale.Scale
 }
 
-type BufferError struct{
-  message string
+type BufferError struct {
+	message string
 }
 
 func (m *BufferError) Error() string {
@@ -48,8 +49,11 @@ func (h HttpPostClient) PostData(request string, data interface{}) error {
 	if err != nil {
 		return err
 	}
-	url := path.Join(h.ApiServer, request)
-  logger.Info("none", fmt.Sprintf("Post Request for API Server %s", url))
+	if !strings.HasSuffix(h.ApiServer, "/") {
+		h.ApiServer = h.ApiServer + "/"
+	}
+	url := h.ApiServer + url.PathEscape(request)
+	logger.Info("none", fmt.Sprintf("Post Request for API Server %s", url))
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(j))
 	if err != nil {
 		return err
@@ -62,9 +66,9 @@ func (h HttpPostClient) PostData(request string, data interface{}) error {
 		return err
 	}
 	defer resp.Body.Close()
-  if resp.Status != "200" {
-    return &BufferError{fmt.Sprintf("HTTP return code: %s; URL: %s", resp.Status, url)}
-  }
+	if resp.Status != "200" {
+		return &BufferError{fmt.Sprintf("HTTP return code: %s; URL: %s", resp.Status, url)}
+	}
 	return nil
 }
 
@@ -75,18 +79,18 @@ func (b *Buffer) String() string {
 }
 
 func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
-  logger.Info(ip, "Flushing")
+	logger.Info(ip, "Flushing")
 	var temperatures = make([]temperature.Temperature, len(b.temperatures))
 	for i, t := range b.temperatures {
 		temperatures[i] = t
 	}
 	// empty the slice.
 	b.temperatures = make([]temperature.Temperature, 0)
-  var last_err error
+	var last_err error
 	for _, t := range temperatures {
-    err := poster.PostData("temperature", t)
+		err := poster.PostData("temperature", t)
 		if err != nil {
-      last_err = err
+			last_err = err
 			b.temperatures = append(b.temperatures, t)
 		}
 	}
