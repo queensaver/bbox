@@ -66,7 +66,7 @@ func (h HttpPostClient) PostData(request string, data interface{}) error {
 		return err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != "200" {
+	if resp.StatusCode != 200 {
 		return &BufferError{fmt.Sprintf("HTTP return code: %s; URL: %s", resp.Status, url)}
 	}
 	return nil
