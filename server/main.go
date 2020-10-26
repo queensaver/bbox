@@ -60,6 +60,7 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 		logger.Error(req.RemoteAddr, err)
 		return
 	}
+	logger.Info(req.RemoteAddr, "Sending Data to API server was successful.")
 }
 
 func scaleHandler(w http.ResponseWriter, req *http.Request) {

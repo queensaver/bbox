@@ -1,7 +1,7 @@
 package buffer
 
 import (
-	"github.com/wogri/bbox/structs/temperature"
+	"github.com/wogri/bbox/packages/temperature"
 	"reflect"
 	"testing"
 )
@@ -47,7 +47,7 @@ func TestBufferSuccessfulFlush(t *testing.T) {
 		t.Errorf("Unexpected result after adding Temperature; expected: \n%v\nvs\n%v", result, expected)
 	}
 	c := HttpClientMock{"200", nil}
-	err := bBuffer.Flush(&c)
+	err := bBuffer.Flush("1.2.3.4", &c)
 	if err != nil {
 		t.Errorf("Unexpected result after flushing to success")
 	}
@@ -71,7 +71,7 @@ func TestBufferFailedFlush(t *testing.T) {
 	}
 	bBuffer.AppendTemperature(temp)
 	c := HttpClientMock{"501", &BufferError{}}
-	err := bBuffer.Flush(&c)
+	err := bBuffer.Flush("1.2.3.4", &c)
 	if err == nil {
 		t.Errorf("Unexpected result after flushing to fail")
 	}
@@ -106,17 +106,17 @@ func TestBufferFailedFlushMultiAppend(t *testing.T) {
 	}
 	bBuffer.AppendTemperature(temp1)
 	c := HttpClientMock{"501", &BufferError{}}
-	err := bBuffer.Flush(&c)
+	err := bBuffer.Flush("1.2.3.4", &c)
 	if err == nil {
 		t.Errorf("Unexpected result after flushing to fail")
 	}
 	bBuffer.AppendTemperature(temp2)
-	err = bBuffer.Flush(&c)
+	err = bBuffer.Flush("1.2.3.4", &c)
 	if err == nil {
 		t.Errorf("Unexpected result after flushing to fail")
 	}
 	bBuffer.AppendTemperature(temp3)
-	err = bBuffer.Flush(&c)
+	err = bBuffer.Flush("1.2.3.4", &c)
 	if err == nil {
 		t.Errorf("Unexpected result after flushing to fail")
   }
