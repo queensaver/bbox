@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+  "time"
 	"github.com/wogri/bbox/packages/logger"
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
@@ -82,11 +83,11 @@ func (b *Buffer) String() string {
 }
 
 func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int) {
-  poster = HttpClientPoster{*apiServerAddr, token}
+  poster := HttpPostClient{*apiServerAddr, token}
   for {
-    logger.Debug(nil, fmt.Sprintf("sleeping for %d seconds", seconds))
-    time.Sleep(seconds)
-    b.Fush(nil, poster)
+    logger.Debug("none", fmt.Sprintf("sleeping for %d seconds", seconds))
+    time.Sleep(time.Duration(seconds) * time.Second)
+    b.Flush("none", poster)
   }
 }
 
