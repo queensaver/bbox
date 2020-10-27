@@ -12,7 +12,7 @@ func init() {
     log = logrus.New()
     log.Formatter = &logrus.JSONFormatter{}
     //log.Formatter = &logrus.TextFormatter{}
-
+    log.SetLevel(log.DebugLevel)
     // TODO: Remove. This is a huge performance penalty.
     // log.SetReportCaller(true)
 }

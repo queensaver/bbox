@@ -16,7 +16,7 @@ import (
 
 var apiServerAddr = flag.String("api_server_addr", "https://bcloud.azure.wogri.com", "API Server Address")
 var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
-var httpServerPort = flag.Int("flush_interval", "60", "Interval in seconds when the data is flushed to the bCloud API")
+var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
 var debug = flag.Bool("debug", false, "debug mode")
 var prometheusActive = flag.Bool("prometheus", false, "Activate Prometheus exporter")
 
@@ -47,21 +47,10 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	t.Timestamp = int64(time.Now().Unix())
 	bBuffer.AppendTemperature(t)
-	if *debug {
-		//out, _ := t.String()
-		//logger.Info(string(out))
-	}
+	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received temperature from bHive %s", t.BBoxID))
 	if *prometheusActive {
 		promTemperature.WithLabelValues(t.BBoxID, t.SensorID).Set(t.Temperature)
 	}
-	//logger.Info(bBuffer)
-	postClient := buffer.HttpPostClient{*apiServerAddr, "token"}
-	err = bBuffer.Flush(req.RemoteAddr, postClient)
-	if err != nil {
-		logger.Error(req.RemoteAddr, err)
-		return
-	}
-	logger.Info(req.RemoteAddr, "Sending Data to API server was successful.")
 }
 
 func scaleHandler(w http.ResponseWriter, req *http.Request) {
@@ -73,21 +62,11 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	s.Timestamp = int64(time.Now().Unix())
-	if *debug {
-		//out, _ := s.String()
-		//logger.Info(string(out))
-	}
+	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received weight from bHive %s", t.BBoxID))
 	bBuffer.AppendScale(s)
 	if *prometheusActive {
 		promWeight.WithLabelValues(s.BBoxID).Set(s.Weight)
 	}
-  postClient := buffer.HttpPostClient{*apiServerAddr, "token"}
-	err = bBuffer.Flush(req.RemoteAddr, postClient)
-	if err != nil {
-		logger.Error(req.RemoteAddr, err)
-		return
-	}
-	logger.Info(req.RemoteAddr, "Sending Data to API server was successful.")
 }
 
 func main() {
@@ -99,5 +78,6 @@ func main() {
 	http.HandleFunc("/scale", scaleHandler)
 	http.HandleFunc("/temperature", temperatureHandler)
 	http.Handle("/metrics", promhttp.Handler())
+  go bBuffer.FlushSchedule(apiServerAddr, "token", *flushInterval)
 	log.Fatal(http.ListenAndServe(":"+*httpServerPort, nil))
 }

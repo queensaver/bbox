@@ -6,6 +6,7 @@ import (
 
 type Temperature struct {
 	Temperature float64
+  // TODO: change! This is the BHiveID, not the BBoxID!
 	BBoxID string //BBoxID is usually the Mac address of the raspberry pi in the bHive.
   SensorID string
   Timestamp int64

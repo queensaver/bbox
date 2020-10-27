@@ -87,7 +87,12 @@ func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int)
   for {
     logger.Debug("none", fmt.Sprintf("sleeping for %d seconds", seconds))
     time.Sleep(time.Duration(seconds) * time.Second)
-    b.Flush("none", poster)
+    err := b.Flush("none", poster)
+    if err != nil {
+      logger.Error("none", err)
+    } else {
+	    logger.Info("none", "Sending Data to API server was successful.")
+    }
   }
 }
 
