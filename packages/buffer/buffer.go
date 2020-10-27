@@ -8,6 +8,7 @@ import (
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
 	"net/http"
+  "sync"
 	"net/url"
 	"strings"
 )
@@ -44,6 +45,8 @@ type DiskBuffer interface {
 	*/
 }
 
+var mu sync.Mutex
+
 func (h HttpPostClient) PostData(request string, data interface{}) error {
 	j, err := json.Marshal(data)
 	if err != nil {
@@ -79,7 +82,8 @@ func (b *Buffer) String() string {
 }
 
 func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
-  // TODO: MUTEX! This should not be called in parallel!
+  mu.Lock()
+  defer mu.Unlock()
 	logger.Info(ip, "Flushing")
 	var temperatures = make([]temperature.Temperature, len(b.temperatures))
 	for i, t := range b.temperatures {
@@ -116,13 +120,19 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 }
 
 func (b *Buffer) AppendScale(s scale.Scale) {
+  mu.Lock()
+  defer mu.Unlock()
 	b.scales = append(b.scales, s)
 }
 
 func (b *Buffer) AppendTemperature(t temperature.Temperature) {
+  mu.Lock()
+  defer mu.Unlock()
 	b.temperatures = append(b.temperatures, t)
 }
 
 func (b *Buffer) GetTemperatures() []temperature.Temperature {
+  mu.Lock()
+  defer mu.Unlock()
 	return b.temperatures
 }
