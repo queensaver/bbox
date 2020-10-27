@@ -76,9 +76,17 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 		//out, _ := s.String()
 		//logger.Info(string(out))
 	}
+	bBuffer.AppendScale(s)
 	if *prometheusActive {
 		promWeight.WithLabelValues(s.BBoxID).Set(s.Weight)
 	}
+  postClient := buffer.HttpPostClient{*apiServerAddr, "token"}
+	err = bBuffer.Flush(req.RemoteAddr, postClient)
+	if err != nil {
+		logger.Error(req.RemoteAddr, err)
+		return
+	}
+	logger.Info(req.RemoteAddr, "Sending Data to API server was successful.")
 }
 
 func main() {

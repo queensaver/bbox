@@ -79,6 +79,7 @@ func (b *Buffer) String() string {
 }
 
 func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
+  // TODO: MUTEX! This should not be called in parallel!
 	logger.Info(ip, "Flushing")
 	var temperatures = make([]temperature.Temperature, len(b.temperatures))
 	for i, t := range b.temperatures {
@@ -94,8 +95,28 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 			b.temperatures = append(b.temperatures, t)
 		}
 	}
+
+  // Repeat the same thing as above with scale.
+  // While we could write a function to DRY I think it's OK if I copy this.
+	var scales = make([]scale.Scale, len(b.scales))
+	for i, s := range b.scales {
+		scales[i] = s
+	}
+	// empty the slice.
+	b.scales = make([]scale.Scale, 0)
+	for _, s := range scales {
+		err := poster.PostData("scale", s)
+		if err != nil {
+			last_err = err
+			b.scales = append(b.scales, s)
+		}
+	}
+
 	return last_err
-	// TODO: implement the same shit for scale.
+}
+
+func (b *Buffer) AppendScale(s scale.Scale) {
+	b.scales = append(b.scales, s)
 }
 
 func (b *Buffer) AppendTemperature(t temperature.Temperature) {
