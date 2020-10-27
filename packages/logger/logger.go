@@ -17,6 +17,12 @@ func init() {
     // log.SetReportCaller(true)
 }
 
+func Debug(ip string, msg string) {
+  log.WithFields(logrus.Fields{
+    "ip": ip,
+  }).Debug(msg)
+}
+
 func Info(ip string, msg string) {
   log.WithFields(logrus.Fields{
     "ip": ip,

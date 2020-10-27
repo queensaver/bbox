@@ -16,6 +16,7 @@ import (
 
 var apiServerAddr = flag.String("api_server_addr", "https://bcloud.azure.wogri.com", "API Server Address")
 var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
+var httpServerPort = flag.Int("flush_interval", "60", "Interval in seconds when the data is flushed to the bCloud API")
 var debug = flag.Bool("debug", false, "debug mode")
 var prometheusActive = flag.Bool("prometheus", false, "Activate Prometheus exporter")
 

@@ -81,6 +81,15 @@ func (b *Buffer) String() string {
 	return fmt.Sprintf("%v\n%v", b.temperatures, b.scales)
 }
 
+func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int) {
+  poster = HttpClientPoster{*apiServerAddr, token}
+  for {
+    logger.Debug(nil, fmt.Sprintf("sleeping for %d seconds", seconds))
+    time.Sleep(seconds)
+    b.Fush(nil, poster)
+  }
+}
+
 func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
   mu.Lock()
   defer mu.Unlock()
