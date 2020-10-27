@@ -10,6 +10,7 @@ import (
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
 	"log"
+  "fmt"
 	"net/http"
 	"time"
 )
@@ -62,7 +63,7 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	s.Timestamp = int64(time.Now().Unix())
-	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received weight from bHive %s", t.BBoxID))
+	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received weight from bHive %s", s.BBoxID))
 	bBuffer.AppendScale(s)
 	if *prometheusActive {
 		promWeight.WithLabelValues(s.BBoxID).Set(s.Weight)

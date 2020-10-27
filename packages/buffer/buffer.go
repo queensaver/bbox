@@ -57,7 +57,7 @@ func (h HttpPostClient) PostData(request string, data interface{}) error {
 		h.ApiServer = h.ApiServer + "/"
 	}
 	url := h.ApiServer + url.PathEscape(request)
-	logger.Info("none", fmt.Sprintf("Post Request for API Server %s", url))
+	logger.Debug("none", fmt.Sprintf("Post Request for API Server %s", url))
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(j))
 	if err != nil {
 		return err
@@ -91,7 +91,7 @@ func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int)
     if err != nil {
       logger.Error("none", err)
     } else {
-	    logger.Info("none", "Sending Data to API server was successful.")
+	    logger.Debug("none", "Sending Data to API server was successful.")
     }
   }
 }
@@ -99,7 +99,7 @@ func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int)
 func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
   mu.Lock()
   defer mu.Unlock()
-	logger.Info(ip, "Flushing")
+	logger.Debug(ip, "Flushing")
 	var temperatures = make([]temperature.Temperature, len(b.temperatures))
 	for i, t := range b.temperatures {
 		temperatures[i] = t

@@ -98,6 +98,8 @@ github.com/wogri/bbox/packages/buffer v0.0.0-20201027162625-a014cf3af30e h1:aEYz
 github.com/wogri/bbox/packages/buffer v0.0.0-20201027162625-a014cf3af30e/go.mod h1:8tuvL5IgGWx+gz3unzct5s+T7K5UQ46IetieEaApyLw=
 github.com/wogri/bbox/packages/buffer v0.0.0-20201027185220-2c3ef5aec10c h1:WWOOGPMk80k5xPdrV9RGTYXZJtDfEA4hcKFtzw+knjk=
 github.com/wogri/bbox/packages/buffer v0.0.0-20201027185220-2c3ef5aec10c/go.mod h1:OsVGpzNR9tHvAcTAItDNCwRssi2nAFTK4Pzqa1GYvKY=
+github.com/wogri/bbox/packages/buffer v0.0.0-20201027200117-31bd7f5fdf62 h1:TMlf3XsmsOwT0wR2qe5Wt/vSxr36bwP5Vpmr4lYq+80=
+github.com/wogri/bbox/packages/buffer v0.0.0-20201027200117-31bd7f5fdf62/go.mod h1:e6uzvxchrOviITnrSgxrKl6lINS34C//2zXszwc9sRU=
 github.com/wogri/bbox/packages/logger v0.0.0-20201025190320-6a32eb947b50 h1:cCGUqclG2xKmBDNi659XfXzNYx/vshJEzIKkh+0Gh18=
 github.com/wogri/bbox/packages/logger v0.0.0-20201025190320-6a32eb947b50/go.mod h1:ChbjUyUndj5SoKpnHRtLl9C6+n06ahymb1+71akQM7o=
 github.com/wogri/bbox/packages/logger v0.0.0-20201025190645-33269c33fda1 h1:tkqo8Vgl17x1rOqjtoxTR3MK74LifglHCd/GeNhzeyI=
@@ -112,6 +114,9 @@ github.com/wogri/bbox/packages/logger v0.0.0-20201026063730-dc6cb4d7f5fb h1:ra5o
 github.com/wogri/bbox/packages/logger v0.0.0-20201026063730-dc6cb4d7f5fb/go.mod h1:ChbjUyUndj5SoKpnHRtLl9C6+n06ahymb1+71akQM7o=
 github.com/wogri/bbox/packages/logger v0.0.0-20201027183757-38c123b4a47e h1:tos82ZFMDpI8N9DsPWIy9LqsS5kPxRRJynNPFWxojqE=
 github.com/wogri/bbox/packages/logger v0.0.0-20201027183757-38c123b4a47e/go.mod h1:ChbjUyUndj5SoKpnHRtLl9C6+n06ahymb1+71akQM7o=
+github.com/wogri/bbox/packages/logger v0.0.0-20201027195929-917afaca674d/go.mod h1:ChbjUyUndj5SoKpnHRtLl9C6+n06ahymb1+71akQM7o=
+github.com/wogri/bbox/packages/logger v0.0.0-20201027200117-31bd7f5fdf62 h1:OACK8csj26prLLTs7j8oZf1rkicU4Cm4TUBqBAG10sI=
+github.com/wogri/bbox/packages/logger v0.0.0-20201027200117-31bd7f5fdf62/go.mod h1:ChbjUyUndj5SoKpnHRtLl9C6+n06ahymb1+71akQM7o=
 github.com/wogri/bbox/packages/scale v0.0.0-20201025190026-09aa290478c7 h1:Yg1pr9GsN88g+N1vrAAvj5JaEnGuK4Asa0Dhzr6t02w=
 github.com/wogri/bbox/packages/scale v0.0.0-20201025190026-09aa290478c7/go.mod h1:BoJNdP3GSQN21BlztW362Ot6ngctP5CobE0+0QD3Yho=
 github.com/wogri/bbox/packages/scale v0.0.0-20201025190320-6a32eb947b50/go.mod h1:BoJNdP3GSQN21BlztW362Ot6ngctP5CobE0+0QD3Yho=
