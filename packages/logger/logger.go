@@ -17,6 +17,8 @@ func init() {
     // log.SetReportCaller(true)
 }
 
+// TODO: Context logging: https://notes.burke.libbey.me/context-and-logging/
+
 func Debug(ip string, msg string) {
   log.WithFields(logrus.Fields{
     "ip": ip,

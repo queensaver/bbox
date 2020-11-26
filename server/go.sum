@@ -100,6 +100,8 @@ github.com/wogri/bbox/packages/buffer v0.0.0-20201027185220-2c3ef5aec10c h1:WWOO
 github.com/wogri/bbox/packages/buffer v0.0.0-20201027185220-2c3ef5aec10c/go.mod h1:OsVGpzNR9tHvAcTAItDNCwRssi2nAFTK4Pzqa1GYvKY=
 github.com/wogri/bbox/packages/buffer v0.0.0-20201027200117-31bd7f5fdf62 h1:TMlf3XsmsOwT0wR2qe5Wt/vSxr36bwP5Vpmr4lYq+80=
 github.com/wogri/bbox/packages/buffer v0.0.0-20201027200117-31bd7f5fdf62/go.mod h1:e6uzvxchrOviITnrSgxrKl6lINS34C//2zXszwc9sRU=
+github.com/wogri/bbox/packages/buffer v0.0.0-20201027200542-b343a0b4c3de h1:MY7QDguBma0o56JEdSC6hbflKhxz3NuCJqS8meJvhmE=
+github.com/wogri/bbox/packages/buffer v0.0.0-20201027200542-b343a0b4c3de/go.mod h1:qRDMkZ6/6qQe6focxoCszh6jlX2bpePoaOW62LHTDCA=
 github.com/wogri/bbox/packages/logger v0.0.0-20201025190320-6a32eb947b50 h1:cCGUqclG2xKmBDNi659XfXzNYx/vshJEzIKkh+0Gh18=
 github.com/wogri/bbox/packages/logger v0.0.0-20201025190320-6a32eb947b50/go.mod h1:ChbjUyUndj5SoKpnHRtLl9C6+n06ahymb1+71akQM7o=
 github.com/wogri/bbox/packages/logger v0.0.0-20201025190645-33269c33fda1 h1:tkqo8Vgl17x1rOqjtoxTR3MK74LifglHCd/GeNhzeyI=

@@ -1,9 +1,9 @@
 package buffer
 
 import (
-	"github.com/wogri/bbox/packages/temperature"
-	"reflect"
 	"testing"
+  "github.com/google/go-cmp/cmp"
+	"github.com/wogri/bbox/packages/temperature"
 )
 
 func TestBufferAppend(t *testing.T) {
@@ -17,8 +17,9 @@ func TestBufferAppend(t *testing.T) {
 	bBuffer.AppendTemperature(temp)
 	tempSlice := make([]temperature.Temperature, 1)
 	tempSlice[0] = temp
-	if !reflect.DeepEqual(tempSlice, bBuffer.GetTemperatures()) {
-		t.Errorf("Unexpected result after adding Temperature")
+  te := bBuffer.GetTemperatures()
+  if diff := cmp.Diff(tempSlice, te); diff != "" {
+    t.Errorf("Unexpected result after adding Temperature: %s", diff)
 	}
 }
 
@@ -43,7 +44,7 @@ func TestBufferSuccessfulFlush(t *testing.T) {
 	expected := make([]temperature.Temperature, 1)
 	expected[0] = temp
 	result := bBuffer.GetTemperatures()
-	if !reflect.DeepEqual(expected, result) {
+	if !cmp.Equal(expected, result) {
 		t.Errorf("Unexpected result after adding Temperature; expected: \n%v\nvs\n%v", result, expected)
 	}
 	c := HttpClientMock{"200", nil}
@@ -53,7 +54,7 @@ func TestBufferSuccessfulFlush(t *testing.T) {
 	}
 	result = bBuffer.GetTemperatures()
 	expected = make([]temperature.Temperature, 0)
-	if !reflect.DeepEqual(expected, result) {
+	if !cmp.Equal(expected, result) {
 		t.Errorf(`Unexpected result after successful Flush():
 expected: %v
 vs
@@ -78,7 +79,7 @@ func TestBufferFailedFlush(t *testing.T) {
 	result := bBuffer.GetTemperatures()
 	expected := make([]temperature.Temperature, 1)
 	expected[0] = temp
-	if !reflect.DeepEqual(expected, result) {
+	if !cmp.Equal(expected, result) {
 		t.Errorf(`Unexpected result after failing Flush():
 expected: %v
 vs
@@ -125,7 +126,7 @@ func TestBufferFailedFlushMultiAppend(t *testing.T) {
 	expected[0] = temp1
 	expected[1] = temp2
 	expected[2] = temp3
-	if !reflect.DeepEqual(expected, result) {
+	if !cmp.Equal(expected, result) {
 		t.Errorf(`Unexpected result after failing Flush() with multiple Temperatures:
 expected: %v
 vs
