@@ -1,0 +1,49 @@
+# instructions from: https://medium.com/swlh/make-your-raspberry-pi-file-system-read-only-raspbian-buster-c558694de79
+- name: remove unnecessary packages
+  apt:
+    name:
+    - triggerhappy
+    - logrotate
+    - dphys-swapfile
+    state: absent
+    purge: yes
+    update_cache: yes
+    autoremove: yes
+
+    #- name: Disable swap and filesystem check and set it to read-only
+
+# fastboot noswap ro
+# This line should now look similar to this:
+# dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait fastboot noswap ro
+#
+# $ sudo apt-get install busybox-syslogd
+# $ sudo apt-get remove --purge rsyslog
+#
+# Update the file /etc/fstab and add the ,ro flag to all block devices. The updated file should look like this:
+# proc                  /proc     proc    defaults             0     0
+# PARTUUID=fb0d460e-01  /boot     vfat    defaults,ro          0     2
+# PARTUUID=fb0d460e-02  /         ext4    defaults,noatime,ro  0     1
+# Also add the entries for the temporary file system at the end of the file:
+# tmpfs        /tmp            tmpfs   nosuid,nodev         0       0
+# tmpfs        /var/log        tmpfs   nosuid,nodev         0       0
+# tmpfs        /var/tmp        tmpfs   nosuid,nodev         0       0
+#
+# $ sudo rm -rf /var/lib/dhcp /var/lib/dhcpcd5 /var/spool /etc/resolv.conf
+# $ sudo ln -s /tmp /var/lib/dhcp
+# $ sudo ln -s /tmp /var/lib/dhcpcd5
+# $ sudo ln -s /tmp /var/spool
+# $ sudo touch /tmp/dhcpcd.resolv.conf
+# $ sudo ln -s /tmp/dhcpcd.resolv.conf /etc/resolv.conf
+#
+# $ sudo rm /var/lib/systemd/random-seed
+# $ sudo ln -s /tmp/random-seed /var/lib/systemd/random-seed
+#
+# Edit the service configuration file /lib/systemd/system/systemd-random-seed.service to have the file created on boot. Add the line ExecStartPre=/bin/echo "" >/tmp/random-seed under the [Service] section.
+# The modified [Service] section should look like this:
+# [Service]
+# Type=oneshot
+# RemainAfterExit=yes
+# ExecStartPre=/bin/echo "" >/tmp/random-seed
+# ExecStart=/lib/systemd/systemd-random-seed load
+# ExecStop=/lib/systemd/systemd-random-seed save
+# TimeoutSec=30s
