@@ -12,5 +12,5 @@ else
   git clone https://github.com/wogri/bbox.git
 fi
 
-ansible-playbook bbox/ansible/read-only.yml
+ansible-playbook bbox/ansible/read_only.yml
 reboot
