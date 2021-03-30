@@ -86,4 +86,4 @@
   blockinfile:
     path: /lib/systemd/system/systemd-random-seed.service
     block: |
-      ExecStartPre=/usr/bin/touch > /tmp/random-seed
+      ExecStartPre=/usr/bin/touch /tmp/random-seed
