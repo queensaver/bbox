@@ -1,24 +1,45 @@
 # instructions from: https://medium.com/swlh/make-your-raspberry-pi-file-system-read-only-raspbian-buster-c558694de79
+- name: fstab ro append to vfat
+  lineinfile:
+    regexp: '^(.*vfat\s+defaults)(\s+.*)$'
+    line: '\1,ro\2'
+    path: /etc/fstab
+    backrefs: yes
+
+- name: fstab ro append to ext4
+  lineinfile:
+    regexp: '^(.*ext4\s+defaults,noatime)(\s+.*)$'
+    line: '\1,ro\2'
+    path: /etc/fstab
+    backrefs: yes
+
 - name: remove unnecessary packages
   apt:
     name:
     - triggerhappy
     - logrotate
     - dphys-swapfile
+    - rsyslog
     state: absent
     purge: yes
-    update_cache: yes
+    # TODO: add back in.
+    # update_cache: yes
     autoremove: yes
 
-    #- name: Disable swap and filesystem check and set it to read-only
+- name: Disable swap and filesystem check and set it to read-only
+  lineinfile:
+    regexp: '^(.*)rootwait$'
+    line: '\1 rootwait fastboot noswap ro'
+    path: /boot/cmdline.txt
+    backrefs: yes
 
-# fastboot noswap ro
-# This line should now look similar to this:
-# dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait fastboot noswap ro
-#
-# $ sudo apt-get install busybox-syslogd
-# $ sudo apt-get remove --purge rsyslog
-#
+- name: install busybox-syslogd
+  apt:
+    name:
+    - busybox-syslogd
+    state: present
+
+
 # Update the file /etc/fstab and add the ,ro flag to all block devices. The updated file should look like this:
 # proc                  /proc     proc    defaults             0     0
 # PARTUUID=fb0d460e-01  /boot     vfat    defaults,ro          0     2
