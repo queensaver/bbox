@@ -13,6 +13,42 @@
     path: /etc/fstab
     backrefs: yes
 
+- name: add tmpfs to fstab
+  blockinfile:
+    path: /etc/fstab
+    block: |
+      tmpfs        /tmp            tmpfs   nosuid,nodev         0       0
+      tmpfs        /var/log        tmpfs   nosuid,nodev         0       0
+      tmpfs        /var/tmp        tmpfs   nosuid,nodev         0       0
+
+- name: delete directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+  - /var/lib/dhcp 
+  - /var/lib/dhcpcd5 
+  - /var/spool 
+  - /etc/resolv.conf
+
+- name: set symlink
+  file:
+    dest: "{{ item }}"
+    src: /tmp
+    state: link
+    force: yes
+  with_items:
+  - /var/lib/dhcp
+  - /var/lib/dhcp5
+  - /var/spool
+    
+- name: resolv.conf
+  file:
+    dest: /etc/resolv.conf
+    src: /tmp/dhcpd.resolv.conf
+    state: link
+    force: yes
+
 - name: remove unnecessary packages
   apt:
     name:
@@ -40,15 +76,6 @@
     state: present
 
 
-# Update the file /etc/fstab and add the ,ro flag to all block devices. The updated file should look like this:
-# proc                  /proc     proc    defaults             0     0
-# PARTUUID=fb0d460e-01  /boot     vfat    defaults,ro          0     2
-# PARTUUID=fb0d460e-02  /         ext4    defaults,noatime,ro  0     1
-# Also add the entries for the temporary file system at the end of the file:
-# tmpfs        /tmp            tmpfs   nosuid,nodev         0       0
-# tmpfs        /var/log        tmpfs   nosuid,nodev         0       0
-# tmpfs        /var/tmp        tmpfs   nosuid,nodev         0       0
-#
 # $ sudo rm -rf /var/lib/dhcp /var/lib/dhcpcd5 /var/spool /etc/resolv.conf
 # $ sudo ln -s /tmp /var/lib/dhcp
 # $ sudo ln -s /tmp /var/lib/dhcpcd5
