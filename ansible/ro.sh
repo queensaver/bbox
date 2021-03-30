@@ -6,8 +6,11 @@ set -o pipefail
 sudo apt update
 sudo apt install -y ansible git
 
-# todo: git clone
-
-git clone https://github.com/wogri/bbox.git
+if [ -e bbox ]; then
+  git -C bbox/ pull
+else
+  git clone https://github.com/wogri/bbox.git
+fi
 
 ansible-playbook bbox/ansible/read-only.yml
+reboot
