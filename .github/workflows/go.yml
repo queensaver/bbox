@@ -22,9 +22,13 @@ jobs:
       run: go test -v ./...
       working-directory: ./packages/buffer
       
-    - name: Build
+    - name: Build bBox Server
       run: env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -v ./...
       working-directory: ./server
+
+    - name: Build Updater
+      run: env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -v ./...
+      working-directory: ./updater
 
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
@@ -34,3 +38,4 @@ jobs:
         title: "Development Build"
         files: |
           server/server
+          updater/updater
