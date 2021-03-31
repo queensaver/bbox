@@ -1,8 +1,9 @@
+# Todo: Run command to set filesystem read / write 
 - name: set permissions of tmp
   file:
     path: /tmp
     state: directory
-    mode: 1777
+    mode: 01777
 
 - name: aptget update and install some packages
   apt: 
@@ -58,3 +59,5 @@
       alias ll='ls -l'
       alias la='ls -a'
       alias l='ls -CF'
+
+# Todo: Run command to set filesystem read only
