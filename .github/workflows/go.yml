@@ -1,4 +1,4 @@
-name: Go test and build
+name: Go test, build and prerelase
 
 on:
   push:
@@ -18,14 +18,14 @@ jobs:
       with:
         go-version: 1.15
 
-    - name: Build
-      run: go build -v ./...
-      working-directory: ./server
-
     - name: Test
       run: go test -v ./...
       working-directory: ./packages/buffer
       
+    - name: Build
+      run: env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -v ./...
+      working-directory: ./server
+
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
