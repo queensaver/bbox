@@ -17,7 +17,7 @@
   blockinfile:
     path: /etc/fstab
     block: |
-      tmpfs        /tmp            tmpfs   nosuid,nodev,mode=1777         0       0
+      tmpfs        /tmp            tmpfs   nosuid,nodev         0       0
       tmpfs        /var/log        tmpfs   nosuid,nodev         0       0
       tmpfs        /var/tmp        tmpfs   nosuid,nodev         0       0
 

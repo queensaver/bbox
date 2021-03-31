@@ -1,3 +1,9 @@
+- name: set permissions of tmp
+  file:
+    path: /tmp
+    state: directory
+    mode: 1777
+
 - name: aptget update and install some packages
   apt: 
     update_cache: yes
@@ -49,3 +55,6 @@
       # ~/.bashrc
       # 
       set -o vi
+      alias ll='ls -l'
+      alias la='ls -a'
+      alias l='ls -CF'
