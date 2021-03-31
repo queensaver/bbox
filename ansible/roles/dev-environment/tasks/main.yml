@@ -22,3 +22,20 @@
   locale_gen:
     name: en_US.UTF-8
     state: present
+
+- name: vimrc
+  file:
+    path: ~/.vimrc
+    state: file
+    mode: 0644
+    content: |
+      set tabstop=2
+      set shiftwidth=2
+      set expandtab
+      set autoindent
+      set textwidth=120
+      set softtabstop=2
+      set smartindent 
+      set backspace=indent,eol,start
+      set encoding=utf-8
+      set fileencoding=utf-8
