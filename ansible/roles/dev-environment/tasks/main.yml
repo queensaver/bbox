@@ -31,10 +31,8 @@
     state: present
 
 - name: vimrc
-  file:
-    path: ~/.vimrc
-    state: file
-    mode: 0644
+  copy:
+    dest: ~/.vimrc
     content: |
       set tabstop=2
       set shiftwidth=2
@@ -48,10 +46,8 @@
       set fileencoding=utf-8
 
 - name: bashrc
-  file:
-    path: ~/.bashrc
-    state: file
-    mode: 0644
+  copy:
+    dest: /home/pi/.bashrc
     content: |
       # ~/.bashrc
       # 
