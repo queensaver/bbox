@@ -13,4 +13,4 @@ else
 fi
 
 ansible-playbook bbox/ansible/read_only.yml
-reboot
+sudo reboot
