@@ -6,7 +6,7 @@ After=network-online.target
 
 [Service]
 Type=forking
-ExecStartPre=curl --silent https://github.com/wogri/bbox/releases/download/stable/server -O /home/pi/ram/updater && chmod +x /home/pi/bOS/updater
+ExecStartPre=curl --silent https://github.com/wogri/bbox/releases/download/stable/updater -O /home/pi/bOS/updater && chmod +x /home/pi/bOS/updater
 ExecStart=/home/pi/bOS/updater
 TimeoutSec=30
 Restart=on-failure
