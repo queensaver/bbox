@@ -92,6 +92,6 @@ func main() {
 			}
 			old_id = id
 		}
-		waitRandomTime(60)
+		waitRandomTime(24 * 60 * 60)
 	}
 }
