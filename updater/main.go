@@ -85,7 +85,12 @@ func main() {
 		if id != old_id {
 			err := backoff.Retry(func() error {
 				fmt.Println("downloading the latest release")
-				return downloadRelease("/tmp/server", "https://github.com/wogri/bbox/releases/download/stable/server")
+				err := downloadRelease("/home/pi/bOS", "https://github.com/wogri/bbox/releases/download/stable/server")
+				if err != nil {
+					fmt.Println("error downloading:", err)
+
+				}
+				return err
 			}, bo)
 			if err != nil {
 				fmt.Println(err)
