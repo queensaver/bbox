@@ -28,6 +28,7 @@
     - logrotate
     - dphys-swapfile
     - rsyslog
+    - avahi-daemon
     state: absent
     purge: yes
     update_cache: yes
