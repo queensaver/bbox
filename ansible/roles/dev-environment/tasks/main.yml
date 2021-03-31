@@ -1,0 +1,24 @@
+- name: aptget update and install some packages
+  apt: 
+    update_cache: yes
+    name:     
+      - tcpdump
+      - bzip2
+      - bash-completion
+      - less
+      - curl
+      - wget
+      - telnet 
+      - screen
+      - rsync
+      - tar
+      - psmisc
+      - host
+      - locales
+      - vim
+      - netcat
+
+- name: configure locales
+  locale_gen:
+    name: en_US.UTF-8
+    state: present
