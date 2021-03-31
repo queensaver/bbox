@@ -3,13 +3,13 @@ Description=bBox Updater Service - keeps the bBox up to date
 After=network.target
 After=systemd-user-sessions.service
 After=network-online.target
+StartLimitBurst=5
 
 [Service]
-Type=forking
-ExecStartPre=curl --silent https://github.com/wogri/bbox/releases/download/stable/updater -O /home/pi/bOS/updater && chmod +x /home/pi/bOS/updater
+ExecStartPre=/usr/bin/curl -L https://github.com/wogri/bbox/releases/download/stable/updater --output /home/pi/bOS/updater 
+ExecStartPre=/usr/bin/chmod +x /home/pi/bOS/updater
 ExecStart=/home/pi/bOS/updater
-TimeoutSec=30
-Restart=on-failure
+Restart=always
 RestartSec=60
 
 [Install]

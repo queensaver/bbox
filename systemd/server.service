@@ -1,0 +1,15 @@
+[Unit]
+Description=bBox Server - bBox logic
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+ExecStartPre=/usr/bin/test -f /home/pi/bOS/server
+ExecStartPre=/usr/bin/chmod +x /home/pi/bOS/server
+ExecStart=/home/pi/bOS/server
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
