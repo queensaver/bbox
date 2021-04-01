@@ -20,6 +20,13 @@
       tmpfs        /tmp            tmpfs   nosuid,nodev         0       0
       tmpfs        /var/log        tmpfs   nosuid,nodev         0       0
       tmpfs        /var/tmp        tmpfs   nosuid,nodev         0       0
+      tmpfs        /home/pi/bOS    tmpfs   nosuid,nodev         0       0
+
+- name: create bOS directory
+  file:
+    path: /home/pi/bOS
+    state: directory
+    owner: pi
 
 - name: remove unnecessary packages
   apt:

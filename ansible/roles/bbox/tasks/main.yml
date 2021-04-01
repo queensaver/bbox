@@ -1,0 +1,24 @@
+
+- name: link updater systemd service
+  file:
+    state: link
+    src: /home/pi/bbox/systemd/updater.service
+    dest: /etc/systemd/system/updater.service
+
+- name: link server systemd service
+  file:
+    state: link
+    src: /home/pi/bbox/systemd/server.service
+    dest: /etc/systemd/system/server.service
+
+- name: enable updater systemd service
+  systemd:
+    state: started
+    enabled: yes
+    name: updater
+
+- name: enable server systemd service
+  systemd:
+    state: started
+    enabled: yes
+    name: server
