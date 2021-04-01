@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/cenkalti/backoff"
@@ -95,6 +96,12 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
+			cmd := exec.Command("/usr/bin/systemctl", "restart", "server")
+			err = cmd.Run()
+			if err != nil {
+				fmt.Println(err)
+			}
+
 			old_id = id
 		}
 		waitRandomTime(24 * 60 * 60)
