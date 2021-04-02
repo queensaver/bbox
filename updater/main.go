@@ -103,7 +103,6 @@ func main() {
 			}
 
 			old_id = id
-      // TODO: tell systemd to restart the server - question is: when is a good time?
 		}
 		waitRandomTime(24 * 60 * 60)
 	}

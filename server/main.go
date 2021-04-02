@@ -3,16 +3,17 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/wogri/bbox/packages/buffer"
 	"github.com/wogri/bbox/packages/logger"
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
-	"log"
-  "fmt"
-	"net/http"
-	"time"
 )
 
 var apiServerAddr = flag.String("api_server_addr", "https://bcloud.azure.wogri.com", "API Server Address")
@@ -79,6 +80,8 @@ func main() {
 	http.HandleFunc("/scale", scaleHandler)
 	http.HandleFunc("/temperature", temperatureHandler)
 	http.Handle("/metrics", promhttp.Handler())
-  go bBuffer.FlushSchedule(apiServerAddr, "token", *flushInterval)
+	fs := http.FileServer(http.Dir("/home/pi/bOS/bhive"))
+	http.Handle("/bhive/", http.StripPrefix("/bhive", fs))
+	go bBuffer.FlushSchedule(apiServerAddr, "token", *flushInterval)
 	log.Fatal(http.ListenAndServe(":"+*httpServerPort, nil))
 }
