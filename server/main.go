@@ -18,6 +18,7 @@ import (
 
 var apiServerAddr = flag.String("api_server_addr", "https://bcloud.azure.wogri.com", "API Server Address")
 var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
+var httpServerHiveDir = flag.String("http_server_bhive_dir", "/home/pi/bOS/bhive", "HTTP server directory to serve bHive files")
 var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
 var debug = flag.Bool("debug", false, "debug mode")
 var prometheusActive = flag.Bool("prometheus", false, "Activate Prometheus exporter")
@@ -80,7 +81,7 @@ func main() {
 	http.HandleFunc("/scale", scaleHandler)
 	http.HandleFunc("/temperature", temperatureHandler)
 	http.Handle("/metrics", promhttp.Handler())
-	fs := http.FileServer(http.Dir("/home/pi/bOS/bhive"))
+	fs := http.FileServer(http.Dir(*httpServerHiveDir))
 	http.Handle("/bhive/", http.StripPrefix("/bhive", fs))
 	go bBuffer.FlushSchedule(apiServerAddr, "token", *flushInterval)
 	log.Fatal(http.ListenAndServe(":"+*httpServerPort, nil))
