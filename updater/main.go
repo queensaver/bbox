@@ -15,12 +15,12 @@ import (
 	"github.com/google/go-github/v34/github"
 )
 
-func getReleaseID() (int64, error) {
+func getReleaseID(org, repo, train string) (int64, error) {
 	client := github.NewClient(nil)
 	if client == nil {
 		return 0, errors.New("nil client")
 	}
-	release, _, err := client.Repositories.GetReleaseByTag(context.Background(), "wogri", "bbox", "stable")
+	release, _, err := client.Repositories.GetReleaseByTag(context.Background(), org, repo, train)
 	if err != nil {
 		return 0, err
 	}
@@ -31,12 +31,14 @@ func waitRandomTime(t int) {
 	fmt.Println("waiting between 0 and", t, "seconds")
 	time.Sleep(time.Duration(rand.Intn(t)) * time.Second)
 }
-func checkRelease() int64 {
+func checkRelease(org, repo, train, binary string, old_id int64) (int64, error) {
 	var id int64
 	var err error
+	bo := backoff.NewExponentialBackOff()
+	bo.MaxInterval = 60 * time.Minute
 	exp := 0
 	for {
-		id, err = getReleaseID()
+		id, err = getReleaseID(org, repo, train)
 		exp += 1
 		if exp > 10 {
 			exp = 10
@@ -48,7 +50,21 @@ func checkRelease() int64 {
 			break
 		}
 	}
-	return id
+	if id != old_id {
+		err := backoff.Retry(func() error {
+			fmt.Println("downloading the latest release")
+			err := downloadRelease(fmt.Sprintf("/home/pi/bOS/%s", binary), fmt.Sprintf("https://github.com/%s/%s/releases/download/%s/%s", org, repo, train, binary))
+			if err != nil {
+				fmt.Println("error downloading:", err)
+			}
+			return err
+		}, bo)
+		if err != nil {
+			return old_id, err
+		}
+		return id, nil
+	}
+	return old_id, nil
 }
 
 // DownloadFile will download a url to a local file. It's efficient because it will
@@ -77,33 +93,18 @@ func downloadRelease(filepath string, url string) error {
 func main() {
 	var id, old_id int64
 	old_id = 0
-	bo := backoff.NewExponentialBackOff()
-	bo.MaxInterval = 60 * time.Minute
+	var err error
 
 	for {
-		id = checkRelease()
-		fmt.Println("release id:", id)
-		if id != old_id {
-			err := backoff.Retry(func() error {
-				fmt.Println("downloading the latest release")
-				err := downloadRelease("/home/pi/bOS/server", "https://github.com/wogri/bbox/releases/download/stable/server")
-				if err != nil {
-					fmt.Println("error downloading:", err)
-
-				}
-				return err
-			}, bo)
-			if err != nil {
-				fmt.Println(err)
-			}
+		id, err = checkRelease("wogri", "bbox", "stable", "server", old_id)
+		if old_id != id {
 			cmd := exec.Command("/usr/bin/systemctl", "restart", "server")
 			err = cmd.Run()
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("error restarting server:", err)
 			}
-
-			old_id = id
 		}
+
 		waitRandomTime(24 * 60 * 60)
 	}
 }
