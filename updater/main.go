@@ -91,20 +91,40 @@ func downloadRelease(filepath string, url string) error {
 }
 
 func main() {
-	var id, old_id int64
-	old_id = 0
 	var err error
 
-	for {
-		id, err = checkRelease("wogri", "bbox", "stable", "server", old_id)
-		if old_id != id {
-			cmd := exec.Command("/usr/bin/systemctl", "restart", "server")
-			err = cmd.Run()
+	go func() {
+		var id, old_id int64
+		old_id = 0
+		for {
+			id, err = checkRelease("wogri", "bhive", "stable", "bhive", old_id)
 			if err != nil {
 				fmt.Println("error restarting server:", err)
 			}
+			if old_id != id {
+				old_id = id
+			}
+			waitRandomTime(24 * 60 * 60)
 		}
+	}()
 
-		waitRandomTime(24 * 60 * 60)
-	}
+	go func() {
+		var id, old_id int64
+		old_id = 0
+		for {
+			id, err = checkRelease("wogri", "bbox", "stable", "server", old_id)
+			if err != nil {
+				fmt.Println(err)
+			}
+			if old_id != id {
+				cmd := exec.Command("/usr/bin/systemctl", "restart", "server")
+				err = cmd.Run()
+				if err != nil {
+					fmt.Println("error restarting server:", err)
+				}
+				old_id = id
+			}
+			waitRandomTime(24 * 60 * 60)
+		}
+	}()
 }
