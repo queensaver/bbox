@@ -19,6 +19,7 @@ import (
 )
 
 var releaseTrain = flag.String("release_train", "stable", "GitHub release train name")
+var updateCheckInterval = flag.Int("update_check_interval", 60*60*24, "how often to check for updates")
 
 func getReleaseID(org, repo, train string) (int64, error) {
 	client := github.NewClient(nil)
@@ -110,7 +111,7 @@ func main() {
 			if old_id != id {
 				old_id = id
 			}
-			waitRandomTime(24 * 60 * 60)
+			waitRandomTime(*updateCheckInterval)
 		}
 	}()
 
@@ -130,7 +131,7 @@ func main() {
 				}
 				old_id = id
 			}
-			waitRandomTime(24 * 60 * 60)
+			waitRandomTime(*updateCheckInterval)
 		}
 	}()
 	exitSignal := make(chan os.Signal)
