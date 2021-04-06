@@ -29,6 +29,7 @@ github.com/golang/protobuf v1.4.2/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw
 github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
 github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
 github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+github.com/google/go-cmp v0.5.4/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
 github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=
 github.com/json-iterator/go v1.1.10/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
@@ -102,6 +103,8 @@ github.com/wogri/bbox/packages/buffer v0.0.0-20201027200117-31bd7f5fdf62 h1:TMlf
 github.com/wogri/bbox/packages/buffer v0.0.0-20201027200117-31bd7f5fdf62/go.mod h1:e6uzvxchrOviITnrSgxrKl6lINS34C//2zXszwc9sRU=
 github.com/wogri/bbox/packages/buffer v0.0.0-20201027200542-b343a0b4c3de h1:MY7QDguBma0o56JEdSC6hbflKhxz3NuCJqS8meJvhmE=
 github.com/wogri/bbox/packages/buffer v0.0.0-20201027200542-b343a0b4c3de/go.mod h1:qRDMkZ6/6qQe6focxoCszh6jlX2bpePoaOW62LHTDCA=
+github.com/wogri/bbox/packages/buffer v0.0.0-20210406194356-491f30c69a78 h1:XZi6gU+Y917B49SXYnojyb9+ldXlfExuiYQGt+SCS+g=
+github.com/wogri/bbox/packages/buffer v0.0.0-20210406194356-491f30c69a78/go.mod h1:yf+qi9v4Ebi/E8gn3soH0zeiJ6EKWNsQB3oaOFdHjD0=
 github.com/wogri/bbox/packages/logger v0.0.0-20201025190320-6a32eb947b50 h1:cCGUqclG2xKmBDNi659XfXzNYx/vshJEzIKkh+0Gh18=
 github.com/wogri/bbox/packages/logger v0.0.0-20201025190320-6a32eb947b50/go.mod h1:ChbjUyUndj5SoKpnHRtLl9C6+n06ahymb1+71akQM7o=
 github.com/wogri/bbox/packages/logger v0.0.0-20201025190645-33269c33fda1 h1:tkqo8Vgl17x1rOqjtoxTR3MK74LifglHCd/GeNhzeyI=
@@ -124,11 +127,15 @@ github.com/wogri/bbox/packages/scale v0.0.0-20201025190026-09aa290478c7/go.mod h
 github.com/wogri/bbox/packages/scale v0.0.0-20201025190320-6a32eb947b50/go.mod h1:BoJNdP3GSQN21BlztW362Ot6ngctP5CobE0+0QD3Yho=
 github.com/wogri/bbox/packages/scale v0.0.0-20201025190645-33269c33fda1 h1:rB4zwesQ4vubcelqxtuqsa9+NtzluX7l3u5Z9tII9cA=
 github.com/wogri/bbox/packages/scale v0.0.0-20201025190645-33269c33fda1/go.mod h1:BoJNdP3GSQN21BlztW362Ot6ngctP5CobE0+0QD3Yho=
+github.com/wogri/bbox/packages/scale v0.0.0-20210406194356-491f30c69a78 h1:+ZSsRJqbxpWbBFRd/CuLuw5rDAUZoxwtVX0Bt4QUxus=
+github.com/wogri/bbox/packages/scale v0.0.0-20210406194356-491f30c69a78/go.mod h1:BoJNdP3GSQN21BlztW362Ot6ngctP5CobE0+0QD3Yho=
 github.com/wogri/bbox/packages/temperature v0.0.0-20201025190026-09aa290478c7 h1:KdsyH70uj6bb31bxEdLfQ5umJgyReqh7vr2egOiE1dk=
 github.com/wogri/bbox/packages/temperature v0.0.0-20201025190026-09aa290478c7/go.mod h1:wEmpLQ7jsaVt5GIQD/mJLPeJBlyOPS3fY6syExBcZs4=
 github.com/wogri/bbox/packages/temperature v0.0.0-20201025190320-6a32eb947b50/go.mod h1:wEmpLQ7jsaVt5GIQD/mJLPeJBlyOPS3fY6syExBcZs4=
 github.com/wogri/bbox/packages/temperature v0.0.0-20201025190645-33269c33fda1 h1:MgekEL0UgNVdnwifucs411ENd6KE9t4Te2xXr1H6lWk=
 github.com/wogri/bbox/packages/temperature v0.0.0-20201025190645-33269c33fda1/go.mod h1:wEmpLQ7jsaVt5GIQD/mJLPeJBlyOPS3fY6syExBcZs4=
+github.com/wogri/bbox/packages/temperature v0.0.0-20210406194356-491f30c69a78 h1:OghTX7m7A7lvF+1eEYKGuY4AAka0N3VRd4AOPThSRp4=
+github.com/wogri/bbox/packages/temperature v0.0.0-20210406194356-491f30c69a78/go.mod h1:wEmpLQ7jsaVt5GIQD/mJLPeJBlyOPS3fY6syExBcZs4=
 github.com/wogri/bbox/structs v0.0.0-20200821195214-07e7c1664007 h1:g6DUsT2GIkfvXC9lgCyzFrd5IYuaYgby++yMZOJ/khU=
 github.com/wogri/bbox/structs v0.0.0-20200821195214-07e7c1664007/go.mod h1:FbMhM3Sd/rilSzMtq/HIXBdU904RtY21v649hkKdL/M=
 github.com/wogri/bbox/structs/buffer v0.0.0-20201004200552-fd56c9d96d88 h1:eJeKJJnZK6vob4MdgxBnZg4Z84iWIlS1IqD/F/Y5k+4=
