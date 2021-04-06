@@ -18,6 +18,8 @@ import (
 	"github.com/google/go-github/v34/github"
 )
 
+var releaseTrain = flag.String("release_train", "stable", "GitHub release train name")
+
 func getReleaseID(org, repo, train string) (int64, error) {
 	client := github.NewClient(nil)
 	if client == nil {
@@ -101,7 +103,7 @@ func main() {
 		var id, old_id int64
 		old_id = 0
 		for {
-			id, err = checkRelease("wogri", "bhive", "stable", "bhive", old_id)
+			id, err = checkRelease("wogri", "bhive", *releaseTrain, "bhive", old_id)
 			if err != nil {
 				fmt.Println("error restarting server:", err)
 			}
@@ -116,7 +118,7 @@ func main() {
 		var id, old_id int64
 		old_id = 0
 		for {
-			id, err = checkRelease("wogri", "bbox", "stable", "server", old_id)
+			id, err = checkRelease("wogri", "bbox", *releaseTrain, "server", old_id)
 			if err != nil {
 				fmt.Println(err)
 			}
