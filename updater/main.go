@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/cenkalti/backoff"
@@ -127,4 +129,8 @@ func main() {
 			waitRandomTime(24 * 60 * 60)
 		}
 	}()
+	exitSignal := make(chan os.Signal)
+	signal.Notify(exitSignal, syscall.SIGINT, syscall.SIGTERM)
+	<-exitSignal
+
 }
