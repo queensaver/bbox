@@ -11,7 +11,7 @@ func TestBufferAppend(t *testing.T) {
 	bBuffer = new(Buffer)
 	temp := temperature.Temperature{
 		Temperature: 31.0,
-		BBoxID:      "1234asdf",
+		BHiveID:      "1234asdf",
 		SensorID:    "1234asdf",
 	}
 	bBuffer.AppendTemperature(temp)
@@ -37,7 +37,7 @@ func TestBufferSuccessfulFlush(t *testing.T) {
 	bBuffer = new(Buffer)
 	temp := temperature.Temperature{
 		Temperature: 31.0,
-		BBoxID:      "1234asdf",
+		BHiveID:      "1234asdf",
 		SensorID:    "1234asdf",
 	}
 	bBuffer.AppendTemperature(temp)
@@ -67,7 +67,7 @@ func TestBufferFailedFlush(t *testing.T) {
 	bBuffer = new(Buffer)
 	temp := temperature.Temperature{
 		Temperature: 31.0,
-		BBoxID:      "1234asdf",
+		BHiveID:      "1234asdf",
 		SensorID:    "1234asdf",
 	}
 	bBuffer.AppendTemperature(temp)
@@ -92,17 +92,17 @@ func TestBufferFailedFlushMultiAppend(t *testing.T) {
 	bBuffer = new(Buffer)
 	temp1:= temperature.Temperature{
 		Temperature: 31.0,
-		BBoxID:      "1234asdf",
+		BHiveID:      "1234asdf",
 		SensorID:    "1234asdf",
 	}
 	temp2:= temperature.Temperature{
 		Temperature: 32.0,
-		BBoxID:      "1234asdf",
+		BHiveID:      "1234asdf",
 		SensorID:    "1234asdf",
 	}
 	temp3:= temperature.Temperature{
 		Temperature: 33.0,
-		BBoxID:      "1234asdf",
+		BHiveID:      "1234asdf",
 		SensorID:    "1234asdf",
 	}
 	bBuffer.AppendTemperature(temp1)

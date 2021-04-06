@@ -28,13 +28,13 @@ var (
 		Name: "bhive_temperature",
 		Help: "Temperature of the bHive",
 	},
-		[]string{"BBoxID", "SensorID"},
+		[]string{"BHiveID", "SensorID"},
 	)
 	promWeight = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "bhive_weight",
 		Help: "Weight of the bHive",
 	},
-		[]string{"BBoxID"},
+		[]string{"BHiveID"},
 	)
 )
 
@@ -50,9 +50,9 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	t.Timestamp = int64(time.Now().Unix())
 	bBuffer.AppendTemperature(t)
-	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received temperature from bHive %s", t.BBoxID))
+	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received temperature from bHive %s", t.BHiveID))
 	if *prometheusActive {
-		promTemperature.WithLabelValues(t.BBoxID, t.SensorID).Set(t.Temperature)
+		promTemperature.WithLabelValues(t.BHiveID, t.SensorID).Set(t.Temperature)
 	}
 }
 
@@ -65,10 +65,10 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	s.Timestamp = int64(time.Now().Unix())
-	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received weight from bHive %s", s.BBoxID))
+	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received weight from bHive %s", s.BHiveID))
 	bBuffer.AppendScale(s)
 	if *prometheusActive {
-		promWeight.WithLabelValues(s.BBoxID).Set(s.Weight)
+		promWeight.WithLabelValues(s.BHiveID).Set(s.Weight)
 	}
 }
 
