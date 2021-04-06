@@ -5,9 +5,9 @@ import (
 )
 
 type Scale struct {
-	Weight float64
-	BBoxID string //BBoxID is usually the Mac address of the raspberry pi in the bHive.
-  Timestamp int64
+	Weight    float64
+	BHiveID   string //BHiveID is usually the Mac address of the raspberry pi in the bHive.
+	Timestamp uint64
 }
 
 func (s *Scale) String() ([]byte, error) {

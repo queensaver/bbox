@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"math/rand"
@@ -93,6 +94,7 @@ func downloadRelease(filepath string, url string) error {
 }
 
 func main() {
+	flag.Parse()
 	var err error
 
 	go func() {
