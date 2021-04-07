@@ -29,7 +29,7 @@
 
 - name: configure eth0
   copy:
-    dest: /etc/network/interfaces.d/eth0.cfg
+    dest: /etc/network/interfaces.d/eth0
     mode: 0644
     owner: root 
     group: root
