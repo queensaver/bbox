@@ -12,5 +12,6 @@ else
   git clone https://github.com/wogri/bbox.git
 fi
 
+ansible-playbook bbox/ansible/bbox.yml
 ansible-playbook bbox/ansible/read_only.yml
 sudo reboot

@@ -26,3 +26,33 @@
 - name: set hostname
   hostname:
     name: bbox
+
+- name: configure eth0
+  file:
+    state: present
+    path: /etc/network/interfaces.d/eth0.cfg
+    mode: 0644
+    owner: root 
+    group: root
+    content: |
+      auto eth0
+      iface eth0 inet static
+      address 192.168.233.1
+      netmask 255.255.255.0
+
+- name: install dhcpd
+  apt:
+    name:
+    - isc-dhcp-server
+    state: present
+
+- name: set interface for dhcp server
+  lineinfile:
+    path: /etc/default/isc-dhcp-server
+    line: INTERFACESv4="eth0"
+    state: present
+
+- name: start dhcp server
+  systemd:
+    state: started
+    name: isc-dhcp-server
