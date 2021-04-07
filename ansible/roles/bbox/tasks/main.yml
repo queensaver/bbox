@@ -67,8 +67,3 @@
     path: /etc/default/isc-dhcp-server
     line: INTERFACESv4="eth0"
     state: present
-
-- name: start dhcp server
-  systemd:
-    state: started
-    name: isc-dhcp-server
