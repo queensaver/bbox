@@ -13,13 +13,13 @@
 
 - name: enable updater systemd service
   systemd:
-    state: started
+    state: enabled
     enabled: yes
     name: updater
 
 - name: enable server systemd service
   systemd:
-    state: started
+    state: enabled
     enabled: yes
     name: server
 
