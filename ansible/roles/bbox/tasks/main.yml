@@ -22,3 +22,7 @@
     state: started
     enabled: yes
     name: server
+
+- name: set hostname
+  hostname:
+    name: bbox
