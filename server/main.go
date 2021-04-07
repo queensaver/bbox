@@ -16,7 +16,7 @@ import (
 	"github.com/wogri/bbox/packages/temperature"
 )
 
-var apiServerAddr = flag.String("api_server_addr", "https://bcloud.azure.wogri.com", "API Server Address")
+var apiServerAddr = flag.String("api_server_addr", "https://bcloud-api.azure.wogri.com", "API Server Address")
 var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
 var httpServerHiveDir = flag.String("http_server_bhive_dir", "/home/pi/bOS/bhive", "HTTP server directory to serve bHive files")
 var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
