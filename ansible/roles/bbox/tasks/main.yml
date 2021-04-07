@@ -29,7 +29,7 @@
 
 - name: configure eth0
   file:
-    state: present
+    state: file
     path: /etc/network/interfaces.d/eth0.cfg
     mode: 0644
     owner: root 
