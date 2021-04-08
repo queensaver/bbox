@@ -30,7 +30,7 @@
 - name: make hostname resolvable
   lineinfile:
     path: /etc/hosts
-    line: 127.0.0.1 bhive
+    line: 127.0.0.1 bbox
 
 - name: configure eth0
   copy:
