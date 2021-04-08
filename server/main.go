@@ -78,6 +78,7 @@ func main() {
 		prometheus.MustRegister(promTemperature)
 		prometheus.MustRegister(promWeight)
 	}
+
 	http.HandleFunc("/scale", scaleHandler)
 	http.HandleFunc("/temperature", temperatureHandler)
 	http.Handle("/metrics", promhttp.Handler())
