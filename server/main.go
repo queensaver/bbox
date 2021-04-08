@@ -81,8 +81,9 @@ func main() {
 	http.HandleFunc("/scale", scaleHandler)
 	http.HandleFunc("/temperature", temperatureHandler)
 	http.Handle("/metrics", promhttp.Handler())
-	fs := http.FileServer(http.Dir(*httpServerHiveFile))
-	http.Handle("/bhive", fs)
+	http.HandleFunc("/bhive", func(res http.ResponseWriter, req *http.Request) {
+		http.ServeFile(res, req, *httpServerHiveFile)
+	})
 	go bBuffer.FlushSchedule(apiServerAddr, "token", *flushInterval)
 	log.Fatal(http.ListenAndServe(":"+*httpServerPort, nil))
 }
