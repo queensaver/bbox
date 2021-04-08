@@ -37,7 +37,7 @@ func waitRandomTime(t int) {
 	fmt.Println("waiting between 0 and", t, "seconds")
 	time.Sleep(time.Duration(rand.Intn(t)) * time.Second)
 }
-func checkRelease(org, repo, train, binary string, old_id int64) (int64, error) {
+func checkRelease(org, repo, train, binary, filename string, old_id int64) (int64, error) {
 	var id int64
 	var err error
 	bo := backoff.NewExponentialBackOff()
@@ -59,7 +59,7 @@ func checkRelease(org, repo, train, binary string, old_id int64) (int64, error) 
 	if id != old_id {
 		err := backoff.Retry(func() error {
 			fmt.Println("downloading the latest release")
-			err := downloadRelease(fmt.Sprintf("/home/pi/bOS/%s", binary), fmt.Sprintf("https://github.com/%s/%s/releases/download/%s/%s", org, repo, train, binary))
+			err := downloadRelease(fmt.Sprintf("/home/pi/bOS/%s", filename), fmt.Sprintf("https://github.com/%s/%s/releases/download/%s/%s", org, repo, train, binary))
 			if err != nil {
 				fmt.Println("error downloading:", err)
 			}
@@ -104,7 +104,7 @@ func main() {
 		var id, old_id int64
 		old_id = 0
 		for {
-			id, err = checkRelease("wogri", "bhive", *releaseTrain, "bhive", old_id)
+			id, err = checkRelease("wogri", "bhive", *releaseTrain, "bhive", "bhive", old_id)
 			if err != nil {
 				fmt.Println("error restarting server:", err)
 			}
@@ -119,15 +119,27 @@ func main() {
 		var id, old_id int64
 		old_id = 0
 		for {
-			id, err = checkRelease("wogri", "bbox", *releaseTrain, "server", old_id)
+			id, err = checkRelease("wogri", "bbox", *releaseTrain, "server", "server.download", old_id)
 			if err != nil {
 				fmt.Println(err)
 			}
 			if old_id != id {
-				cmd := exec.Command("/usr/bin/systemctl", "restart", "server")
+				cmd := exec.Command("/usr/bin/systemctl", "stop", "server")
 				err = cmd.Run()
 				if err != nil {
 					fmt.Println("error restarting server:", err)
+					continue
+				}
+				err = os.Rename("home/pi/bOS/server.download", "home/pi/bOS/server")
+				if err != nil {
+					fmt.Println("error renaming file:", err)
+					continue
+				}
+				cmd = exec.Command("/usr/bin/systemctl", "start", "server")
+				err = cmd.Run()
+				if err != nil {
+					fmt.Println("error restarting server:", err)
+					continue
 				}
 				old_id = id
 			}
