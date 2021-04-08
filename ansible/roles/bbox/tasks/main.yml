@@ -27,6 +27,11 @@
   hostname:
     name: bbox
 
+- name: make hostname resolvable
+  lineinfile:
+    path: /etc/hosts
+    line: 127.0.0.1 bhive
+
 - name: configure eth0
   copy:
     dest: /etc/network/interfaces.d/eth0.cfg
