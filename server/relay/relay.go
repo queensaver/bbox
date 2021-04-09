@@ -17,6 +17,11 @@ type Switch struct {
 type Switcher interface {
 	Off() error
 	On() error
+	GetState() bool
+}
+
+func (r *RelayModule) GetCurrentSwitch() (Switcher) {
+  return r.Switches[r.currentSwitch]
 }
 
 // turns off power from the current switch and turns on the next one.
@@ -69,6 +74,10 @@ func (s *Switch) Off() error {
 	pin.High()
 	s.State = false
 	return nil
+}
+
+func (s *Switch) GetState() bool {
+  return s.State
 }
 
 // Turns all switches off during initalization

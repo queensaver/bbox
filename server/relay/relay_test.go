@@ -21,6 +21,11 @@ func (h *SwitchMock) On() error {
 	return nil
 }
 
+func (h *SwitchMock) GetState() bool {
+	return h.State
+}
+
+
 func TestEmptyRelay(t *testing.T) {
   relay := RelayModule{}
   emptySlice := []Switcher{}
@@ -46,15 +51,14 @@ func TestSingleRelay(t *testing.T) {
   if done == true {
     t.Errorf("One switch shouldn't return success here.")
   }
-  s := r.Switches[0]
-  if s.State == false {
+  if r.Switches[0].GetState() == false {
     t.Errorf("Switch should be on!")
   }
-  done, err := r.ActivateNextBHive()
+  done, err = r.ActivateNextBHive()
   if done == false {
     t.Errorf("We should be done by now!")
   }
-  if s.State == true {
+  if r.Switches[0].GetState() == true {
     t.Errorf("Switch should be off!")
   }
 }

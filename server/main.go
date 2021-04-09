@@ -75,7 +75,7 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	flag.Parse()
-	relaySwitches := []relay.Switcher{relay.Switch{Gpio: 16}}
+	relaySwitches := []relay.Switcher{&relay.Switch{Gpio: 16}}
 	relay := relay.RelayModule{}
 	err := relay.Initialize(relaySwitches)
 	if err != nil {
