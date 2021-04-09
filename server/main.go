@@ -14,7 +14,7 @@ import (
 	"github.com/wogri/bbox/packages/logger"
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
-	"github.com/wogri/bbox/server/relais"
+	"github.com/wogri/bbox/server/relay"
 )
 
 var apiServerAddr = flag.String("api_server_addr", "https://bcloud-api.azure.wogri.com", "API Server Address")
@@ -75,10 +75,11 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	flag.Parse()
-	relaisGpioPins := []int{17}
-	err := relais.OpenAllRelais(relaisGpioPins)
+	relaySwitches := []relay.Switcher{relay.Switch{Gpio: 16}}
+	relay := relay.RelayModule{}
+	err := relay.Initialize(relaySwitches)
 	if err != nil {
-		logger.Debug("", fmt.Sprintf("bbox relais problems: %s", err))
+		logger.Debug("", fmt.Sprintf("bbox relay problems: %s", err))
 	}
 
 	if *prometheusActive {
