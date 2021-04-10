@@ -10,6 +10,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/stianeikeland/go-rpio/v4 v4.4.0
 	github.com/wogri/bbox/packages/buffer v0.0.0-20210406194356-491f30c69a78 // indirect
+	github.com/wogri/bbox/packages/config v0.0.0-20210410205447-b67c00131289 // indirect
 	github.com/wogri/bbox/packages/logger v0.0.0-20201027200117-31bd7f5fdf62
 	github.com/wogri/bbox/packages/scale v0.0.0-20210406194356-491f30c69a78 // indirect
 	github.com/wogri/bbox/packages/temperature v0.0.0-20210406194356-491f30c69a78 // indirect
