@@ -4,13 +4,17 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/wogri/bbox/packages/buffer"
+	"github.com/wogri/bbox/packages/config"
 	"github.com/wogri/bbox/packages/logger"
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
@@ -74,12 +78,67 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func getMacAddr() (string, error) {
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		return "", err
+	}
+	a := interfaces[1].HardwareAddr.String()
+	if a != "" {
+		r := strings.Replace(a, ":", "", -1)
+		return r, nil
+	}
+	return "", nil
+}
+
+func getConfig() (*config.Config, error) {
+	httpClient := http.Client{
+		Timeout: time.Second * 10,
+	}
+
+	req, err := http.NewRequest(http.MethodGet, *apiServerAddr+"/v1/config", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Auth-Token", "1234")
+	mac, err := getMacAddr()
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("BBoxID", mac)
+
+	res, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.Body != nil {
+		defer res.Body.Close()
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	config := config.Config{}
+	err = json.Unmarshal(body, &config)
+	if err != nil {
+		return nil, err
+	}
+
+	return &config, nil
+
+}
+
 func main() {
 	flag.Parse()
 	if *prometheusActive {
 		prometheus.MustRegister(promTemperature)
 		prometheus.MustRegister(promWeight)
 	}
+	config := getConfig()
 
 	http.HandleFunc("/scale", scaleHandler)
 	http.HandleFunc("/temperature", temperatureHandler)
