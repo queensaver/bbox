@@ -15,6 +15,7 @@ import (
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
 	"github.com/wogri/bbox/server/relay"
+	"github.com/wogri/bbox/server/scheduler"
 )
 
 var apiServerAddr = flag.String("api_server_addr", "https://bcloud-api.azure.wogri.com", "API Server Address")
@@ -75,13 +76,6 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	flag.Parse()
-	relaySwitches := []relay.Switcher{&relay.Switch{Gpio: 16}}
-	relay := relay.RelayModule{}
-	err := relay.Initialize(relaySwitches)
-	if err != nil {
-		logger.Debug("", fmt.Sprintf("bbox relay problems: %s", err))
-	}
-
 	if *prometheusActive {
 		prometheus.MustRegister(promTemperature)
 		prometheus.MustRegister(promWeight)
@@ -93,6 +87,19 @@ func main() {
 	http.HandleFunc("/bhive", func(res http.ResponseWriter, req *http.Request) {
 		http.ServeFile(res, req, *httpServerHiveFile)
 	})
+
+	relaySwitches := []relay.Switcher{&relay.Switch{Gpio: 16}}
+	relay := relay.RelayModule{}
+	err := relay.Initialize(relaySwitches)
+	if err != nil {
+		logger.Debug("", fmt.Sprintf("bbox relay problems: %s", err))
+	}
+
+	scheduler := scheduler.Schedule{Schedule: "*/5 * * * *", RelayModule: relay}
+	c := make(chan bool)
+	go scheduler.Start(c)
+
 	go bBuffer.FlushSchedule(apiServerAddr, "token", *flushInterval)
+
 	log.Fatal(http.ListenAndServe(":"+*httpServerPort, nil))
 }

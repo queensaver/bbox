@@ -1,32 +1,42 @@
 package scheduler
 
 import (
-	"github.com/robfig/cron/v3"
-	"github.com/wogri/bbox/server/relay"
-	"time"
 	"fmt"
+	"time"
+
+	"github.com/robfig/cron/v3"
+	"github.com/wogri/bbox/packages/logger"
+	"github.com/wogri/bbox/server/relay"
 )
 
 type Schedule struct {
-	relayModule relay.RelayModule
-	Cron *cron.Cron
+	Schedule    string
+	RelayModule relay.RelayModule
+	cron        *cron.Cron
 }
 
 func (s *Schedule) runSchedule() {
-  for {
-    done, err := s.relayModule.ActivateNextBHive()
-    if err != nil {
-      fmt.Println(err)
-    }
-    if done {
-      break
-    }
-    time.Sleep(2 * time.Minute)
-  }
+	logger.Debug("none", "runSchedule started")
+	for {
+		done, err := s.RelayModule.ActivateNextBHive()
+		if err != nil {
+			logger.Debug("none", fmt.Sprintf("%s", err))
+			continue
+		}
+		if done {
+			break
+		}
+		logger.Debug("none", "runSchedule sleeping")
+		time.Sleep(2 * time.Minute)
+	}
+	logger.Debug("none", "runSchedule done")
 }
 
-func (s *Schedule) InitCron(schedule string) {
-  s.Cron = cron.New()
-  s.Cron.AddFunc(schedule, s.runSchedule)
-  s.Cron.Start()
+func (s *Schedule) Start(killswitch chan bool) {
+	s.cron = cron.New()
+	s.cron.AddFunc(s.Schedule, s.runSchedule)
+	s.runSchedule() // TODO: Remove me when we have a real server
+	s.cron.Start()
+	<-killswitch
+	s.cron.Stop()
 }
