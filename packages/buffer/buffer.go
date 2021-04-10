@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-  "time"
+	"net/http"
+	"net/url"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/wogri/bbox/packages/logger"
 	"github.com/wogri/bbox/packages/scale"
 	"github.com/wogri/bbox/packages/temperature"
-	"net/http"
-  "sync"
-	"net/url"
-	"strings"
 )
 
 type Buffer struct {
@@ -83,22 +84,22 @@ func (b *Buffer) String() string {
 }
 
 func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int) {
-  poster := HttpPostClient{*apiServerAddr, token}
-  for {
-    logger.Debug("none", fmt.Sprintf("sleeping for %d seconds", seconds))
-    time.Sleep(time.Duration(seconds) * time.Second)
-    err := b.Flush("none", poster)
-    if err != nil {
-      logger.Error("none", err)
-    } else {
-	    logger.Debug("none", "Sending Data to API server was successful.")
-    }
-  }
+	poster := HttpPostClient{*apiServerAddr, token}
+	for {
+		logger.Debug("none", fmt.Sprintf("sleeping for %d seconds", seconds))
+		time.Sleep(time.Duration(seconds) * time.Second)
+		err := b.Flush("none", poster)
+		if err != nil {
+			logger.Error("none", err)
+		} else {
+			logger.Debug("none", "Sending Data to API server was successful.")
+		}
+	}
 }
 
 func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
-  mu.Lock()
-  defer mu.Unlock()
+	mu.Lock()
+	defer mu.Unlock()
 	logger.Debug(ip, "Flushing")
 	var temperatures = make([]temperature.Temperature, len(b.temperatures))
 	for i, t := range b.temperatures {
@@ -108,15 +109,15 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	b.temperatures = make([]temperature.Temperature, 0)
 	var last_err error
 	for _, t := range temperatures {
-		err := poster.PostData("temperature", t)
+		err := poster.PostData("v1/temperature", t)
 		if err != nil {
 			last_err = err
 			b.temperatures = append(b.temperatures, t)
 		}
 	}
 
-  // Repeat the same thing as above with scale.
-  // While we could write a function to DRY I think it's OK if I copy this.
+	// Repeat the same thing as above with scale.
+	// While we could write a function to DRY I think it's OK if I copy this.
 	var scales = make([]scale.Scale, len(b.scales))
 	for i, s := range b.scales {
 		scales[i] = s
@@ -124,7 +125,7 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	// empty the slice.
 	b.scales = make([]scale.Scale, 0)
 	for _, s := range scales {
-		err := poster.PostData("scale", s)
+		err := poster.PostData("v1/scale", s)
 		if err != nil {
 			last_err = err
 			b.scales = append(b.scales, s)
@@ -135,19 +136,19 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 }
 
 func (b *Buffer) AppendScale(s scale.Scale) {
-  mu.Lock()
-  defer mu.Unlock()
+	mu.Lock()
+	defer mu.Unlock()
 	b.scales = append(b.scales, s)
 }
 
 func (b *Buffer) AppendTemperature(t temperature.Temperature) {
-  mu.Lock()
-  defer mu.Unlock()
+	mu.Lock()
+	defer mu.Unlock()
 	b.temperatures = append(b.temperatures, t)
 }
 
 func (b *Buffer) GetTemperatures() []temperature.Temperature {
-  mu.Lock()
-  defer mu.Unlock()
+	mu.Lock()
+	defer mu.Unlock()
 	return b.temperatures
 }
