@@ -8,13 +8,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/wogri/bbox/packages/buffer"
-	"github.com/wogri/bbox/packages/config"
-	"github.com/wogri/bbox/packages/logger"
-	"github.com/wogri/bbox/packages/scale"
-	"github.com/wogri/bbox/packages/temperature"
-	"github.com/wogri/bbox/server/relay"
-	"github.com/wogri/bbox/server/scheduler"
+	"github.com/btelemetry/packages/buffer"
+	"github.com/btelemetry/packages/config"
+	"github.com/btelemetry/packages/logger"
+	"github.com/btelemetry/packages/scale"
+	"github.com/btelemetry/packages/temperature"
+	"github.com/btelemetry/bbox/server/relay"
+	"github.com/btelemetry/bbox/server/scheduler"
 )
 
 var apiServerAddr = flag.String("api_server_addr", "https://bcloud-api.azure.wogri.com", "API Server Address")

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/robfig/cron/v3"
-	"github.com/wogri/bbox/packages/logger"
-	"github.com/wogri/bbox/server/relay"
+	"github.com/bTelemetry/packages/logger"
+	"github.com/bTelemetry/bbox/server/relay"
 )
 
 type Schedule struct {

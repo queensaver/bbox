@@ -1,4 +1,4 @@
-module github.com/wogri/bbox/updater
+module github.com/btelemetry/updater
 
 go 1.15
 

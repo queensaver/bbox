@@ -9,7 +9,7 @@ sudo apt install -y ansible git
 if [ -e bbox ]; then
   git -C bbox/ pull
 else
-  git clone https://github.com/wogri/bbox.git
+  git clone https://github.com/btelemetry/bbox.git
 fi
 
 ansible-playbook bbox/ansible/bbox.yml

@@ -6,7 +6,7 @@ After=network-online.target
 StartLimitBurst=5
 
 [Service]
-ExecStartPre=/usr/bin/curl -L https://github.com/wogri/bbox/releases/download/stable/updater --output /home/pi/bOS/updater 
+ExecStartPre=/usr/bin/curl -L https://github.com/btelemetry/bbox/releases/download/stable/updater --output /home/pi/bOS/updater 
 ExecStartPre=/usr/bin/chmod +x /home/pi/bOS/updater
 ExecStart=/home/pi/bOS/updater
 Restart=always
