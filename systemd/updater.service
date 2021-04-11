@@ -10,7 +10,7 @@ ExecStartPre=/usr/bin/curl -L https://github.com/btelemetry/bbox/releases/downlo
 ExecStartPre=/usr/bin/chmod +x /home/pi/bOS/updater
 ExecStart=/home/pi/bOS/updater
 Restart=always
-RestartSec=60
+RestartSec=600
 
 [Install]
 WantedBy=multi-user.target

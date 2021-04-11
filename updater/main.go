@@ -104,7 +104,7 @@ func main() {
 		var id, old_id int64
 		old_id = 0
 		for {
-			id, err = checkRelease("btelemetry", "bhive", *releaseTrain, "bhive", "bhive", old_id)
+			id, err = checkRelease("bTelemetry", "bhive", *releaseTrain, "bhive", "bhive", old_id)
 			if err != nil {
 				fmt.Println("error restarting server:", err)
 			}
@@ -119,7 +119,7 @@ func main() {
 		var id, old_id int64
 		old_id = 0
 		for {
-			id, err = checkRelease("btelemetry", "bbox", *releaseTrain, "server", "server.download", old_id)
+			id, err = checkRelease("bTelemetry", "bbox", *releaseTrain, "server", "server.download", old_id)
 			if err != nil {
 				fmt.Println(err)
 			}
