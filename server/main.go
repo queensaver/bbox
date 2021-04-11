@@ -8,13 +8,13 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/btelemetry/bbox/server/relay"
+	"github.com/btelemetry/bbox/server/scheduler"
 	"github.com/btelemetry/packages/buffer"
 	"github.com/btelemetry/packages/config"
 	"github.com/btelemetry/packages/logger"
 	"github.com/btelemetry/packages/scale"
 	"github.com/btelemetry/packages/temperature"
-	"github.com/btelemetry/bbox/server/relay"
-	"github.com/btelemetry/bbox/server/scheduler"
 )
 
 var apiServerAddr = flag.String("api_server_addr", "https://bcloud-api.azure.wogri.com", "API Server Address")
@@ -67,6 +67,7 @@ func main() {
 	var err error
 
 	bConfig, err = config.Get(*apiServerAddr + "/v1/config")
+	// TODO: this needs to be downloaded before every scheduler run
 	if err != nil {
 		log.Fatal(err)
 	}
