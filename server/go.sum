@@ -1,7 +1,7 @@
 github.com/btelemetry/packages/buffer v0.0.0-20210411064718-418dc5109709 h1:nEIrVImVgBPIRlPwG0MMkNtGJGYEQoP1y0kI0AbSOO4=
 github.com/btelemetry/packages/buffer v0.0.0-20210411064718-418dc5109709/go.mod h1:1Slf+753zYPBarGe2LrhNKP9l8JRzhV+HxUthO6ihig=
-github.com/btelemetry/packages/config v0.0.0-20210411064718-418dc5109709 h1:DWCX1bpdfTzqZ1UI1jIAFk/7Yte7o9gPZKvfrujPoyg=
-github.com/btelemetry/packages/config v0.0.0-20210411064718-418dc5109709/go.mod h1:tRTAGZog2glQbs2628bTZOJD8s2/rtza1dhXOct/PIU=
+github.com/btelemetry/packages/config v0.0.0-20210411091949-dfd7fe7dc549 h1:SkUu3cd36qeO+RZvfgWemru99dCozGi4AS3lBfO/EXI=
+github.com/btelemetry/packages/config v0.0.0-20210411091949-dfd7fe7dc549/go.mod h1:tRTAGZog2glQbs2628bTZOJD8s2/rtza1dhXOct/PIU=
 github.com/btelemetry/packages/logger v0.0.0-20210411064718-418dc5109709 h1:7rCLyJHQoVK5nSn8mutTjLWx1syUIfW7QeLZGFq7hn4=
 github.com/btelemetry/packages/logger v0.0.0-20210411064718-418dc5109709/go.mod h1:jcLX8euPlRhWBNbxjL1yPR+zA+lbrRUvA1e+6X770qM=
 github.com/btelemetry/packages/scale v0.0.0-20210411064718-418dc5109709 h1:mGwpvcQaq3zksXBtIXqwxglC0iRv10koG23JY4mmuYk=
