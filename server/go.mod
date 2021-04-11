@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/btelemetry/packages/buffer v0.0.0-20210411064718-418dc5109709
-	github.com/btelemetry/packages/config v0.0.0-20210411091949-dfd7fe7dc549
+	github.com/btelemetry/packages/config v0.0.0-20210411114149-2e72bda8ee99
 	github.com/btelemetry/packages/logger v0.0.0-20210411064718-418dc5109709
 	github.com/btelemetry/packages/scale v0.0.0-20210411064718-418dc5109709
 	github.com/btelemetry/packages/temperature v0.0.0-20210411064718-418dc5109709
