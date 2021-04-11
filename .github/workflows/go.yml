@@ -23,7 +23,7 @@ jobs:
       working-directory: ./server
       
     - name: Build bBox Server
-      run: env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -v ./...
+      run: env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -v
       working-directory: ./server
 
     - name: Build Updater
