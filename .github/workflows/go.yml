@@ -20,10 +20,6 @@ jobs:
 
     - name: Test
       run: go test -v ./...
-      working-directory: ./packages/buffer
-      
-    - name: Test
-      run: go test -v ./...
       working-directory: ./server
       
     - name: Build bBox Server
