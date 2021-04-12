@@ -78,7 +78,10 @@ func main() {
 		http.ServeFile(res, req, *httpServerHiveFile)
 	})
 
-	relaySwitches := []relay.Switcher{&relay.Switch{Gpio: 16}}
+	var relaySwitches []relay.Switcher
+	for _, bhive := range bConfig.BHives {
+		relaySwitches = append(relaySwitches, &relay.Switch{Gpio: bhive.RelayGPIO})
+	}
 	relay := relay.RelayModule{}
 	err = relay.Initialize(relaySwitches)
 	if err != nil {
