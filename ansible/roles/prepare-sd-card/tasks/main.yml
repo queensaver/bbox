@@ -1,0 +1,10 @@
+- name: touch ssh file
+  file:
+    path: /Volumes/boot/ssh
+    state: touch
+
+- name: copy wpa_supplicant.conf
+  copy:
+    src: ~/wpa_supplicant.conf
+    dest: /Volumes/boot/wpa_supplicant.conf
+
