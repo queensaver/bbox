@@ -3,12 +3,12 @@ module github.com/queensaver/bbox/server
 go 1.15
 
 require (
-	github.com/queensaver/packages/buffer v0.0.0-20210411064718-418dc5109709
-	github.com/queensaver/packages/config v0.0.0-20210411114149-2e72bda8ee99
-	github.com/queensaver/packages/logger v0.0.0-20210411064718-418dc5109709
-	github.com/queensaver/packages/scale v0.0.0-20210411064718-418dc5109709
-	github.com/queensaver/packages/temperature v0.0.0-20210411064718-418dc5109709
 	github.com/kr/pretty v0.1.0 // indirect
+	github.com/queensaver/packages/buffer v0.0.0-20210503095333-20340d0e3fd2
+	github.com/queensaver/packages/config v0.0.0-20210503095333-20340d0e3fd2
+	github.com/queensaver/packages/logger v0.0.0-20210503095333-20340d0e3fd2
+	github.com/queensaver/packages/scale v0.0.0-20210503095333-20340d0e3fd2
+	github.com/queensaver/packages/temperature v0.0.0-20210503095333-20340d0e3fd2
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stianeikeland/go-rpio/v4 v4.4.0
 	github.com/stretchr/testify v1.4.0 // indirect
