@@ -1,4 +1,4 @@
-module github.com/btelemetry/updater
+module github.com/queensaver/updater
 
 go 1.15
 

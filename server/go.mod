@@ -1,13 +1,13 @@
-module github.com/btelemetry/bbox/server
+module github.com/queensaver/bbox/server
 
 go 1.15
 
 require (
-	github.com/btelemetry/packages/buffer v0.0.0-20210411064718-418dc5109709
-	github.com/btelemetry/packages/config v0.0.0-20210411114149-2e72bda8ee99
-	github.com/btelemetry/packages/logger v0.0.0-20210411064718-418dc5109709
-	github.com/btelemetry/packages/scale v0.0.0-20210411064718-418dc5109709
-	github.com/btelemetry/packages/temperature v0.0.0-20210411064718-418dc5109709
+	github.com/queensaver/packages/buffer v0.0.0-20210411064718-418dc5109709
+	github.com/queensaver/packages/config v0.0.0-20210411114149-2e72bda8ee99
+	github.com/queensaver/packages/logger v0.0.0-20210411064718-418dc5109709
+	github.com/queensaver/packages/scale v0.0.0-20210411064718-418dc5109709
+	github.com/queensaver/packages/temperature v0.0.0-20210411064718-418dc5109709
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stianeikeland/go-rpio/v4 v4.4.0

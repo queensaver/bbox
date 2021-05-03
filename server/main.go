@@ -8,13 +8,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/btelemetry/bbox/server/relay"
-	"github.com/btelemetry/bbox/server/scheduler"
-	"github.com/btelemetry/packages/buffer"
-	"github.com/btelemetry/packages/config"
-	"github.com/btelemetry/packages/logger"
-	"github.com/btelemetry/packages/scale"
-	"github.com/btelemetry/packages/temperature"
+	"github.com/queensaver/bbox/server/relay"
+	"github.com/queensaver/bbox/server/scheduler"
+	"github.com/queensaver/packages/buffer"
+	"github.com/queensaver/packages/config"
+	"github.com/queensaver/packages/logger"
+	"github.com/queensaver/packages/scale"
+	"github.com/queensaver/packages/temperature"
 )
 
 var apiServerAddr = flag.String("api_server_addr", "https://api.queensaver.wogri.com", "API Server Address")
