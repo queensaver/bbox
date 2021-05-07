@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"time"
+  "os"
 
 	"github.com/queensaver/bbox/server/relay"
 	"github.com/queensaver/bbox/server/scheduler"
@@ -66,7 +67,11 @@ func main() {
 	flag.Parse()
 	var err error
 
-	bConfig, err = config.Get(*apiServerAddr + "/v1/config")
+  token := os.Getenv("TOKEN")
+  if token == "" {
+    log.Fatal("can't bootstrap without authentication token (set TOKEN environment variable)")
+  }
+	bConfig, err = config.Get(*apiServerAddr + "/v1/config", token)
 	// TODO: this needs to be downloaded before every scheduler run
 	if err != nil {
 		log.Fatal(err)
@@ -79,8 +84,8 @@ func main() {
 	})
 
 	var relaySwitches []relay.Switcher
-	for _, bhive := range bConfig.BHives {
-		relaySwitches = append(relaySwitches, &relay.Switch{Gpio: bhive.RelayGPIO})
+	for _, bhive := range bConfig.Bhive {
+		relaySwitches = append(relaySwitches, &relay.Switch{Gpio: bhive.RelayGpio})
 	}
 	relay := relay.RelayModule{}
 	err = relay.Initialize(relaySwitches)
@@ -88,7 +93,7 @@ func main() {
 		logger.Debug("", fmt.Sprintf("bbox relay problems: %s", err))
 	}
 
-	scheduler := scheduler.Schedule{Schedule: "*/5 * * * *", RelayModule: relay}
+  scheduler := scheduler.Schedule{Schedule: bConfig.Schedule, RelayModule: relay, Token: token}
 	c := make(chan bool)
 	go scheduler.Start(c)
 

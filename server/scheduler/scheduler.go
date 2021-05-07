@@ -12,10 +12,20 @@ import (
 type Schedule struct {
 	Schedule    string
 	RelayModule relay.RelayModule
+  Token       string
 	cron        *cron.Cron
 }
 
 func (s *Schedule) runSchedule() {
+  /* TODO: download config with:
+	bConfig, err = config.Get(*apiServerAddr + "/v1/config", token)
+	// TODO: this needs to be downloaded before every scheduler run
+	if err != nil {
+		log.Fatal(err)
+	}
+  Then update all the relevant datapoints.
+  */
+
 	logger.Debug("none", "runSchedule started")
 	for {
 		done, err := s.RelayModule.ActivateNextBHive()
