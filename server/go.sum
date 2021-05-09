@@ -12,6 +12,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/queensaver/packages/buffer v0.0.0-20210503095333-20340d0e3fd2 h1:pYyCO4a3kzlXxFu779fMttrgMhy2Y54WbU4DSLdBhsc=
 github.com/queensaver/packages/buffer v0.0.0-20210503095333-20340d0e3fd2/go.mod h1:4VFoVFNjRJ8mxwW3T6xuFPGdqwzhej/kTAA7EkixZI0=
+github.com/queensaver/packages/buffer v0.0.0-20210506191051-65a48b311f37 h1:+KIdmMo4H6lodZH72kIJOV1H2EfzfrEH/MEuttKSGIk=
+github.com/queensaver/packages/buffer v0.0.0-20210506191051-65a48b311f37/go.mod h1:4VFoVFNjRJ8mxwW3T6xuFPGdqwzhej/kTAA7EkixZI0=
 github.com/queensaver/packages/config v0.0.0-20210503095333-20340d0e3fd2 h1:uU1zbzqDv80Av6+FanK6b3zivdeI+oUcASkly1TVL3w=
 github.com/queensaver/packages/config v0.0.0-20210503095333-20340d0e3fd2/go.mod h1:sGtlRPJOuYNiUMfxKNPf6e46PHYY3MeYvs7ObdeCWYQ=
 github.com/queensaver/packages/config v0.0.0-20210506191051-65a48b311f37 h1:sq0hUYji2k8KPMfRIINqWihBhpkmsAGvQ5efm8Dpjh0=

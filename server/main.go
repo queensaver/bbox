@@ -76,6 +76,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+  s, _ := bConfig.String()
+  logger.Info("", string(s))
 	http.HandleFunc("/scale", scaleHandler)
 	http.HandleFunc("/temperature", temperatureHandler)
 	http.HandleFunc("/config", configHandler)
@@ -97,7 +99,7 @@ func main() {
 	c := make(chan bool)
 	go scheduler.Start(c)
 
-	go bBuffer.FlushSchedule(apiServerAddr, "token", *flushInterval)
+	go bBuffer.FlushSchedule(apiServerAddr, token, *flushInterval)
 
 	log.Fatal(http.ListenAndServe(":"+*httpServerPort, nil))
 }
