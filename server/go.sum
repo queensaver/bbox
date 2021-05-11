@@ -14,10 +14,14 @@ github.com/queensaver/packages/buffer v0.0.0-20210503095333-20340d0e3fd2 h1:pYyC
 github.com/queensaver/packages/buffer v0.0.0-20210503095333-20340d0e3fd2/go.mod h1:4VFoVFNjRJ8mxwW3T6xuFPGdqwzhej/kTAA7EkixZI0=
 github.com/queensaver/packages/buffer v0.0.0-20210506191051-65a48b311f37 h1:+KIdmMo4H6lodZH72kIJOV1H2EfzfrEH/MEuttKSGIk=
 github.com/queensaver/packages/buffer v0.0.0-20210506191051-65a48b311f37/go.mod h1:4VFoVFNjRJ8mxwW3T6xuFPGdqwzhej/kTAA7EkixZI0=
+github.com/queensaver/packages/buffer v0.0.0-20210509184847-d38bdf51b92b h1:CZW7GF7G3O2/M0zsxqai1d9Kk8oTuNTos6Rq3R3zq3Q=
+github.com/queensaver/packages/buffer v0.0.0-20210509184847-d38bdf51b92b/go.mod h1:4VFoVFNjRJ8mxwW3T6xuFPGdqwzhej/kTAA7EkixZI0=
 github.com/queensaver/packages/config v0.0.0-20210503095333-20340d0e3fd2 h1:uU1zbzqDv80Av6+FanK6b3zivdeI+oUcASkly1TVL3w=
 github.com/queensaver/packages/config v0.0.0-20210503095333-20340d0e3fd2/go.mod h1:sGtlRPJOuYNiUMfxKNPf6e46PHYY3MeYvs7ObdeCWYQ=
 github.com/queensaver/packages/config v0.0.0-20210506191051-65a48b311f37 h1:sq0hUYji2k8KPMfRIINqWihBhpkmsAGvQ5efm8Dpjh0=
 github.com/queensaver/packages/config v0.0.0-20210506191051-65a48b311f37/go.mod h1:sGtlRPJOuYNiUMfxKNPf6e46PHYY3MeYvs7ObdeCWYQ=
+github.com/queensaver/packages/config v0.0.0-20210511072551-1e86d6ed6dad h1:KpsbhCrTvEpcyqctu33/zdg4je7Z4OhmE6Uem6gcflE=
+github.com/queensaver/packages/config v0.0.0-20210511072551-1e86d6ed6dad/go.mod h1:sGtlRPJOuYNiUMfxKNPf6e46PHYY3MeYvs7ObdeCWYQ=
 github.com/queensaver/packages/logger v0.0.0-20210503095333-20340d0e3fd2 h1:F4SplR3R3mnfiawbiTtSvcPrtiklU1Z+BNlTgn4aoJU=
 github.com/queensaver/packages/logger v0.0.0-20210503095333-20340d0e3fd2/go.mod h1:eBuxpW2zStcCGQeMX+v7+hylbsgGFE1FAsr7BChhkdE=
 github.com/queensaver/packages/scale v0.0.0-20210503095333-20340d0e3fd2 h1:zI7o2JpIuBKLQgyZ1wd2Kuuexfa6NoBWJpYKXIqdoy0=
