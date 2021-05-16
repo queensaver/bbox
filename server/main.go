@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
   "os"
+  "io/ioutil"
 
 	"github.com/queensaver/bbox/server/relay"
 	"github.com/queensaver/bbox/server/scheduler"
@@ -22,7 +23,8 @@ var apiServerAddr = flag.String("api_server_addr", "https://api.queensaver.wogri
 var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
 var httpServerHiveFile = flag.String("http_server_bhive_file", "/home/pi/bOS/bhive", "HTTP server directory to serve bHive file")
 var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
-var debug = flag.Bool("debug", false, "debug mode")
+var tokenFile = flag.String("token_file", fmt.Sprintf("%s/.queensaver_token",
+	os.Getenv("HOME")), "HTTP server port")
 
 var bBuffer buffer.Buffer
 var bConfig *config.Config
@@ -69,7 +71,11 @@ func main() {
 
   token := os.Getenv("TOKEN")
   if token == "" {
-    log.Fatal("can't bootstrap without authentication token (set TOKEN environment variable)")
+		content, err := ioutil.ReadFile(*tokenFile)
+    if err != nil {
+			log.Fatal("can't bootstrap without authentication token (set TOKEN environment variable):", err)
+    }
+		token = string(content)
   }
 	bConfig, err = config.Get(*apiServerAddr + "/v1/config", token)
 	// TODO: this needs to be downloaded before every scheduler run
