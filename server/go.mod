@@ -7,7 +7,7 @@ require (
 	github.com/queensaver/packages/buffer v0.0.0-20210509184847-d38bdf51b92b
 	github.com/queensaver/packages/config v0.0.0-20210511072551-1e86d6ed6dad
 	github.com/queensaver/packages/logger v0.0.0-20210503095333-20340d0e3fd2
-	github.com/queensaver/packages/scale v0.0.0-20210503095333-20340d0e3fd2
+	github.com/queensaver/packages/scale v0.0.0-20210601070738-527908db9928
 	github.com/queensaver/packages/temperature v0.0.0-20210503095333-20340d0e3fd2
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stianeikeland/go-rpio/v4 v4.4.0
