@@ -50,8 +50,8 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 		//logger.Info(err)
 		return
 	}
-	s.Timestamp = int64(time.Now().Unix())
-	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received weight from bHive %s", s.BHiveID))
+	s.Epoch = int64(time.Now().Unix())
+	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received weight from bHive %s", s.BhiveId))
 	bBuffer.AppendScale(s)
 }
 
