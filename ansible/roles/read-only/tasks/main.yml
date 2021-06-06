@@ -22,6 +22,7 @@
       tmpfs        /var/spool      tmpfs   nosuid,nodev         0       0
       tmpfs        /var/tmp        tmpfs   nosuid,nodev         0       0
       tmpfs        /home/pi/bOS    tmpfs   nosuid,nodev         0       0
+      tmpfs        /var/lib/systemd/timesync tmpfs   nosuid,nodev,uid=100         0       0
 
 - name: create bOS directory
   file:
