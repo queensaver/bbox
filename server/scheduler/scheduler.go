@@ -2,7 +2,6 @@ package scheduler
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 	"time"
 
@@ -22,11 +21,11 @@ type Schedule struct {
 
 // This function could have some more paramters like the
 func (s *Schedule) runLocally() {
-  log.Println("starting bhive client locally")
+  logger.Debug("none", "starting bhive client locally")
 	cmd := exec.Command("/usr/bin/systemctl", "restart", "bhive.service")
 	err := cmd.Run()
 	if err != nil {
-		log.Println("error restarting server:", err)
+		logger.Error("error restarting server:", err)
 	}
 }
 
