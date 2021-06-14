@@ -93,13 +93,13 @@ func main() {
 
 	var schedule scheduler.Schedule
 	// check if the bhive is a local instance, if so, skip the relay initialisation.
-  logger.Debug("len", fmt.Sprintf("%d", len(bConfig.Bhive)))
-  logger.Debug("local", fmt.Sprintf("%v", bConfig.Bhive[0].Local))
-	if len(bConfig.Bhive) == 1 && bConfig.Bhive[0].Local {
+  logger.Debug("len", fmt.Sprintf("%d", len(bConfig.Bhive))) // TODO: delete.
+  logger.Debug("local", fmt.Sprintf("%v", bConfig.Bhive[0].Local)) // TODO: delete.
+	if len(bConfig.Bhive) == 1 && bConfig.Bhive[0].Local == true {
+    logger.Debug("", "setting local to true.")
 		schedule = scheduler.Schedule{Schedule: bConfig.Schedule,
 			Local:      true,
-			Token:      token,
-			HiveBinary: *httpServerHiveFile}
+			Token:      token}
 	} else {
 		var relaySwitches []relay.Switcher
 		for _, bhive := range bConfig.Bhive {

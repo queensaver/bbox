@@ -16,7 +16,6 @@ type Schedule struct {
 	Token       string
 	Local       bool
 	cron        *cron.Cron
-	HiveBinary  string
 }
 
 // This function could have some more paramters like the
