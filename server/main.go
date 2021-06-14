@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
-  "os"
-  "io/ioutil"
 
 	"github.com/queensaver/bbox/server/relay"
 	"github.com/queensaver/bbox/server/scheduler"
@@ -69,21 +69,21 @@ func main() {
 	flag.Parse()
 	var err error
 
-  token := os.Getenv("TOKEN")
-  if token == "" {
+	token := os.Getenv("TOKEN")
+	if token == "" {
 		content, err := ioutil.ReadFile(*tokenFile)
-    if err != nil {
+		if err != nil {
 			log.Fatal("can't bootstrap without authentication token (set TOKEN environment variable):", err)
-    }
+		}
 		token = string(content)
-  }
-	bConfig, err = config.Get(*apiServerAddr + "/v1/config", token)
+	}
+	bConfig, err = config.Get(*apiServerAddr+"/v1/config", token)
 	// TODO: this needs to be downloaded before every scheduler run
 	if err != nil {
 		log.Fatal(err)
 	}
-  s, _ := bConfig.String()
-  logger.Info("", string(s))
+	s, _ := bConfig.String()
+	logger.Info("", string(s))
 	http.HandleFunc("/scale", scaleHandler)
 	http.HandleFunc("/temperature", temperatureHandler)
 	http.HandleFunc("/config", configHandler)
@@ -91,19 +91,28 @@ func main() {
 		http.ServeFile(res, req, *httpServerHiveFile)
 	})
 
-	var relaySwitches []relay.Switcher
-	for _, bhive := range bConfig.Bhive {
-		relaySwitches = append(relaySwitches, &relay.Switch{Gpio: bhive.RelayGpio})
-	}
-	relay := relay.RelayModule{}
-	err = relay.Initialize(relaySwitches)
-	if err != nil {
-		logger.Debug("", fmt.Sprintf("bbox relay problems: %s", err))
-	}
+	var schedule scheduler.Schedule
+	// check if the bhive is a local instance, if so, skip the relay initialisation.
+	if len(bConfig.Bhive) == 1 && bConfig.Bhive[0].Local {
+		schedule = scheduler.Schedule{Schedule: bConfig.Schedule,
+			Local:      true,
+			Token:      token,
+			HiveBinary: *httpServerHiveFile}
+	} else {
+		var relaySwitches []relay.Switcher
+		for _, bhive := range bConfig.Bhive {
+			relaySwitches = append(relaySwitches, &relay.Switch{Gpio: bhive.RelayGpio})
+		}
+		myRelay := relay.RelayModule{}
+		err = myRelay.Initialize(relaySwitches)
+		if err != nil {
+			logger.Debug("", fmt.Sprintf("bbox relay problems: %s", err))
+		}
 
-  scheduler := scheduler.Schedule{Schedule: bConfig.Schedule, RelayModule: relay, Token: token}
+		schedule = scheduler.Schedule{Schedule: bConfig.Schedule, RelayModule: myRelay, Token: token}
+	}
 	c := make(chan bool)
-	go scheduler.Start(c)
+	go schedule.Start(c)
 
 	go bBuffer.FlushSchedule(apiServerAddr, token, *flushInterval)
 

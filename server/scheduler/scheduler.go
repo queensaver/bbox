@@ -2,29 +2,41 @@ package scheduler
 
 import (
 	"fmt"
+	"os/exec"
 	"time"
+  "log"
 
-	"github.com/robfig/cron/v3"
-	"github.com/queensaver/packages/logger"
 	"github.com/queensaver/bbox/server/relay"
+	"github.com/queensaver/packages/logger"
+	"github.com/robfig/cron/v3"
 )
 
 type Schedule struct {
 	Schedule    string
 	RelayModule relay.RelayModule
-  Token       string
+	Token       string
+	Local       bool
 	cron        *cron.Cron
+	HiveBinary  string
 }
 
-func (s *Schedule) runSchedule() {
-  /* TODO: download config with:
-	bConfig, err = config.Get(*apiServerAddr + "/v1/config", token)
-	// TODO: this needs to be downloaded before every scheduler run
+// This function could have some more paramters like the
+func (s *Schedule) runLocally() {
+	cmd := exec.Command("/usr/bin/systemctl", "stop", "server")
+  err := cmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		log.Println("error restarting server:", err)
 	}
-  Then update all the relevant datapoints.
-  */
+}
+func (s *Schedule) runSchedule() {
+	/* TODO: download config with:
+		bConfig, err = config.Get(*apiServerAddr + "/v1/config", token)
+		// TODO: this needs to be downloaded before every scheduler run
+		if err != nil {
+			log.Fatal(err)
+		}
+	  Then update all the relevant datapoints.
+	*/
 
 	logger.Debug("none", "runSchedule started")
 	for {
@@ -44,8 +56,12 @@ func (s *Schedule) runSchedule() {
 
 func (s *Schedule) Start(killswitch chan bool) {
 	s.cron = cron.New()
-	s.cron.AddFunc(s.Schedule, s.runSchedule)
-	s.runSchedule() // TODO: Remove me when we have a real server
+	if s.Local {
+		s.cron.AddFunc(s.Schedule, s.runLocally)
+	} else {
+		s.cron.AddFunc(s.Schedule, s.runSchedule)
+	}
+	s.runSchedule() // TODO: Remove me when we run in complete production - this just triggers the run immediately for convenience.gw
 	s.cron.Start()
 	<-killswitch
 	s.cron.Stop()
