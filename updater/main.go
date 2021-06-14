@@ -59,11 +59,16 @@ func checkRelease(org, repo, train, binary, filename string, old_id int64) (int6
 	if id != old_id {
 		err := backoff.Retry(func() error {
 			fmt.Println("downloading the latest release")
-			err := downloadRelease(fmt.Sprintf("/home/pi/bOS/%s", filename), fmt.Sprintf("https://github.com/%s/%s/releases/download/%s/%s", org, repo, train, binary))
+      f := fmt.Sprintf("/home/pi/bOS/%s", filename)
+			err := downloadRelease(f, fmt.Sprintf("https://github.com/%s/%s/releases/download/%s/%s", org, repo, train, binary))
 			if err != nil {
 				fmt.Println("error downloading:", err)
 			}
-			return err
+      err = os.Chmod(f, 0755)
+      if err != nil {
+        fmt.Println("error setting permissions: ", err)
+      }
+			return nil
 		}, bo)
 		if err != nil {
 			return old_id, err
