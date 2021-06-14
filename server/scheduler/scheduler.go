@@ -58,10 +58,11 @@ func (s *Schedule) Start(killswitch chan bool) {
 	s.cron = cron.New()
 	if s.Local {
 		s.cron.AddFunc(s.Schedule, s.runLocally)
+	  s.runLocally() // TODO: Remove me when we run in complete production - this just triggers the run immediately for convenience.gw
 	} else {
 		s.cron.AddFunc(s.Schedule, s.runSchedule)
+	  s.runSchedule() // TODO: Remove me when we run in complete production - this just triggers the run immediately for convenience.gw
 	}
-	s.runSchedule() // TODO: Remove me when we run in complete production - this just triggers the run immediately for convenience.gw
 	s.cron.Start()
 	<-killswitch
 	s.cron.Stop()
