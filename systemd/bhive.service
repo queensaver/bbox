@@ -1,0 +1,14 @@
+[Unit]
+Description=bHive client - hive logic
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+ExecStartPre=/usr/bin/test -f /home/pi/bOS/bhive
+ExecStart=/home/pi/bOS/bhive --server_addr=http://localhost:8333
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

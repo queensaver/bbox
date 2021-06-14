@@ -5,6 +5,12 @@
     src: /home/pi/bbox/systemd/updater.service
     dest: /etc/systemd/system/updater.service
 
+- name: link bhive systemd service
+  file:
+    state: link
+    src: /home/pi/bbox/systemd/bhive.service
+    dest: /etc/systemd/system/bhive.service
+
 - name: link server systemd service
   file:
     state: link
