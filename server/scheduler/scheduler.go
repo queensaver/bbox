@@ -22,7 +22,8 @@ type Schedule struct {
 
 // This function could have some more paramters like the
 func (s *Schedule) runLocally() {
-	cmd := exec.Command("/usr/bin/systemctl", "restart", s.HiveBinary)
+  log.Println("starting bhive client locally")
+	cmd := exec.Command("/usr/bin/systemctl", "restart", "bhive.service")
 	err := cmd.Run()
 	if err != nil {
 		log.Println("error restarting server:", err)
