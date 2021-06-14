@@ -2,9 +2,9 @@ package scheduler
 
 import (
 	"fmt"
+	"log"
 	"os/exec"
 	"time"
-  "log"
 
 	"github.com/queensaver/bbox/server/relay"
 	"github.com/queensaver/packages/logger"
@@ -22,12 +22,13 @@ type Schedule struct {
 
 // This function could have some more paramters like the
 func (s *Schedule) runLocally() {
-	cmd := exec.Command("/usr/bin/systemctl", "stop", "server")
-  err := cmd.Run()
+	cmd := exec.Command("/usr/bin/systemctl", "restart", s.HiveBinary)
+	err := cmd.Run()
 	if err != nil {
 		log.Println("error restarting server:", err)
 	}
 }
+
 func (s *Schedule) runSchedule() {
 	/* TODO: download config with:
 		bConfig, err = config.Get(*apiServerAddr + "/v1/config", token)
