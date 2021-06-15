@@ -19,7 +19,7 @@ import (
 	"github.com/queensaver/packages/temperature"
 )
 
-var apiServerAddr = flag.String("api_server_addr", "https://api.queensaver.wogri.com", "API Server Address")
+var apiServerAddr = flag.String("api_server_addr", "https://api.queensaver.com", "API Server Address")
 var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
 var httpServerHiveFile = flag.String("http_server_bhive_file", "/home/pi/bOS/bhive", "HTTP server directory to serve bHive file")
 var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
