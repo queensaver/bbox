@@ -63,10 +63,12 @@ func checkRelease(org, repo, train, binary, filename string, old_id int64) (int6
 			err := downloadRelease(f, fmt.Sprintf("https://github.com/%s/%s/releases/download/%s/%s", org, repo, train, binary))
 			if err != nil {
 				fmt.Println("error downloading:", err)
+        return err
 			}
       err = os.Chmod(f, 0755)
       if err != nil {
         fmt.Println("error setting permissions: ", err)
+        return err
       }
 			return nil
 		}, bo)
