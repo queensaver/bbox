@@ -78,3 +78,8 @@
     path: /etc/default/isc-dhcp-server
     line: INTERFACESv4="eth0"
     state: present
+
+- name: active w1-gpio service
+  lineinfile:
+    path: /boot/config.txt
+    line: dtoverlay=w1-gpio,gpiopin=11
