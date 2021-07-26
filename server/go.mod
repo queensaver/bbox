@@ -11,7 +11,7 @@ require (
 	github.com/queensaver/packages/temperature v0.0.0-20210503095333-20340d0e3fd2
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stianeikeland/go-rpio/v4 v4.4.0
-	github.com/stretchr/testify v1.4.0 // indirect
+	github.com/stretchr/testify v1.5.1 // indirect
 	golang.org/x/sys v0.0.0-20200615200032-f1bc736245b1 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v2 v2.2.5 // indirect
