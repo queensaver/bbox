@@ -95,9 +95,9 @@ func main() {
 	// check if the bhive is a local instance, if so, skip the relay initialisation.
 	if len(bConfig.Bhive) == 1 && bConfig.Bhive[0].Local == true {
 		schedule = scheduler.Schedule{Schedule: bConfig.Schedule,
-			Local:      true,
-      WittyPi:    bConfig.Bhive[0].WittyPi,
-			Token:      token}
+			Local:   true,
+			WittyPi: bConfig.Bhive[0].WittyPi,
+			Token:   token}
 	} else {
 		var relaySwitches []relay.Switcher
 		for _, bhive := range bConfig.Bhive {

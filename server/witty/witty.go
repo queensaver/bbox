@@ -1,10 +1,10 @@
 package witty
 
 import (
+	"fmt"
 	"periph.io/x/conn/v3/i2c"
-  host "periph.io/x/host/v3"
 	"periph.io/x/conn/v3/i2c/i2creg"
-  "fmt"
+	host "periph.io/x/host/v3"
 	"time"
 )
 
@@ -13,37 +13,40 @@ func dec2bcd(num int) byte {
 }
 
 func setDay(dev *i2c.Dev, date int) error {
-  return write(dev, []byte{0x0A, dec2bcd(date)})
+	return write(dev, []byte{0x0A, dec2bcd(date)})
 }
 
 func setHours(dev *i2c.Dev, hours int) error {
-  return write(dev, []byte{0x09, dec2bcd(hours)})
+	return write(dev, []byte{0x09, dec2bcd(hours)})
 }
 
 func setMinutes(dev *i2c.Dev, minutes int) error {
-  return write(dev, []byte{0x08, dec2bcd(minutes)})
+	return write(dev, []byte{0x08, dec2bcd(minutes)})
 }
 
 func setSeconds(dev *i2c.Dev, seconds int) error {
-  return write(dev, []byte{0x07, dec2bcd(seconds)})
+	return write(dev, []byte{0x07, dec2bcd(seconds)})
 }
 
 func initWitty(dev *i2c.Dev) error {
-  return write(dev, []byte{0x0E, 0x07})
+	return write(dev, []byte{0x0E, 0x07})
 }
 
 func write(dev *i2c.Dev, val []byte) error {
-  read := make([]byte, 1)
-  err := dev.Tx(val, read)
-  if err != nil {
+	read := make([]byte, 1)
+	err := dev.Tx(val, read)
+	if err != nil {
 		return err
 	}
 	fmt.Printf("%v\n", read)
-  return nil
+	return nil
 }
 
+// Usage:
+// t := time.Now()
+// err := witty.StartAt(t.Add(time.Hour * 1))
 func StartAt(t time.Time) error {
-  _, err := host.Init()
+	_, err := host.Init()
 	// _, err := driverreg.Init()
 	if err != nil {
 		return err
@@ -58,26 +61,26 @@ func StartAt(t time.Time) error {
 	// Dev is a valid conn.Conn.
 	d := &i2c.Dev{Addr: 0x68, Bus: b}
 
-  initWitty(d)
-  hour, minute, seconds := t.UTC().Clock()
-  err = setSeconds(d, seconds)
-  if err != nil {
-    return err
-  }
-  setMinutes(d, minute)
-  if err != nil {
-    return err
-  }
-  setHours(d, hour)
-  if err != nil {
-    return err
-  }
-  _, _, day := t.UTC().Date()
-  setDay(d, day)
-  if err != nil {
-    return err
-  }
-  return nil
+	initWitty(d)
+	hour, minute, seconds := t.UTC().Clock()
+	err = setSeconds(d, seconds)
+	if err != nil {
+		return err
+	}
+	setMinutes(d, minute)
+	if err != nil {
+		return err
+	}
+	setHours(d, hour)
+	if err != nil {
+		return err
+	}
+	_, _, day := t.UTC().Date()
+	setDay(d, day)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 /* Based on this shellscript
