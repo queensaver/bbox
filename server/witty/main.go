@@ -1,13 +1,13 @@
 package main
 
 import (
-  "bla/witty"
+  "witty"
   "time"
   "fmt"
 )
 
 func main() {
   t := time.Now()
-  err := witty.StartAt(t)
+  err := witty.StartAt(t.Add(time.Hour * 1))
   fmt.Println(err)
 }

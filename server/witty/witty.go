@@ -12,6 +12,26 @@ func dec2bcd(num int) byte {
 	return byte(num/10*16 + num%10)
 }
 
+func setDay(dev *i2c.Dev, date int) error {
+  return write(dev, []byte{0x0A, dec2bcd(date)})
+}
+
+func setHours(dev *i2c.Dev, hours int) error {
+  return write(dev, []byte{0x09, dec2bcd(hours)})
+}
+
+func setMinutes(dev *i2c.Dev, minutes int) error {
+  return write(dev, []byte{0x08, dec2bcd(minutes)})
+}
+
+func setSeconds(dev *i2c.Dev, seconds int) error {
+  return write(dev, []byte{0x07, dec2bcd(seconds)})
+}
+
+func initWitty(dev *i2c.Dev) error {
+  return write(dev, []byte{0x0E, 0x07})
+}
+
 func write(dev *i2c.Dev, val []byte) error {
   read := make([]byte, 1)
   err := dev.Tx(val, read)
@@ -38,19 +58,25 @@ func StartAt(t time.Time) error {
 	// Dev is a valid conn.Conn.
 	d := &i2c.Dev{Addr: 0x68, Bus: b}
 
-  // initialize the setup - I think.
-  err = write(d, []byte{0x0E, 0x07})
+  initWitty(d)
+  hour, minute, seconds := t.UTC().Clock()
+  err = setSeconds(d, seconds)
   if err != nil {
     return err
   }
-
-
-  // 10 seconds
-  err = write(d, []byte{0x07, dec2bcd(10)})
+  setMinutes(d, minute)
   if err != nil {
     return err
   }
-
+  setHours(d, hour)
+  if err != nil {
+    return err
+  }
+  _, _, day := t.UTC().Date()
+  setDay(d, day)
+  if err != nil {
+    return err
+  }
   return nil
 }
 
