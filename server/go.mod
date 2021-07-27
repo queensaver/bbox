@@ -15,4 +15,6 @@ require (
 	golang.org/x/sys v0.0.0-20200615200032-f1bc736245b1 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v2 v2.2.5 // indirect
+	periph.io/x/conn/v3 v3.6.8 // indirect
+	periph.io/x/host/v3 v3.7.0 // indirect
 )

@@ -15,6 +15,7 @@ type Schedule struct {
 	RelayModule relay.RelayModule
 	Token       string
 	Local       bool
+  WittyPi     bool
 	cron        *cron.Cron
 }
 

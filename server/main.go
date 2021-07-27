@@ -96,6 +96,7 @@ func main() {
 	if len(bConfig.Bhive) == 1 && bConfig.Bhive[0].Local == true {
 		schedule = scheduler.Schedule{Schedule: bConfig.Schedule,
 			Local:      true,
+      WittyPi:    bConfig.Bhive[0].WittyPi,
 			Token:      token}
 	} else {
 		var relaySwitches []relay.Switcher
