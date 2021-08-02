@@ -6,6 +6,18 @@
     path: /etc/fstab
     backrefs: yes
 
+- name: Comment out line for systemd-timesyncd to work
+	replace:
+		path: /usr/lib/systemd/system/systemd-timesyncd.service
+		regexp: 'CapabilityBoundingSet=CAP_SYS_TIME'
+		replace: '# CapabilityBoundingSet=CAP_SYS_TIME'
+
+- name: Comment out another line for systemd-timesyncd to work
+	replace:
+		path: /usr/lib/systemd/system/systemd-timesyncd.service
+		regexp: 'PrivateTmp=yes'
+		replace: '# PrivateTmp=yes'
+
 - name: fstab ro append to ext4
   lineinfile:
     regexp: '^(.*ext4\s+defaults,noatime)(\s+.*)$'
@@ -22,7 +34,7 @@
       tmpfs        /var/spool      tmpfs   nosuid,nodev         0       0
       tmpfs        /var/tmp        tmpfs   nosuid,nodev         0       0
       tmpfs        /home/pi/bOS    tmpfs   nosuid,nodev         0       0
-      tmpfs        /var/lib/systemd/timesync tmpfs   nosuid,nodev,uid=100         0       0
+      tmpfs        /var/lib/systemd/timesync tmpfs   nosuid,nodev,uid=100,gid=102,mode=0755         0       0
 
 - name: create bOS directory
   file:
