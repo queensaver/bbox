@@ -83,4 +83,4 @@
 - name: active w1-gpio service
   lineinfile:
     path: /boot/config.txt
-    line: dtoverlay=w1-gpio,gpiopin=11
+    line: dtoverlay=w1-gpio,gpiopin=17
