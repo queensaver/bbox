@@ -22,7 +22,12 @@
     - i2c-tools
     state: present
 
-- name: enable i2c
+- name: enable i2c kernel feature
   lineinfile:
     path: /boot/config.txt
     line: dtparam=i2c_arm=on
+
+- name: enable i2c module
+  lineinfile:
+    path: /etc/modules-load.d/modules.conf
+    line: i2c_dev

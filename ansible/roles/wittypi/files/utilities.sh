@@ -417,7 +417,7 @@ log2file()
 {
   local datetime=$(date +'[%Y-%m-%d %H:%M:%S]')
   local msg="$datetime $1"
-  echo $msg >> $wittypi_home/wittyPi.log
+  echo $msg
 }
 
 log()
