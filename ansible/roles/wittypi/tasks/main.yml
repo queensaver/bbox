@@ -4,7 +4,7 @@
     state: directory
     owner: root
 
-- name: Copy CA files
+- name: Copy Witty files
   copy:
     src: '{{item}}'
     dest: '/etc/witty'
@@ -21,3 +21,8 @@
     name:
     - i2c-tools
     state: present
+
+- name: enable i2c
+  lineinfile:
+    path: /boot/config.txt
+    line: dtparam=i2c_arm=on
