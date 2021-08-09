@@ -1,0 +1,23 @@
+- name: create wittypi directory
+  file:
+    path: /etc/witty
+    state: directory
+    owner: root
+
+- name: Copy CA files
+  copy:
+    src: '{{item}}'
+    dest: '/etc/witty'
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - syncTime.sh
+    - utilities.sh
+
+
+- name: install i2c-tools
+  apt:
+    name:
+    - i2c-tools
+    state: present
