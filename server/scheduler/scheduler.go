@@ -59,7 +59,13 @@ func (s *Schedule) runSchedule() {
 func (s *Schedule) Start(killswitch chan bool) {
 	s.cron = cron.New()
 	if s.Local {
-		s.cron.AddFunc(s.Schedule, s.runLocally)
+    s.cron.AddFunc(s.Schedule, s.runLocally)
+		if s.WittyPi {
+      entries := s.cron.Entries()
+      next := entries[0].Next
+      logger.Debug("the next time witty pi will turn on the machine: ", fmt.Sprintf("%+v", next))
+      witty.StartAt(next)
+    }
 	  s.runLocally() // TODO: Remove me when we run in complete production - this just triggers the run immediately for convenience.gw
 	} else {
 		s.cron.AddFunc(s.Schedule, s.runSchedule)
