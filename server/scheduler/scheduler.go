@@ -62,6 +62,7 @@ func (s *Schedule) Start(killswitch chan bool) {
     s.cron.AddFunc(s.Schedule, s.runLocally)
 		if s.WittyPi {
       entries := s.cron.Entries()
+      logger.Debug("Cron Entries: ", fmt.Sprintf("%+v", entries))
       next := entries[0].Next
       logger.Debug("the next time witty pi will turn on the machine: ", fmt.Sprintf("%+v", next))
       witty.StartAt(next)
