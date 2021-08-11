@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/queensaver/packages/buffer v0.0.0-20210509184847-d38bdf51b92b
-	github.com/queensaver/packages/config v0.0.0-20210726075951-6954ec22ff3f
+	github.com/queensaver/packages/config v0.0.0-20210811104314-ea61975ded70
 	github.com/queensaver/packages/logger v0.0.0-20210503095333-20340d0e3fd2
 	github.com/queensaver/packages/scale v0.0.0-20210613181441-8b40e1944e05
 	github.com/queensaver/packages/temperature v0.0.0-20210503095333-20340d0e3fd2
