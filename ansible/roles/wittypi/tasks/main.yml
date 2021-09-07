@@ -4,6 +4,16 @@
     state: directory
     owner: root
 
+- name: Copy Witty init files
+  copy:
+    src: '{{item}}'
+    dest: '/etc/init.d'
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - wittypi
+
 - name: Copy Witty files
   copy:
     src: '{{item}}'
