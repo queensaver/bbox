@@ -14,15 +14,31 @@
   loop:
     - syncTime.sh
     - utilities.sh
+    - daemon.sh
 
-
-- name: install i2c-tools
+- name: install i2c-tools and wiringpi
   apt:
     name:
     - i2c-tools
+    - wiringpi
     state: present
 
+- name: enable the witty daemon
+  sysvinit:
+    name: wittypi
+    enabled: yes
+
+- name: enable core frequency
+  lineinfile:
+    path: /boot/config.txt
+    line: core_freq=250
+
 - name: enable i2c kernel feature
+  lineinfile:
+    path: /boot/config.txt
+    line: dtparam=i2c1=on
+
+- name: enable i2c kernel arm feature
   lineinfile:
     path: /boot/config.txt
     line: dtparam=i2c_arm=on
@@ -30,4 +46,9 @@
 - name: enable i2c module
   lineinfile:
     path: /etc/modules-load.d/modules.conf
-    line: i2c_dev
+    line: i2c-bcm2708
+
+- name: enable i2c-dev module
+  lineinfile:
+    path: /etc/modules-load.d/modules.conf
+    line: i2c-dev
