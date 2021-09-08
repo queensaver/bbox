@@ -43,6 +43,11 @@
     path: /boot/config.txt
     line: core_freq=250
 
+- name: enable miniuart
+  lineinfile:
+    path: /boot/config.txt
+    line: dtoverlay=pi3-miniuart-bt
+
 - name: enable i2c kernel feature
   lineinfile:
     path: /boot/config.txt
