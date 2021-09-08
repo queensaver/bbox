@@ -125,9 +125,6 @@ while [ $counter -lt 5 ]; do  # increase this value if it needs more time
   sleep 1
 done
 
-# run afterStartup.sh in background
-"$cur_dir/afterStartup.sh" &
-
 # wait for GPIO-4 (BCM naming) falling, or alarm B (shutdown)
 log 'Pending for incoming shutdown command...'
 alarm_shutdown=0
