@@ -38,25 +38,14 @@
     name: wittypi
     enabled: yes
 
-- name: enable core frequency
-  lineinfile:
+- name: update config.txt
+  blockinfile:
     path: /boot/config.txt
-    line: core_freq=250
-
-- name: enable miniuart
-  lineinfile:
-    path: /boot/config.txt
-    line: dtoverlay=pi3-miniuart-bt
-
-- name: enable i2c kernel feature
-  lineinfile:
-    path: /boot/config.txt
-    line: dtparam=i2c1=on
-
-- name: enable i2c kernel arm feature
-  lineinfile:
-    path: /boot/config.txt
-    line: dtparam=i2c_arm=on
+    block: |
+      core_freq=250
+      dtoverlay=pi3-miniuart-bt
+      dtparam=i2c1=on
+      dtparam=i2c_arm=on
 
 - name: enable i2c module
   lineinfile:
