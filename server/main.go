@@ -100,7 +100,7 @@ func main() {
 			WittyPi: witty,
 			Token:   token}
 
-		bBuffer.SetSchedule(schedule)
+		bBuffer.SetSchedule(&schedule)
 		if witty {
 			bBuffer.SetShutdownDesired(true)
 		}
