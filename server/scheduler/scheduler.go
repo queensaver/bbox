@@ -3,6 +3,7 @@ package scheduler
 import (
 	"fmt"
 	"os/exec"
+	"sync"
 	"time"
 
 	"github.com/queensaver/bbox/server/relay"
@@ -12,17 +13,38 @@ import (
 )
 
 type Schedule struct {
-	Schedule    string
-	RelayModule relay.RelayModule
-	Token       string
-	Local       bool
-  WittyPi     bool
-	cron        *cron.Cron
+	Schedule     string
+	RelayModule  relay.RelayModule
+	Token        string
+	Local        bool
+	WittyPi      bool
+	cron         *cron.Cron
+	localRunLock bool // Set to true when the scheduler is running locally and waitig for results from bhive code.
+	mu           sync.Mutex
+}
+
+func (s *Schedule) LocalRunBusy() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.localRunLock
+}
+
+func (s *Schedule) UnSetLocalRunLock() {
+	s.mu.Lock()
+	s.localRunLock = false
+	s.mu.Unlock()
+}
+
+func (s *Schedule) SetLocalRunLock() {
+	s.mu.Lock()
+	s.localRunLock = true
+	s.mu.Unlock()
 }
 
 // This function could have some more paramters like the
 func (s *Schedule) runLocally() {
-  logger.Debug("none", "starting bhive client locally")
+	logger.Debug("none", "starting bhive client locally")
+	s.SetLocalRunLock()
 	cmd := exec.Command("/usr/bin/systemctl", "restart", "bhive.service")
 	err := cmd.Run()
 	if err != nil {
@@ -56,23 +78,35 @@ func (s *Schedule) runSchedule() {
 	logger.Debug("none", "runSchedule done")
 }
 
+// Returns true if a shutdown is useful, false if it doesn't make sense (that might be because the next scheduled startup is already in the next 120 seconds)
+func (s *Schedule) Shutdown() bool {
+	entries := s.cron.Entries()
+	next := entries[0].Next
+	logger.Debug("the next time witty pi will turn on the machine: ", fmt.Sprintf("%+v", next))
+	if time.Duration(time.Now().Sub(next).Seconds()) < 120*time.Second {
+		fmt.Println("not shutting down the raspberry, next startup time is in under 120 seconds.")
+		return false
+	}
+	witty.StartAt(next)
+	cmd := exec.Command("shutdown -h now")
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return true
+}
+
 func (s *Schedule) Start(killswitch chan bool) {
 	s.cron = cron.New()
 	if s.Local {
-    s.cron.AddFunc(s.Schedule, s.runLocally)
-	  s.cron.Start()
-		if s.WittyPi {
-      entries := s.cron.Entries()
-      logger.Debug("Cron Entries: ", fmt.Sprintf("%+v", entries))
-      next := entries[0].Next
-      logger.Debug("the next time witty pi will turn on the machine: ", fmt.Sprintf("%+v", next))
-      witty.StartAt(next)
-    }
-	  s.runLocally() // TODO: Remove me when we run in complete production - this just triggers the run immediately for convenience.gw
+		s.cron.AddFunc(s.Schedule, s.runLocally)
+		s.cron.Start()
+		s.runLocally() // TODO: Remove me when we run in complete production - this just triggers the run immediately for convenience.gw
 	} else {
 		s.cron.AddFunc(s.Schedule, s.runSchedule)
-	  s.cron.Start()
-	  s.runSchedule() // TODO: Remove me when we run in complete production - this just triggers the run immediately for convenience.gw
+		s.cron.Start()
+		s.runSchedule() // TODO: Remove me when we run in complete production - this just triggers the run immediately for convenience.gw
 	}
 	<-killswitch
 	s.cron.Stop()

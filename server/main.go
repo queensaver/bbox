@@ -94,10 +94,17 @@ func main() {
 	var schedule scheduler.Schedule
 	// check if the bhive is a local instance, if so, skip the relay initialisation.
 	if len(bConfig.Bhive) == 1 && bConfig.Bhive[0].Local == true {
+		witty := bConfig.Bhive[0].WittyPi
 		schedule = scheduler.Schedule{Schedule: bConfig.Schedule,
 			Local:   true,
-			WittyPi: bConfig.Bhive[0].WittyPi,
+			WittyPi: witty,
 			Token:   token}
+
+		bBuffer.SetSchedule(schedule)
+		if witty {
+			bBuffer.SetShutdownDesired(true)
+		}
+		go bBuffer.FlushSchedule(apiServerAddr, token, *flushInterval)
 	} else {
 		var relaySwitches []relay.Switcher
 		for _, bhive := range bConfig.Bhive {
@@ -110,11 +117,10 @@ func main() {
 		}
 
 		schedule = scheduler.Schedule{Schedule: bConfig.Schedule, RelayModule: myRelay, Token: token}
+		go bBuffer.FlushSchedule(apiServerAddr, token, *flushInterval)
 	}
 	c := make(chan bool)
 	go schedule.Start(c)
-
-	go bBuffer.FlushSchedule(apiServerAddr, token, *flushInterval)
 
 	log.Fatal(http.ListenAndServe(":"+*httpServerPort, nil))
 }
