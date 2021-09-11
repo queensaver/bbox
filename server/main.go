@@ -10,9 +10,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/queensaver/bbox/server/buffer"
 	"github.com/queensaver/bbox/server/relay"
 	"github.com/queensaver/bbox/server/scheduler"
-	"github.com/queensaver/packages/buffer"
 	"github.com/queensaver/packages/config"
 	"github.com/queensaver/packages/logger"
 	"github.com/queensaver/packages/scale"
