@@ -89,7 +89,7 @@ func (s *Schedule) Shutdown() bool {
 		return false
 	}
 	witty.StartAt(next)
-	cmd := exec.Command("/usr/sbin/shutdown -h now")
+	cmd := exec.Command("/usr/sbin/shutdown", "-h", "now")
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
