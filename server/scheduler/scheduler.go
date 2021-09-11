@@ -2,6 +2,7 @@ package scheduler
 
 import (
 	"fmt"
+	"math"
 	"os/exec"
 	"sync"
 	"time"
@@ -83,12 +84,12 @@ func (s *Schedule) Shutdown() bool {
 	entries := s.cron.Entries()
 	next := entries[0].Next
 	logger.Debug("the next time witty pi will turn on the machine: ", fmt.Sprintf("%+v", next))
-	if time.Duration(time.Now().Sub(next).Seconds()) < 120*time.Second {
+	if math.Abs(time.Until(next).Seconds()) < 120 {
 		fmt.Println("not shutting down the raspberry, next startup time is in under 120 seconds.")
 		return false
 	}
 	witty.StartAt(next)
-	cmd := exec.Command("shutdown -h now")
+	cmd := exec.Command("/usr/sbin/shutdown -h now")
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
