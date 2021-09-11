@@ -37,6 +37,11 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 		logger.Error(req.RemoteAddr, err)
 		return
 	}
+	if t.Error != "" {
+		log.Printf("Temperature measurement error received from BHive %s: %s", t.BHiveID, t.Error)
+		// TODO: Saving the erorr is not implemetend on the cloud side, hence we just log the error and null it here.
+		t.Error = ""
+	}
 	t.Timestamp = int64(time.Now().Unix())
 	bBuffer.AppendTemperature(t)
 	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received temperature from bHive %s", t.BHiveID))
@@ -47,9 +52,15 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	var s scale.Scale
 	err := decoder.Decode(&s)
 	if err != nil {
-		//logger.Info(err)
+		log.Println(err)
 		return
 	}
+	if s.Error != "" {
+		log.Printf("Scale measurement error received from BHive %s: %s", s.BhiveId, s.Error)
+		// TODO: Saving the erorr is not implemetend on the cloud side, hence we just log the error and null it here.
+		s.Error = ""
+	}
+
 	s.Epoch = int64(time.Now().Unix())
 	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received weight from bHive %s", s.BhiveId))
 	bBuffer.AppendScale(s)
