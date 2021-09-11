@@ -24,7 +24,7 @@ var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
 var httpServerHiveFile = flag.String("http_server_bhive_file", "/home/pi/bOS/bhive", "HTTP server directory to serve bHive file")
 var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
 var tokenFile = flag.String("token_file", fmt.Sprintf("%s/.queensaver_token",
-	os.Getenv("HOME")), "HTTP server port")
+	os.Getenv("HOME")), "Path to the file containing the token")
 
 var bBuffer buffer.Buffer
 var bConfig *config.Config
