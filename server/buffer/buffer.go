@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -23,6 +26,7 @@ type Buffer struct {
 	temperatureFlushed bool // Set to true if the temperature has been flushed (only useful with shutdownDesired == true)
 	scaleFlushed       bool // Set to true if the scale has been flushed (only useful with shutdowDesired  == true)
 	schedule           *scheduler.Schedule
+	lock               sync.Mutex
 }
 
 type BufferError struct {
@@ -44,15 +48,49 @@ type HttpPostClient struct {
 
 type DiskBuffer interface {
 	Flush(string, string) error
-	/*
-	  TODO: Implement.
-	  bufferToDisk(string) error
-	  readFromDisk(string) error
-	  deleteFromDisk(string) error
-	*/
+	Save(string, interface{}) error
+	Load(string, interface{}) error
+	Delete(string) error
 }
 
 var mu sync.Mutex
+
+func (b *Buffer) Save(path string, v interface{}) error {
+	b.lock.Lock()
+	defer b.lock.Unlock()
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	r, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(f, bytes.NewReader(r))
+	return err
+}
+
+func (b *Buffer) Load(path string, v interface{}) error {
+	b.lock.Lock()
+	defer b.lock.Unlock()
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	d, err := ioutil.ReadAll(f)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(d, v)
+}
+
+func (b *Buffer) Delete(path string) error {
+	b.lock.Lock()
+	defer b.lock.Unlock()
+	return os.Remove(path)
+}
 
 func (h HttpPostClient) PostData(request string, data interface{}) error {
 	j, err := json.Marshal(data)
@@ -154,7 +192,7 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	}
 	if b.shutdownDesired && b.temperatureFlushed && b.scaleFlushed {
 		res := b.schedule.Shutdown()
-		if res == false {
+		if !res {
 			b.scaleFlushed = false
 			b.temperatureFlushed = false
 		}
