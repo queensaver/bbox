@@ -56,3 +56,6 @@
   lineinfile:
     path: /etc/modules-load.d/modules.conf
     line: i2c-dev
+
+# Something in here doesn't work - the one thing that does work is installing the install-script: 
+# curl http://www.uugear.com/repo/WittyPi3/install.sh | bash

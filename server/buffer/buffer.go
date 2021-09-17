@@ -9,10 +9,12 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/queensaver/bbox/server/scheduler"
 	"github.com/queensaver/packages/logger"
 	"github.com/queensaver/packages/scale"
@@ -27,6 +29,7 @@ type Buffer struct {
 	scaleFlushed       bool // Set to true if the scale has been flushed (only useful with shutdowDesired  == true)
 	schedule           *scheduler.Schedule
 	lock               sync.Mutex
+	path               string //Path on disk to buffer the data if we can't push it out to the cloud.
 }
 
 type BufferError struct {
@@ -51,6 +54,7 @@ type DiskBuffer interface {
 	Save(string, interface{}) error
 	Load(string, interface{}) error
 	Delete(string) error
+	LoadTemperatures(string) ([]temperature.Temperature, error)
 }
 
 var mu sync.Mutex
@@ -90,6 +94,34 @@ func (b *Buffer) Delete(path string) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 	return os.Remove(path)
+}
+
+func (b *Buffer) LoadTemperatures(path string) ([]temperature.Temperature, erorr) {
+	var r []temperature.Temperature
+	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
+		if filepath.Ext(path) != ".json" {
+			return nil
+		}
+		if info.IsDir() {
+			return nil
+		}
+		t := temperature.Temperature
+		err := b.Load(p, t)
+		if err != nil {
+			logger.Error("could not load temperature",
+				"filename", p,
+				"error", err,
+			)
+			r = append(r, t)
+		}
+	})
+	if err != nil {
+		logger.Error("could not load temperatures from disk",
+			"path", path,
+			"error", err,
+		)
+	}
+	return r, nil
 }
 
 func (h HttpPostClient) PostData(request string, data interface{}) error {
@@ -154,7 +186,11 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	mu.Lock()
 	defer mu.Unlock()
 	logger.Debug(ip, "Flushing")
-	var temperatures = make([]temperature.Temperature, len(b.temperatures))
+	temperaturesOnDisk, err := b.LoadTemperatures(b.Path)
+	if err != nil {
+		logger.Error("Could not load data from disk", "error", err)
+	}
+	var temperatures = make([]temperature.Temperature, len(b.temperatures)+len(temperaturesOnDisk))
 	for i, t := range b.temperatures {
 		temperatures[i] = t
 	}

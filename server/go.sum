@@ -18,8 +18,12 @@ github.com/queensaver/packages/scale v0.0.0-20210811104314-ea61975ded70 h1:ca101
 github.com/queensaver/packages/scale v0.0.0-20210811104314-ea61975ded70/go.mod h1:fdE/GV62B9kodox5RlhN5dGjUiZb3H1lEKpT6Oi45QM=
 github.com/queensaver/packages/scale v0.0.0-20210911194541-4f46c9b28536 h1:bsTny5W5o1QPsIzzsjUg5HmeaAMHuShpHa/Sv9r8wUk=
 github.com/queensaver/packages/scale v0.0.0-20210911194541-4f46c9b28536/go.mod h1:fdE/GV62B9kodox5RlhN5dGjUiZb3H1lEKpT6Oi45QM=
+github.com/queensaver/packages/scale v0.0.0-20210915195243-f3f9f6284932 h1:xL7/HGFUvw48OFTlIC3btQrM0d78+Vq6Q+fRhUON0TQ=
+github.com/queensaver/packages/scale v0.0.0-20210915195243-f3f9f6284932/go.mod h1:fdE/GV62B9kodox5RlhN5dGjUiZb3H1lEKpT6Oi45QM=
 github.com/queensaver/packages/temperature v0.0.0-20210911194541-4f46c9b28536 h1:IDtmtolWpn25aGoznZ02EaS6W2jIOHb3ChxFg6akPVM=
 github.com/queensaver/packages/temperature v0.0.0-20210911194541-4f46c9b28536/go.mod h1:MP5i3NL9Qn3RRITZvbtnfxr4fz2MV7/6JxDv03QsROM=
+github.com/queensaver/packages/temperature v0.0.0-20210916132612-288150d2df97 h1:bCUKjtqjJ08nY3Pmz9qHEBp1Szdf9vlfPvOj3e12M28=
+github.com/queensaver/packages/temperature v0.0.0-20210916132612-288150d2df97/go.mod h1:MP5i3NL9Qn3RRITZvbtnfxr4fz2MV7/6JxDv03QsROM=
 github.com/robfig/cron/v3 v3.0.1 h1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=
 github.com/robfig/cron/v3 v3.0.1/go.mod h1:eQICP3HwyT7UooqI/z+Ov+PtYAWygg1TEWWzGIFLtro=
 github.com/sirupsen/logrus v1.7.0 h1:ShrD1U9pZB12TX0cVy0DtePoCH97K8EtX+mg7ZARUtM=
