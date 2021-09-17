@@ -2,24 +2,24 @@ package buffer
 
 import (
 	"testing"
-  "github.com/google/go-cmp/cmp"
+
+	"github.com/google/go-cmp/cmp"
 	"github.com/queensaver/packages/temperature"
 )
 
 func TestBufferAppend(t *testing.T) {
-	var bBuffer *Buffer
-	bBuffer = new(Buffer)
+	bBuffer := new(Buffer)
 	temp := temperature.Temperature{
 		Temperature: 31.0,
-		BHiveID:      "1234asdf",
+		BHiveID:     "1234asdf",
 		SensorID:    "1234asdf",
 	}
 	bBuffer.AppendTemperature(temp)
 	tempSlice := make([]temperature.Temperature, 1)
 	tempSlice[0] = temp
-  te := bBuffer.GetTemperatures()
-  if diff := cmp.Diff(tempSlice, te); diff != "" {
-    t.Errorf("Unexpected result after adding Temperature: %s", diff)
+	te := bBuffer.GetTemperatures()
+	if diff := cmp.Diff(tempSlice, te); diff != "" {
+		t.Errorf("Unexpected result after adding Temperature: %s", diff)
 	}
 }
 
@@ -33,11 +33,10 @@ func (h *HttpClientMock) PostData(string, interface{}) error {
 }
 
 func TestBufferSuccessfulFlush(t *testing.T) {
-	var bBuffer *Buffer
-	bBuffer = new(Buffer)
+	bBuffer := new(Buffer)
 	temp := temperature.Temperature{
 		Temperature: 31.0,
-		BHiveID:      "1234asdf",
+		BHiveID:     "1234asdf",
 		SensorID:    "1234asdf",
 	}
 	bBuffer.AppendTemperature(temp)
@@ -63,11 +62,10 @@ result: %v`, expected, result)
 }
 
 func TestBufferFailedFlush(t *testing.T) {
-	var bBuffer *Buffer
-	bBuffer = new(Buffer)
+	bBuffer := new(Buffer)
 	temp := temperature.Temperature{
 		Temperature: 31.0,
-		BHiveID:      "1234asdf",
+		BHiveID:     "1234asdf",
 		SensorID:    "1234asdf",
 	}
 	bBuffer.AppendTemperature(temp)
@@ -88,21 +86,20 @@ result: %v`, expected, result)
 }
 
 func TestBufferFailedFlushMultiAppend(t *testing.T) {
-	var bBuffer *Buffer
-	bBuffer = new(Buffer)
-	temp1:= temperature.Temperature{
+	bBuffer := new(Buffer)
+	temp1 := temperature.Temperature{
 		Temperature: 31.0,
-		BHiveID:      "1234asdf",
+		BHiveID:     "1234asdf",
 		SensorID:    "1234asdf",
 	}
-	temp2:= temperature.Temperature{
+	temp2 := temperature.Temperature{
 		Temperature: 32.0,
-		BHiveID:      "1234asdf",
+		BHiveID:     "1234asdf",
 		SensorID:    "1234asdf",
 	}
-	temp3:= temperature.Temperature{
+	temp3 := temperature.Temperature{
 		Temperature: 33.0,
-		BHiveID:      "1234asdf",
+		BHiveID:     "1234asdf",
 		SensorID:    "1234asdf",
 	}
 	bBuffer.AppendTemperature(temp1)
@@ -120,7 +117,7 @@ func TestBufferFailedFlushMultiAppend(t *testing.T) {
 	err = bBuffer.Flush("1.2.3.4", &c)
 	if err == nil {
 		t.Errorf("Unexpected result after flushing to fail")
-  }
+	}
 	result := bBuffer.GetTemperatures()
 	expected := make([]temperature.Temperature, 3)
 	expected[0] = temp1

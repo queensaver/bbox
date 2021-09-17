@@ -7,7 +7,7 @@ integration_test: server
 	curl -X POST -d '{"temperature": 22.24, "BHiveID": "aa:bb:cc:dd:ee:ff", "SensorID": "xyz"}' http://localhost:8123/temperature
 	kill `cat /tmp/server.pid`
 
-server: main.go
+server: main.go buffer/buffer.go
 	go build
 
 run:

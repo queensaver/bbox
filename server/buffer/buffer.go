@@ -28,7 +28,6 @@ type Buffer struct {
 	temperatureFlushed bool // Set to true if the temperature has been flushed (only useful with shutdownDesired == true)
 	scaleFlushed       bool // Set to true if the scale has been flushed (only useful with shutdowDesired  == true)
 	schedule           *scheduler.Schedule
-	lock               sync.Mutex
 	path               string //Path on disk to buffer the data if we can't push it out to the cloud.
 }
 
@@ -51,69 +50,112 @@ type HttpPostClient struct {
 
 type DiskBuffer interface {
 	Flush(string, string) error
+	LoadTemperatures(string) ([]temperature.Temperature, error)
+}
+
+type File struct {
+	path string
+	lock sync.Mutex
+}
+
+type Filer interface {
 	Save(string, interface{}) error
 	Load(string, interface{}) error
 	Delete(string) error
-	LoadTemperatures(string) ([]temperature.Temperature, error)
 }
 
 var mu sync.Mutex
 
-func (b *Buffer) Save(path string, v interface{}) error {
-	b.lock.Lock()
-	defer b.lock.Unlock()
-	f, err := os.Create(path)
+func (f *File) Save(v interface{}) error {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+	fh, err := os.Create(f.path)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer fh.Close()
 	r, err := json.Marshal(v)
 	if err != nil {
 		return err
 	}
-	_, err = io.Copy(f, bytes.NewReader(r))
+	_, err = io.Copy(fh, bytes.NewReader(r))
 	return err
 }
 
-func (b *Buffer) Load(path string, v interface{}) error {
-	b.lock.Lock()
-	defer b.lock.Unlock()
-	f, err := os.Open(path)
+func (f *File) Load(v interface{}) error {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+	fh, err := os.Open(f.path)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	d, err := ioutil.ReadAll(f)
+	defer fh.Close()
+	d, err := ioutil.ReadAll(fh)
 	if err != nil {
 		return err
 	}
 	return json.Unmarshal(d, v)
 }
 
-func (b *Buffer) Delete(path string) error {
-	b.lock.Lock()
-	defer b.lock.Unlock()
-	return os.Remove(path)
+func (f *File) Delete() error {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+	return os.Remove(f.path)
 }
 
-func (b *Buffer) LoadTemperatures(path string) ([]temperature.Temperature, erorr) {
+func (b *Buffer) DeleteTemperatures(path string, temps []temperature.Temperature) {
+	for _, t := range temps {
+		f := File{path: filepath.Join(path, t.UUID+".json")}
+		f.Delete()
+	}
+}
+
+func (b *Buffer) SaveTemperatures(path string, temps []temperature.Temperature) error {
+	for _, t := range temps {
+		if t.UUID == "" {
+			uuid := uuid.New()
+			t.UUID = uuid.String()
+		}
+		f := File{path: filepath.Join(path, t.UUID+".json")}
+		f.Save(t)
+	}
+	return nil
+}
+
+func (b *Buffer) remountro() error {
+	// os.exec("sudo mount -o remount,ro /")
+	return nil
+}
+
+func (b *Buffer) remountrw() error {
+	// os.exec("sudo mount -o remount,rw /")
+	return nil
+}
+
+func (b *Buffer) LoadTemperatures(path string) ([]temperature.Temperature, error) {
 	var r []temperature.Temperature
 	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if filepath.Ext(path) != ".json" {
 			return nil
 		}
 		if info.IsDir() {
 			return nil
 		}
-		t := temperature.Temperature
-		err := b.Load(p, t)
+		t := temperature.Temperature{}
+		f := File{path: p}
+		err = f.Load(t)
 		if err != nil {
-			logger.Error("could not load temperature",
-				"filename", p,
+			r = append(r, t)
+			logger.Error("could not load temperature file from disk",
+				"path", p,
 				"error", err,
 			)
-			r = append(r, t)
+			return err
 		}
+		return nil
 	})
 	if err != nil {
 		logger.Error("could not load temperatures from disk",
@@ -186,7 +228,7 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	mu.Lock()
 	defer mu.Unlock()
 	logger.Debug(ip, "Flushing")
-	temperaturesOnDisk, err := b.LoadTemperatures(b.Path)
+	temperaturesOnDisk, err := b.LoadTemperatures(b.path)
 	if err != nil {
 		logger.Error("Could not load data from disk", "error", err)
 	}
