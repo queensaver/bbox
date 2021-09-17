@@ -106,30 +106,32 @@ func (f *File) Delete() error {
 func (b *Buffer) DeleteTemperatures(path string, temps []temperature.Temperature) {
 	for _, t := range temps {
 		f := File{path: filepath.Join(path, t.UUID+".json")}
-		f.Delete()
+		err := f.Delete()
+		if err != nil {
+			logger.Error("Delete error",
+				"filename", f.path,
+				"error", err,
+			)
+		}
 	}
 }
 
-func (b *Buffer) SaveTemperatures(path string, temps []temperature.Temperature) error {
+// SaveTemperatures reuturns the temperatures that have NOT been saved to disk to keep them in memory
+func (b *Buffer) SaveTemperatures(path string, temps []temperature.Temperature) []temperature.Temperature {
+	var unsavedTemperatures []temperature.Temperature
 	for _, t := range temps {
 		if t.UUID == "" {
 			uuid := uuid.New()
 			t.UUID = uuid.String()
 		}
 		f := File{path: filepath.Join(path, t.UUID+".json")}
-		f.Save(t)
+		err := f.Save(t)
+		if err != nil {
+			logger.Error("could not save temperature.", "error", err)
+			unsavedTemperatures = append(unsavedTemperatures, t)
+		}
 	}
-	return nil
-}
-
-func (b *Buffer) remountro() error {
-	// os.exec("sudo mount -o remount,ro /")
-	return nil
-}
-
-func (b *Buffer) remountrw() error {
-	// os.exec("sudo mount -o remount,rw /")
-	return nil
+	return unsavedTemperatures
 }
 
 func (b *Buffer) LoadTemperatures(path string) ([]temperature.Temperature, error) {
@@ -166,6 +168,14 @@ func (b *Buffer) LoadTemperatures(path string) ([]temperature.Temperature, error
 	return r, nil
 }
 
+func (b *Buffer) remountro() {
+	// os.exec("sudo mount -o remount,ro /")
+}
+
+func (b *Buffer) remountrw() error {
+	// os.exec("sudo mount -o remount,rw /")
+	return nil
+}
 func (h HttpPostClient) PostData(request string, data interface{}) error {
 	j, err := json.Marshal(data)
 	if err != nil {
@@ -232,8 +242,10 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	if err != nil {
 		logger.Error("Could not load data from disk", "error", err)
 	}
+	// copy the temperatures from the buffer
 	var temperatures = make([]temperature.Temperature, len(b.temperatures)+len(temperaturesOnDisk))
-	for i, t := range b.temperatures {
+	var postedTemperatures []temperature.Temperature
+	for i, t := range append(b.temperatures, temperaturesOnDisk...) {
 		temperatures[i] = t
 	}
 	// empty the slice.
@@ -244,11 +256,22 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 		if err != nil {
 			last_err = err
 			b.temperatures = append(b.temperatures, t)
+		} else {
+			// If there UUID is not empty this means that the temperature was loaded from disk, hence we have to delete it later in a batch when we remount the disk writeable.
+			if t.UUID != "" {
+				postedTemperatures = append(postedTemperatures, t)
+			}
 		}
 		if b.shutdownDesired {
 			b.temperatureFlushed = true
 		}
 	}
+	err = b.remountrw()
+	if err == nil {
+		b.temperatures = b.SaveTemperatures(filepath.Join(b.path, "temperatures"), b.temperatures)
+		b.DeleteTemperatures(b.path, postedTemperatures)
+	}
+	b.remountro()
 
 	// Repeat the same thing as above with scale.
 	// While we could write a function to DRY I think it's OK if I copy this.
