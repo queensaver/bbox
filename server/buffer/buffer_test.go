@@ -32,6 +32,23 @@ func (h *HttpClientMock) PostData(string, interface{}) error {
 	return h.Error
 }
 
+type FakeFile struct {
+	path string
+}
+
+func (f *FakeFile) Save(v interface{}) error {
+	return nil
+}
+
+func (f *FakeFile) Load(v interface{}) error {
+	// test if file is of a certain type and then populate with random data
+	return nil
+}
+
+func (f *FakeFile) Delete() error {
+	return nil
+}
+
 func TestBufferSuccessfulFlush(t *testing.T) {
 	bBuffer := new(Buffer)
 	temp := temperature.Temperature{

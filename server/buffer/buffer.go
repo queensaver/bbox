@@ -51,6 +51,9 @@ type HttpPostClient struct {
 type DiskBuffer interface {
 	Flush(string, string) error
 	LoadTemperatures(string) ([]temperature.Temperature, error)
+	SaveTemperatures(string, []temperature.Temperature) []temperature.Temperature
+	DeleteTemperatures(string, []temperature.Temperature)
+	NewFiler(string) *Filer
 }
 
 type File struct {
@@ -59,9 +62,10 @@ type File struct {
 }
 
 type Filer interface {
-	Save(string, interface{}) error
-	Load(string, interface{}) error
-	Delete(string) error
+	Save(interface{}) error
+	Load(interface{}) error
+	Delete() error
+	Path() string
 }
 
 var mu sync.Mutex
@@ -97,19 +101,27 @@ func (f *File) Load(v interface{}) error {
 	return json.Unmarshal(d, v)
 }
 
+func (f *File) Path() string {
+	return f.path
+}
+
 func (f *File) Delete() error {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	return os.Remove(f.path)
 }
 
+func (b *Buffer) NewFiler(p string) Filer {
+	return &File{path: p}
+}
+
 func (b *Buffer) DeleteTemperatures(path string, temps []temperature.Temperature) {
 	for _, t := range temps {
-		f := File{path: filepath.Join(path, t.UUID+".json")}
+		f := b.NewFiler(filepath.Join(path, t.UUID+".json"))
 		err := f.Delete()
 		if err != nil {
 			logger.Error("Delete error",
-				"filename", f.path,
+				"filename", f.Path(),
 				"error", err,
 			)
 		}
@@ -124,7 +136,7 @@ func (b *Buffer) SaveTemperatures(path string, temps []temperature.Temperature) 
 			uuid := uuid.New()
 			t.UUID = uuid.String()
 		}
-		f := File{path: filepath.Join(path, t.UUID+".json")}
+		f := b.NewFiler(filepath.Join(path, t.UUID+".json"))
 		err := f.Save(t)
 		if err != nil {
 			logger.Error("could not save temperature.", "error", err)
@@ -147,7 +159,7 @@ func (b *Buffer) LoadTemperatures(path string) ([]temperature.Temperature, error
 			return nil
 		}
 		t := temperature.Temperature{}
-		f := File{path: p}
+		f := b.NewFiler(p)
 		err = f.Load(t)
 		if err != nil {
 			r = append(r, t)
