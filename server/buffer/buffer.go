@@ -21,6 +21,10 @@ import (
 	"github.com/queensaver/packages/temperature"
 )
 
+var newFiler = func(p string) Filer {
+	return &File{path: p}
+}
+
 type Buffer struct {
 	temperatures       []temperature.Temperature
 	scales             []scale.Scale
@@ -53,7 +57,7 @@ type DiskBuffer interface {
 	LoadTemperatures(string) ([]temperature.Temperature, error)
 	SaveTemperatures(string, []temperature.Temperature) []temperature.Temperature
 	DeleteTemperatures(string, []temperature.Temperature)
-	NewFiler(string) *Filer
+	NewFiler(string) Filer
 }
 
 type File struct {
@@ -112,7 +116,7 @@ func (f *File) Delete() error {
 }
 
 func (b *Buffer) NewFiler(p string) Filer {
-	return &File{path: p}
+	return newFiler(p) 
 }
 
 func (b *Buffer) DeleteTemperatures(path string, temps []temperature.Temperature) {

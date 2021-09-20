@@ -8,6 +8,10 @@ import (
 )
 
 func TestBufferAppend(t *testing.T) {
+	filer := newFiler
+	defer func() { newFiler = filer }()
+	newFiler = func(p string) Filer { return &FakeFile{p} }
+
 	bBuffer := new(Buffer)
 	temp := temperature.Temperature{
 		Temperature: 31.0,
@@ -49,7 +53,15 @@ func (f *FakeFile) Delete() error {
 	return nil
 }
 
+func (f *FakeFile) Path() string {
+	return f.path
+}
+
 func TestBufferSuccessfulFlush(t *testing.T) {
+	filer := newFiler
+	defer func() { newFiler = filer }()
+	newFiler = func(p string) Filer { return &FakeFile{p} }
+
 	bBuffer := new(Buffer)
 	temp := temperature.Temperature{
 		Temperature: 31.0,
@@ -79,6 +91,10 @@ result: %v`, expected, result)
 }
 
 func TestBufferFailedFlush(t *testing.T) {
+	filer := newFiler
+	defer func() { newFiler = filer }()
+	newFiler = func(p string) Filer { return &FakeFile{p} }
+
 	bBuffer := new(Buffer)
 	temp := temperature.Temperature{
 		Temperature: 31.0,
@@ -103,6 +119,10 @@ result: %v`, expected, result)
 }
 
 func TestBufferFailedFlushMultiAppend(t *testing.T) {
+	filer := newFiler
+	defer func() { newFiler = filer }()
+	newFiler = func(p string) Filer { return &FakeFile{p} }
+
 	bBuffer := new(Buffer)
 	temp1 := temperature.Temperature{
 		Temperature: 31.0,

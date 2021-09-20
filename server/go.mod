@@ -5,7 +5,6 @@ go 1.15
 require (
 	github.com/google/go-cmp v0.5.4
 	github.com/google/uuid v1.3.0
-	github.com/kr/pretty v0.1.0 // indirect
 	github.com/queensaver/packages/config v0.0.0-20210811104314-ea61975ded70
 	github.com/queensaver/packages/logger v0.0.0-20210916132612-288150d2df97
 	github.com/queensaver/packages/scale v0.0.0-20210915195243-f3f9f6284932
