@@ -7,26 +7,6 @@ import (
 	"github.com/queensaver/packages/temperature"
 )
 
-func TestBufferAppend(t *testing.T) {
-	filer := newFiler
-	defer func() { newFiler = filer }()
-	newFiler = func(p string) Filer { return &FakeFile{p} }
-
-	bBuffer := new(Buffer)
-	temp := temperature.Temperature{
-		Temperature: 31.0,
-		BHiveID:     "1234asdf",
-		SensorID:    "1234asdf",
-	}
-	bBuffer.AppendTemperature(temp)
-	tempSlice := make([]temperature.Temperature, 1)
-	tempSlice[0] = temp
-	te := bBuffer.GetTemperatures()
-	if diff := cmp.Diff(tempSlice, te); diff != "" {
-		t.Errorf("Unexpected result after adding Temperature: %s", diff)
-	}
-}
-
 type HttpClientMock struct {
 	Status string
 	Error  error
@@ -34,6 +14,24 @@ type HttpClientMock struct {
 
 func (h *HttpClientMock) PostData(string, interface{}) error {
 	return h.Error
+}
+
+type FakeFileOperator struct {
+}
+
+func (f *FakeFileOperator) LoadTemperatures(string) ([]temperature.Temperature, error) {
+	return []temperature.Temperature{}, nil
+}
+
+func (f *FakeFileOperator) SaveTemperatures(string, []temperature.Temperature) []temperature.Temperature {
+	return []temperature.Temperature{}
+}
+
+func (f *FakeFileOperator) DeleteTemperatures(string, []temperature.Temperature) {
+}
+
+func (f *FakeFileOperator) NewFiler(p string) Filer {
+	return &FakeFile{p}
 }
 
 type FakeFile struct {
@@ -57,12 +55,29 @@ func (f *FakeFile) Path() string {
 	return f.path
 }
 
-func TestBufferSuccessfulFlush(t *testing.T) {
-	filer := newFiler
-	defer func() { newFiler = filer }()
-	newFiler = func(p string) Filer { return &FakeFile{p} }
+func TestBufferAppend(t *testing.T) {
+	bBuffer := Buffer{
+		FileOperator: &FakeFileOperator{},
+	}
+	temp := temperature.Temperature{
+		Temperature: 31.0,
+		BHiveID:     "1234asdf",
+		SensorID:    "1234asdf",
+	}
+	bBuffer.AppendTemperature(temp)
+	tempSlice := make([]temperature.Temperature, 1)
+	tempSlice[0] = temp
+	te := bBuffer.GetTemperatures()
+	if diff := cmp.Diff(tempSlice, te); diff != "" {
+		t.Errorf("Unexpected result after adding Temperature: %s", diff)
+	}
+}
 
-	bBuffer := new(Buffer)
+func TestBufferSuccessfulFlush(t *testing.T) {
+	bBuffer := Buffer{
+		FileOperator: &FakeFileOperator{},
+		path:         "temperatures",
+	}
 	temp := temperature.Temperature{
 		Temperature: 31.0,
 		BHiveID:     "1234asdf",
@@ -81,21 +96,16 @@ func TestBufferSuccessfulFlush(t *testing.T) {
 		t.Errorf("Unexpected result after flushing to success")
 	}
 	result = bBuffer.GetTemperatures()
-	expected = make([]temperature.Temperature, 0)
-	if !cmp.Equal(expected, result) {
-		t.Errorf(`Unexpected result after successful Flush():
-expected: %v
-vs
-result: %v`, expected, result)
+	if len(result) > 0 {
+		t.Errorf(`Unexpected result after successful Flush():%v`, result)
 	}
 }
 
 func TestBufferFailedFlush(t *testing.T) {
-	filer := newFiler
-	defer func() { newFiler = filer }()
-	newFiler = func(p string) Filer { return &FakeFile{p} }
-
-	bBuffer := new(Buffer)
+	bBuffer := Buffer{
+		FileOperator: &FakeFileOperator{},
+		path:         "temperatures",
+	}
 	temp := temperature.Temperature{
 		Temperature: 31.0,
 		BHiveID:     "1234asdf",

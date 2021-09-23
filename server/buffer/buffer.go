@@ -33,6 +33,8 @@ type Buffer struct {
 	scaleFlushed       bool // Set to true if the scale has been flushed (only useful with shutdowDesired  == true)
 	schedule           *scheduler.Schedule
 	path               string //Path on disk to buffer the data if we can't push it out to the cloud.
+	FileOperator
+	DiskFlusher
 }
 
 type BufferError struct {
@@ -52,8 +54,12 @@ type HttpPostClient struct {
 	Token     string
 }
 
-type DiskBuffer interface {
-	Flush(string, string) error
+type DiskFlusher interface {
+	Flush(string, HttpClientPoster) error
+	AppendTemperature(temperature.Temperature)
+	GetTemperatures() []temperature.Temperature
+}
+type FileOperator interface {
 	LoadTemperatures(string) ([]temperature.Temperature, error)
 	SaveTemperatures(string, []temperature.Temperature) []temperature.Temperature
 	DeleteTemperatures(string, []temperature.Temperature)
@@ -116,7 +122,9 @@ func (f *File) Delete() error {
 }
 
 func (b *Buffer) NewFiler(p string) Filer {
-	return newFiler(p) 
+	// return newFiler(p)
+	return &File{path: p}
+
 }
 
 func (b *Buffer) DeleteTemperatures(path string, temps []temperature.Temperature) {
@@ -254,7 +262,7 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	mu.Lock()
 	defer mu.Unlock()
 	logger.Debug(ip, "Flushing")
-	temperaturesOnDisk, err := b.LoadTemperatures(b.path)
+	temperaturesOnDisk, err := b.FileOperator.LoadTemperatures(b.path)
 	if err != nil {
 		logger.Error("Could not load data from disk", "error", err)
 	}
@@ -284,8 +292,8 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	}
 	err = b.remountrw()
 	if err == nil {
-		b.temperatures = b.SaveTemperatures(filepath.Join(b.path, "temperatures"), b.temperatures)
-		b.DeleteTemperatures(b.path, postedTemperatures)
+		b.temperatures = b.FileOperator.SaveTemperatures(filepath.Join(b.path, "temperatures"), b.temperatures)
+		b.FileOperator.DeleteTemperatures(b.path, postedTemperatures)
 	}
 	b.remountro()
 
