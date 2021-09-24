@@ -291,7 +291,7 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 		}
 	}
 	err = b.remountrw()
-	if err == nil {
+	if err == nil && (len(b.temperatures) > 0 || (len(postedTemperatures)) > 0) {
 		b.temperatures = b.FileOperator.SaveTemperatures(filepath.Join(b.path, "temperatures"), b.temperatures)
 		b.FileOperator.DeleteTemperatures(b.path, postedTemperatures)
 	}

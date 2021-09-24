@@ -17,13 +17,15 @@ func (h *HttpClientMock) PostData(string, interface{}) error {
 }
 
 type FakeFileOperator struct {
+	temperatures []temperature.Temperature
 }
 
 func (f *FakeFileOperator) LoadTemperatures(string) ([]temperature.Temperature, error) {
-	return []temperature.Temperature{}, nil
+	return f.temperatures, nil
 }
 
-func (f *FakeFileOperator) SaveTemperatures(string, []temperature.Temperature) []temperature.Temperature {
+func (f *FakeFileOperator) SaveTemperatures(p string, t []temperature.Temperature) []temperature.Temperature {
+	f.temperatures = t
 	return []temperature.Temperature{}
 }
 
@@ -88,7 +90,7 @@ func TestBufferSuccessfulFlush(t *testing.T) {
 	expected[0] = temp
 	result := bBuffer.GetTemperatures()
 	if !cmp.Equal(expected, result) {
-		t.Errorf("Unexpected result after adding Temperature; expected: \n%v\nvs\n%v", result, expected)
+		t.Errorf("Unexpected result after adding Temperature; %v", cmp.Diff(result, expected))
 	}
 	c := HttpClientMock{"200", nil}
 	err := bBuffer.Flush("1.2.3.4", &c)
@@ -117,14 +119,10 @@ func TestBufferFailedFlush(t *testing.T) {
 	if err == nil {
 		t.Errorf("Unexpected result after flushing to fail")
 	}
-	result := bBuffer.GetTemperatures()
-	expected := make([]temperature.Temperature, 1)
-	expected[0] = temp
+	result, _ := bBuffer.FileOperator.LoadTemperatures("")
+	expected := []temperature.Temperature{temp}
 	if !cmp.Equal(expected, result) {
-		t.Errorf(`Unexpected result after failing Flush():
-expected: %v
-vs
-result: %v`, expected, result)
+		t.Errorf(`Unexpected result after failing Flush(): %v`, cmp.Diff(result, expected))
 	}
 }
 
@@ -133,7 +131,11 @@ func TestBufferFailedFlushMultiAppend(t *testing.T) {
 	defer func() { newFiler = filer }()
 	newFiler = func(p string) Filer { return &FakeFile{p} }
 
-	bBuffer := new(Buffer)
+	bBuffer := Buffer{
+		FileOperator: &FakeFileOperator{},
+		path:         "temperatures",
+	}
+
 	temp1 := temperature.Temperature{
 		Temperature: 31.0,
 		BHiveID:     "1234asdf",
@@ -165,15 +167,12 @@ func TestBufferFailedFlushMultiAppend(t *testing.T) {
 	if err == nil {
 		t.Errorf("Unexpected result after flushing to fail")
 	}
-	result := bBuffer.GetTemperatures()
+	result, _ := bBuffer.FileOperator.LoadTemperatures("")
 	expected := make([]temperature.Temperature, 3)
-	expected[0] = temp1
+	expected[2] = temp1
 	expected[1] = temp2
-	expected[2] = temp3
-	if !cmp.Equal(expected, result) {
-		t.Errorf(`Unexpected result after failing Flush() with multiple Temperatures:
-expected: %v
-vs
-result: %v`, expected, result)
+	expected[0] = temp3
+	if diff := cmp.Diff(expected, result); diff != "" {
+		t.Errorf("%v", diff)
 	}
 }
