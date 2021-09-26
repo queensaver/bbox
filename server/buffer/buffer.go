@@ -14,16 +14,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/queensaver/bbox/server/scheduler"
 	"github.com/queensaver/packages/logger"
 	"github.com/queensaver/packages/scale"
 	"github.com/queensaver/packages/temperature"
 )
-
-var newFiler = func(p string) Filer {
-	return &File{path: p}
-}
 
 type Buffer struct {
 	temperatures       []temperature.Temperature
@@ -59,11 +54,17 @@ type DiskFlusher interface {
 	AppendTemperature(temperature.Temperature)
 	GetTemperatures() []temperature.Temperature
 }
+
 type FileOperator interface {
-	LoadTemperatures(string) ([]temperature.Temperature, error)
-	SaveTemperatures(string, []temperature.Temperature) []temperature.Temperature
-	DeleteTemperatures(string, []temperature.Temperature)
+	LoadValues(string, func() SensorValuer) ([]SensorValuer, error)
+	SaveValues(string, []temperature.Temperature) []SensorValuer
+	DeleteValues(string, []SensorValuer)
 	NewFiler(string) Filer
+}
+
+type SensorValuer interface {
+	SetUUID()
+	GetUUID() string
 }
 
 type File struct {
@@ -127,39 +128,40 @@ func (b *Buffer) NewFiler(p string) Filer {
 
 }
 
-func (b *Buffer) DeleteTemperatures(path string, temps []temperature.Temperature) {
-	for _, t := range temps {
-		f := b.NewFiler(filepath.Join(path, t.UUID+".json"))
+func (b *Buffer) DeleteValues(path string, values []SensorValuer) {
+	for _, v := range values {
+		f := b.NewFiler(filepath.Join(path, v.GetUUID()+".json"))
 		err := f.Delete()
 		if err != nil {
 			logger.Error("Delete error",
 				"filename", f.Path(),
 				"error", err,
-			)
+				"object", v)
 		}
 	}
 }
 
-// SaveTemperatures reuturns the temperatures that have NOT been saved to disk to keep them in memory
-func (b *Buffer) SaveTemperatures(path string, temps []temperature.Temperature) []temperature.Temperature {
-	var unsavedTemperatures []temperature.Temperature
-	for _, t := range temps {
-		if t.UUID == "" {
-			uuid := uuid.New()
-			t.UUID = uuid.String()
+// SaveValues returns the values that have NOT been saved to disk to keep them in memory - just in case the disk is full or whatever.
+func (b *Buffer) SaveValues(path string, values []SensorValuer) []SensorValuer {
+	var unsavedValues []SensorValuer
+	for _, v := range values {
+		if u := v.GetUUID(); u == "" {
+			v.SetUUID()
 		}
-		f := b.NewFiler(filepath.Join(path, t.UUID+".json"))
-		err := f.Save(t)
+		f := b.NewFiler(filepath.Join(path, v.GetUUID()+".json"))
+		err := f.Save(v)
 		if err != nil {
-			logger.Error("could not save temperature.", "error", err)
-			unsavedTemperatures = append(unsavedTemperatures, t)
+			logger.Error("could not save object.",
+				"error", err,
+				"object", v)
+			unsavedValues = append(unsavedValues, v)
 		}
 	}
-	return unsavedTemperatures
+	return unsavedValues
 }
 
-func (b *Buffer) LoadTemperatures(path string) ([]temperature.Temperature, error) {
-	var r []temperature.Temperature
+func (b *Buffer) LoadValues(path string, newObject func() SensorValuer) ([]SensorValuer, error) {
+	var r []SensorValuer
 	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -170,21 +172,22 @@ func (b *Buffer) LoadTemperatures(path string) ([]temperature.Temperature, error
 		if info.IsDir() {
 			return nil
 		}
-		t := temperature.Temperature{}
+		o := newObject()
 		f := b.NewFiler(p)
-		err = f.Load(t)
+		err = f.Load(o)
 		if err != nil {
-			r = append(r, t)
-			logger.Error("could not load temperature file from disk",
+			r = append(r, o)
+			logger.Error("could not load object file from disk",
 				"path", p,
 				"error", err,
+				"object", o,
 			)
 			return err
 		}
 		return nil
 	})
 	if err != nil {
-		logger.Error("could not load temperatures from disk",
+		logger.Error("could not load object from disk",
 			"path", path,
 			"error", err,
 		)
@@ -262,7 +265,8 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	mu.Lock()
 	defer mu.Unlock()
 	logger.Debug(ip, "Flushing")
-	temperaturesOnDisk, err := b.FileOperator.LoadTemperatures(b.path)
+	temperaturePath := filepath.Join(b.path, "temperatures")
+	temperaturesOnDisk, err := b.FileOperator.LoadValues(temperaturePath, func() SensorValuer { return &temperature.Temperature{} })
 	if err != nil {
 		logger.Error("Could not load data from disk", "error", err)
 	}
@@ -282,7 +286,7 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 			b.temperatures = append(b.temperatures, t)
 		} else {
 			// If there UUID is not empty this means that the temperature was loaded from disk, hence we have to delete it later in a batch when we remount the disk writeable.
-			if t.UUID != "" {
+			if t.GetUUID() != "" {
 				postedTemperatures = append(postedTemperatures, t)
 			}
 		}
@@ -292,8 +296,8 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	}
 	err = b.remountrw()
 	if err == nil && (len(b.temperatures) > 0 || (len(postedTemperatures)) > 0) {
-		b.temperatures = b.FileOperator.SaveTemperatures(filepath.Join(b.path, "temperatures"), b.temperatures)
-		b.FileOperator.DeleteTemperatures(b.path, postedTemperatures)
+		b.temperatures = b.FileOperator.SaveValues(temperaturePath, b.temperatures)
+		b.FileOperator.DeleteValues(temperaturePath, postedTemperatures)
 	}
 	b.remountro()
 

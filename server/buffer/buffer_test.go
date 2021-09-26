@@ -17,19 +17,19 @@ func (h *HttpClientMock) PostData(string, interface{}) error {
 }
 
 type FakeFileOperator struct {
-	temperatures []temperature.Temperature
+	values []SensorValuer
 }
 
-func (f *FakeFileOperator) LoadTemperatures(string) ([]temperature.Temperature, error) {
-	return f.temperatures, nil
+func (f *FakeFileOperator) LoadValues(string, func() SensorValuer) ([]SensorValuer, error) {
+	return f.values, nil
 }
 
-func (f *FakeFileOperator) SaveTemperatures(p string, t []temperature.Temperature) []temperature.Temperature {
-	f.temperatures = t
-	return []temperature.Temperature{}
+func (f *FakeFileOperator) SaveValues(p string, v []SensorValuer) []SensorValuer {
+	f.values = v
+	return []SensorValuer{}
 }
 
-func (f *FakeFileOperator) DeleteTemperatures(string, []temperature.Temperature) {
+func (f *FakeFileOperator) DeleteValues(string, []SensorValuer) {
 }
 
 func (f *FakeFileOperator) NewFiler(p string) Filer {
@@ -119,7 +119,7 @@ func TestBufferFailedFlush(t *testing.T) {
 	if err == nil {
 		t.Errorf("Unexpected result after flushing to fail")
 	}
-	result, _ := bBuffer.FileOperator.LoadTemperatures("")
+	result, _ := bBuffer.FileOperator.LoadValues("", func() SensorValuer { return &temperature.Temperature{} })
 	expected := []temperature.Temperature{temp}
 	if !cmp.Equal(expected, result) {
 		t.Errorf(`Unexpected result after failing Flush(): %v`, cmp.Diff(result, expected))
