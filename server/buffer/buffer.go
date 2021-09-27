@@ -21,7 +21,7 @@ import (
 )
 
 type Buffer struct {
-	temperatures       []temperature.Temperature
+	unsentTemperatures       []SensorValuer
 	scales             []scale.Scale
 	shutdownDesired    bool // If true it will actually physically shutdown the raspberry pi after all data is flushed. It will use the wittypi module to wake up the raspberry pi afterwards.
 	temperatureFlushed bool // Set to true if the temperature has been flushed (only useful with shutdownDesired == true)
@@ -50,14 +50,14 @@ type HttpPostClient struct {
 }
 
 type DiskFlusher interface {
-	Flush(string, HttpClientPoster) error
+	Flush(HttpClientPoster) error
 	AppendTemperature(temperature.Temperature)
 	GetTemperatures() []temperature.Temperature
 }
 
 type FileOperator interface {
 	LoadValues(string, func() SensorValuer) ([]SensorValuer, error)
-	SaveValues(string, []temperature.Temperature) []SensorValuer
+	SaveValues(string, []SensorValuer) []SensorValuer
 	DeleteValues(string, []SensorValuer)
 	NewFiler(string) Filer
 }
@@ -234,7 +234,7 @@ func (h HttpPostClient) PostData(request string, data interface{}) error {
 func (b *Buffer) String() string {
 	//r, _ := json.MarshalIndent(b, "", "  ")
 	//return string(r[:])
-	return fmt.Sprintf("%v\n%v", b.temperatures, b.scales)
+	return fmt.Sprintf("%v\n%v", b.unsentTemperatures, b.scales)
 }
 
 func (b *Buffer) SetSchedule(schedule *scheduler.Schedule) {
@@ -252,16 +252,70 @@ func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int)
 	for {
 		logger.Debug("none", fmt.Sprintf("sleeping for %d seconds", seconds))
 		time.Sleep(time.Duration(seconds) * time.Second)
-		err := b.Flush("none", poster)
-		if err != nil {
-			logger.Error("none", err)
-		} else {
-			logger.Debug("none", "Sending Data to API server was successful.")
-		}
+		b.Flush(poster)
 	}
 }
 
-func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
+func(b *Buffer) SendValues(
+		path string, 
+		apiPath string, 
+		newValues []SensorValuer, 
+		poster HttpClientPoster, 
+		newValue func() SensorValuer) ([]SensorValuer, error) {
+	valuesOnDisk, err := b.FileOperator.LoadValues(path, newValue)
+	if err != nil {
+		return nil, err
+	}
+	// copy the temperatures from the buffer
+	var values = make([]SensorValuer, len(newValues)+len(valuesOnDisk))
+	
+	for i, t := range append(newValues, valuesOnDisk...) {
+		values[i] = t
+	}
+	
+	var postedValues []SensorValuer
+	var unsentValues []SensorValuer
+	for _, v := range values {
+		err := poster.PostData(apiPath, v)
+		if err != nil {
+			logger.Debug("error", "err", err)
+			unsentValues = append(unsentValues, v)
+		} else {
+			// If there UUID is not empty this means that the temperature was loaded from disk, hence we have to delete it later in a batch when we remount the disk writeable.
+			if v.GetUUID() != "" {
+				postedValues = append(postedValues, v)
+			}
+		}
+	}
+	if len(postedValues) > 0 {
+		b.FileOperator.DeleteValues(path, postedValues)
+	}
+	if len(unsentValues) > 0 {
+		unsavedValues := b.FileOperator.SaveValues(path, unsentValues)
+		return unsavedValues, nil
+	}
+	return nil, nil
+}
+
+func (b *Buffer) Flush(poster HttpClientPoster) {
+	mu.Lock()
+	defer mu.Unlock()
+	logger.Debug("Flushing data")
+
+	var err error
+	temperaturePath := filepath.Join(b.path, "temperatures")
+	b.unsentTemperatures, err = b.SendValues(
+		temperaturePath, 
+		"v1/temperature", 
+		b.unsentTemperatures, 
+		poster, 
+		func() SensorValuer { return &temperature.Temperature{} })
+	if err != nil {
+		logger.Error("Could not send temperature values", "error", err)
+	}
+}
+
+/*func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 	mu.Lock()
 	defer mu.Unlock()
 	logger.Debug(ip, "Flushing")
@@ -329,6 +383,7 @@ func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
 
 	return last_err
 }
+*/
 
 func (b *Buffer) AppendScale(s scale.Scale) {
 	mu.Lock()
@@ -339,11 +394,11 @@ func (b *Buffer) AppendScale(s scale.Scale) {
 func (b *Buffer) AppendTemperature(t temperature.Temperature) {
 	mu.Lock()
 	defer mu.Unlock()
-	b.temperatures = append(b.temperatures, t)
+	b.unsentTemperatures = append(b.unsentTemperatures, &t)
 }
 
-func (b *Buffer) GetTemperatures() []temperature.Temperature {
+func (b *Buffer) GetUnsentTemperatures() []SensorValuer {
 	mu.Lock()
 	defer mu.Unlock()
-	return b.temperatures
+	return b.unsentTemperatures
 }
