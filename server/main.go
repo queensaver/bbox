@@ -66,6 +66,13 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	bBuffer.AppendScale(s)
 }
 
+// Initiates a flush to cloud. This will hold a lock so that no other values will be accepted from bHIves.
+func flushHandler(w http.ResponseWriter, req *http.Request) {
+	token := os.Getenv("TOKEN")
+	poster := buffer.HttpPostClient{ApiServer: *apiServerAddr, Token: token}
+	bBuffer.Flush(poster)
+}
+
 func configHandler(w http.ResponseWriter, req *http.Request) {
 	js, err := json.Marshal(bConfig)
 	if err != nil {
@@ -94,17 +101,11 @@ func main() {
 		log.Fatal(err)
 	}
 	s, _ := bConfig.String()
-	logger.Info("", string(s))
-	http.HandleFunc("/scale", scaleHandler)
-	http.HandleFunc("/temperature", temperatureHandler)
-	http.HandleFunc("/config", configHandler)
-	http.HandleFunc("/bhive", func(res http.ResponseWriter, req *http.Request) {
-		http.ServeFile(res, req, *httpServerHiveFile)
-	})
+	logger.Debug("bConfig content", "bconfig", s)
 
 	var schedule scheduler.Schedule
 	// check if the bhive is a local instance, if so, skip the relay initialisation.
-	if len(bConfig.Bhive) == 1 && bConfig.Bhive[0].Local == true {
+	if (len(bConfig.Bhive) == 1) && bConfig.Bhive[0].Local {
 		witty := bConfig.Bhive[0].WittyPi
 		schedule = scheduler.Schedule{Schedule: bConfig.Schedule,
 			Local:   true,
@@ -132,6 +133,14 @@ func main() {
 	}
 	c := make(chan bool)
 	go schedule.Start(c)
+
+	http.HandleFunc("/scale", scaleHandler)
+	http.HandleFunc("/temperature", temperatureHandler)
+	http.HandleFunc("/config", configHandler)
+	http.HandleFunc("/flush", flushHandler)
+	http.HandleFunc("/bhive", func(res http.ResponseWriter, req *http.Request) {
+		http.ServeFile(res, req, *httpServerHiveFile)
+	})
 
 	log.Fatal(http.ListenAndServe(":"+*httpServerPort, nil))
 }

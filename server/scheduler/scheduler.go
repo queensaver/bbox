@@ -44,12 +44,12 @@ func (s *Schedule) SetLocalRunLock() {
 
 // This function could have some more paramters like the
 func (s *Schedule) runLocally() {
-	logger.Debug("none", "starting bhive client locally")
+	logger.Debug("starting bhive client locally")
 	s.SetLocalRunLock()
 	cmd := exec.Command("/usr/bin/systemctl", "restart", "bhive.service")
 	err := cmd.Run()
 	if err != nil {
-		logger.Error("error restarting server:", err)
+		logger.Error("error restarting server:", "error", err)
 	}
 }
 
@@ -63,7 +63,7 @@ func (s *Schedule) runSchedule() {
 	  Then update all the relevant datapoints.
 	*/
 
-	logger.Debug("none", "runSchedule started")
+	logger.Debug("runSchedule started")
 	for {
 		done, err := s.RelayModule.ActivateNextBHive()
 		if err != nil {
@@ -73,29 +73,28 @@ func (s *Schedule) runSchedule() {
 		if done {
 			break
 		}
-		logger.Debug("none", "runSchedule sleeping")
+		logger.Debug("runSchedule sleeping")
 		time.Sleep(2 * time.Minute)
 	}
-	logger.Debug("none", "runSchedule done")
+	logger.Debug("runSchedule done")
 }
 
 // Returns true if a shutdown is useful, false if it doesn't make sense (that might be because the next scheduled startup is already in the next 120 seconds)
-func (s *Schedule) Shutdown() bool {
+func (s *Schedule) Shutdown() {
 	entries := s.cron.Entries()
 	next := entries[0].Next
-	logger.Debug("the next time witty pi will turn on the machine: ", fmt.Sprintf("%+v", next))
+	logger.Debug("the next time witty pi will turn on the machine: ", "time", next)
 	if math.Abs(time.Until(next).Seconds()) < 120 {
-		fmt.Println("not shutting down the raspberry, next startup time is in under 120 seconds.")
-		return false
+		logger.Info("not shutting down the raspberry, next startup time is in under 120 seconds.")
+		return
 	}
 	witty.StartAt(next)
 	cmd := exec.Command("/usr/sbin/shutdown", "-h", "now")
 	err := cmd.Run()
 	if err != nil {
-		fmt.Println(err)
-		return false
+		logger.Error("Shutdown Erorr", "error", err)
+		return
 	}
-	return true
 }
 
 func (s *Schedule) Start(killswitch chan bool) {

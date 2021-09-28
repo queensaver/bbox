@@ -24,8 +24,6 @@ type Buffer struct {
 	unsentTemperatures []SensorValuer
 	unsentScaleValues  []SensorValuer
 	shutdownDesired    bool // If true it will actually physically shutdown the raspberry pi after all data is flushed. It will use the wittypi module to wake up the raspberry pi afterwards.
-	temperatureFlushed bool // Set to true if the temperature has been flushed (only useful with shutdownDesired == true)
-	scaleFlushed       bool // Set to true if the scale has been flushed (only useful with shutdowDesired  == true)
 	schedule           *scheduler.Schedule
 	path               string //Path on disk to buffer the data if we can't push it out to the cloud.
 	FileOperator
@@ -245,6 +243,10 @@ func (b *Buffer) SetShutdownDesired(s bool) {
 	b.shutdownDesired = s
 }
 
+func (b *Buffer) ShutdownDesired() bool {
+	return b.shutdownDesired
+}
+
 // FlushSchedule will wait for the given duration of seconds and then flush the buffer.
 // It will be started as a go routine and retry to flush the buffer.
 func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int) {
@@ -320,7 +322,11 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 	if err != nil {
 		logger.Error("Could not send scale values", "error", err)
 	}
+	if b.ShutdownDesired() && b.Flushed() {
+		logger.Info("Shutdown is desired, all data was flushed, attempting to shut down now")
+		b.schedule.Shutdown()
 
+	}
 }
 
 /*func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
@@ -409,4 +415,10 @@ func (b *Buffer) GetUnsentTemperatures() []SensorValuer {
 	mu.Lock()
 	defer mu.Unlock()
 	return b.unsentTemperatures
+}
+
+func (b *Buffer) Flushed() bool {
+	mu.Lock()
+	defer mu.Unlock()
+	return (len(b.unsentScaleValues) == 0) && (len(b.unsentTemperatures) == 0)
 }
