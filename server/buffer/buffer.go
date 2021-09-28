@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -159,10 +160,12 @@ func (b *Buffer) SaveValues(path string, values []SensorValuer) []SensorValuer {
 }
 
 func (b *Buffer) LoadValues(path string, newObject func() SensorValuer) []SensorValuer {
-	var r []SensorValuer
+	log.Println("shit1: ", path)
 	logger.Debug("Loading values from disk", "path", path)
+	r := []SensorValuer{}
 	if _, err := os.Stat("/path/to/whatever"); os.IsNotExist(err) {
 		logger.Debug("Path does not exist", "path", path)
+		log.Println("shit2")
 		return r
 	}
 	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
@@ -269,6 +272,7 @@ func (b *Buffer) SendValues(
 	newValues []SensorValuer,
 	poster HttpClientPoster,
 	newValue func() SensorValuer) ([]SensorValuer, error) {
+	log.Printf("still here, path: %v, newValue: %v", path, newValue())
 	valuesOnDisk := b.FileOperator.LoadValues(path, newValue)
 	// copy the temperatures from the buffer
 	var values = make([]SensorValuer, len(newValues)+len(valuesOnDisk))
@@ -308,22 +312,24 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 
 	var err error
 	temperaturePath := filepath.Join(b.path, "temperatures")
+	newTemperature := func() SensorValuer { return &scale.Scale{} }
 	b.unsentTemperatures, err = b.SendValues(
 		temperaturePath,
 		"v1/temperature",
 		b.unsentTemperatures,
 		poster,
-		func() SensorValuer { return &temperature.Temperature{} })
+		newTemperature)
 	if err != nil {
 		logger.Error("Could not send temperature values", "error", err)
 	}
 	scalePath := filepath.Join(b.path, "scale-values")
+	newScale := func() SensorValuer { return &scale.Scale{} }
 	b.unsentScaleValues, err = b.SendValues(
 		scalePath,
 		"v1/scale",
 		b.unsentScaleValues,
 		poster,
-		func() SensorValuer { return &scale.Scale{} })
+		newScale)
 	if err != nil {
 		logger.Error("Could not send scale values", "error", err)
 	}

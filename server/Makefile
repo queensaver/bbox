@@ -1,4 +1,4 @@
-.PHONY: integration_test run update_dependencies
+.PHONY: integration_test run update_dependencies arm
 integration_test: server
 	gofmt -w main.go
 	go test ./...
@@ -16,3 +16,6 @@ run:
 update_dependencies:
 	go list -m -u all
 	go get -u ./...
+
+arm:
+	env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -v

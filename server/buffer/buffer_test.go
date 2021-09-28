@@ -20,7 +20,8 @@ type FakeFileOperator struct {
 	values []SensorValuer
 }
 
-func (f *FakeFileOperator) LoadValues(string, func() SensorValuer) []SensorValuer {
+func (f *FakeFileOperator) LoadValues(path string, newValue func() SensorValuer) []SensorValuer {
+	_ = newValue()
 	return f.values
 }
 
