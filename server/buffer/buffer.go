@@ -52,11 +52,11 @@ type HttpPostClient struct {
 type DiskFlusher interface {
 	Flush(HttpClientPoster) error
 	AppendTemperature(temperature.Temperature)
-	GetTemperatures() []temperature.Temperature
+	GetUnsentTemperatures() []temperature.Temperature
 }
 
 type FileOperator interface {
-	LoadValues(string, func() SensorValuer) ([]SensorValuer, error)
+	LoadValues(string, func() SensorValuer) []SensorValuer
 	SaveValues(string, []SensorValuer) []SensorValuer
 	DeleteValues(string, []SensorValuer)
 	NewFiler(string) Filer
@@ -141,7 +141,7 @@ func (b *Buffer) DeleteValues(path string, values []SensorValuer) {
 	}
 }
 
-// SaveValues returns the values that have NOT been saved to disk to keep them in memory - just in case the disk is full or whatever.
+// SaveValues returns the values could NOT been saved to disk so we can keep them in memory - just in case the disk is full or whatever we're trying to make sure to not lose any data.
 func (b *Buffer) SaveValues(path string, values []SensorValuer) []SensorValuer {
 	var unsavedValues []SensorValuer
 	for _, v := range values {
@@ -160,7 +160,7 @@ func (b *Buffer) SaveValues(path string, values []SensorValuer) []SensorValuer {
 	return unsavedValues
 }
 
-func (b *Buffer) LoadValues(path string, newObject func() SensorValuer) ([]SensorValuer, error) {
+func (b *Buffer) LoadValues(path string, newObject func() SensorValuer) []SensorValuer {
 	var r []SensorValuer
 	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -187,12 +187,12 @@ func (b *Buffer) LoadValues(path string, newObject func() SensorValuer) ([]Senso
 		return nil
 	})
 	if err != nil {
-		logger.Error("could not load object from disk",
+		logger.Error("could not load objects from disk",
 			"path", path,
 			"error", err,
 		)
 	}
-	return r, nil
+	return r
 }
 
 func (b *Buffer) remountro() {
@@ -212,7 +212,7 @@ func (h HttpPostClient) PostData(request string, data interface{}) error {
 		h.ApiServer = h.ApiServer + "/"
 	}
 	url := h.ApiServer + url.PathEscape(request)
-	logger.Debug("none", fmt.Sprintf("Post Request for API Server %s", url))
+	logger.Debug("Post Request for API Server", "url", url)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(j))
 	if err != nil {
 		return err
@@ -250,7 +250,7 @@ func (b *Buffer) SetShutdownDesired(s bool) {
 func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int) {
 	poster := HttpPostClient{*apiServerAddr, token}
 	for {
-		logger.Debug("none", fmt.Sprintf("sleeping for %d seconds", seconds))
+		logger.Debug("sleeping", "seconds", seconds)
 		time.Sleep(time.Duration(seconds) * time.Second)
 		b.Flush(poster)
 	}
@@ -262,10 +262,7 @@ func(b *Buffer) SendValues(
 		newValues []SensorValuer, 
 		poster HttpClientPoster, 
 		newValue func() SensorValuer) ([]SensorValuer, error) {
-	valuesOnDisk, err := b.FileOperator.LoadValues(path, newValue)
-	if err != nil {
-		return nil, err
-	}
+	valuesOnDisk := b.FileOperator.LoadValues(path, newValue)
 	// copy the temperatures from the buffer
 	var values = make([]SensorValuer, len(newValues)+len(valuesOnDisk))
 	
