@@ -21,8 +21,8 @@ import (
 )
 
 type Buffer struct {
-	unsentTemperatures       []SensorValuer
-	scales             []scale.Scale
+	unsentTemperatures []SensorValuer
+	unsentScaleValues  []SensorValuer
 	shutdownDesired    bool // If true it will actually physically shutdown the raspberry pi after all data is flushed. It will use the wittypi module to wake up the raspberry pi afterwards.
 	temperatureFlushed bool // Set to true if the temperature has been flushed (only useful with shutdownDesired == true)
 	scaleFlushed       bool // Set to true if the scale has been flushed (only useful with shutdowDesired  == true)
@@ -234,7 +234,7 @@ func (h HttpPostClient) PostData(request string, data interface{}) error {
 func (b *Buffer) String() string {
 	//r, _ := json.MarshalIndent(b, "", "  ")
 	//return string(r[:])
-	return fmt.Sprintf("%v\n%v", b.unsentTemperatures, b.scales)
+	return fmt.Sprintf("%v\n%v", b.unsentTemperatures, b.unsentScaleValues)
 }
 
 func (b *Buffer) SetSchedule(schedule *scheduler.Schedule) {
@@ -256,20 +256,20 @@ func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int)
 	}
 }
 
-func(b *Buffer) SendValues(
-		path string, 
-		apiPath string, 
-		newValues []SensorValuer, 
-		poster HttpClientPoster, 
-		newValue func() SensorValuer) ([]SensorValuer, error) {
+func (b *Buffer) SendValues(
+	path string,
+	apiPath string,
+	newValues []SensorValuer,
+	poster HttpClientPoster,
+	newValue func() SensorValuer) ([]SensorValuer, error) {
 	valuesOnDisk := b.FileOperator.LoadValues(path, newValue)
 	// copy the temperatures from the buffer
 	var values = make([]SensorValuer, len(newValues)+len(valuesOnDisk))
-	
+
 	for i, t := range append(newValues, valuesOnDisk...) {
 		values[i] = t
 	}
-	
+
 	var postedValues []SensorValuer
 	var unsentValues []SensorValuer
 	for _, v := range values {
@@ -302,14 +302,25 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 	var err error
 	temperaturePath := filepath.Join(b.path, "temperatures")
 	b.unsentTemperatures, err = b.SendValues(
-		temperaturePath, 
-		"v1/temperature", 
-		b.unsentTemperatures, 
-		poster, 
+		temperaturePath,
+		"v1/temperature",
+		b.unsentTemperatures,
+		poster,
 		func() SensorValuer { return &temperature.Temperature{} })
 	if err != nil {
 		logger.Error("Could not send temperature values", "error", err)
 	}
+	scalePath := filepath.Join(b.path, "scale-values")
+	b.unsentScaleValues, err = b.SendValues(
+		scalePath,
+		"v1/scale",
+		b.unsentScaleValues,
+		poster,
+		func() SensorValuer { return &scale.Scale{} })
+	if err != nil {
+		logger.Error("Could not send scale values", "error", err)
+	}
+
 }
 
 /*func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
@@ -385,7 +396,7 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 func (b *Buffer) AppendScale(s scale.Scale) {
 	mu.Lock()
 	defer mu.Unlock()
-	b.scales = append(b.scales, s)
+	b.unsentScaleValues = append(b.unsentScaleValues, &s)
 }
 
 func (b *Buffer) AppendTemperature(t temperature.Temperature) {
