@@ -38,8 +38,10 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if t.Error != "" {
-		log.Printf("Temperature measurement error received from BHive %s: %s", t.BHiveID, t.Error)
-		// TODO: Saving the erorr is not implemetend on the cloud side, hence we just log the error and null it here.
+		logger.Info("Temperature measurement error received from BHive",
+			"bhive_id", t.BHiveID,
+			"error", t.Error)
+		// TODO: Saving the error is not implemetend on the cloud side, hence we just log the error and null it here.
 		t.Error = ""
 	}
 	t.Timestamp = int64(time.Now().Unix())

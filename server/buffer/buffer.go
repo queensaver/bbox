@@ -160,6 +160,11 @@ func (b *Buffer) SaveValues(path string, values []SensorValuer) []SensorValuer {
 
 func (b *Buffer) LoadValues(path string, newObject func() SensorValuer) []SensorValuer {
 	var r []SensorValuer
+	logger.Debug("Loading values from disk", "path", path)
+	if _, err := os.Stat("/path/to/whatever"); os.IsNotExist(err) {
+		logger.Debug("Path does not exist", "path", path)
+		return r
+	}
 	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
