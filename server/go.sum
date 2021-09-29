@@ -25,6 +25,8 @@ github.com/queensaver/packages/config v0.0.0-20210924194626-eecb7227e71c h1:Xk1N
 github.com/queensaver/packages/config v0.0.0-20210924194626-eecb7227e71c/go.mod h1:sGtlRPJOuYNiUMfxKNPf6e46PHYY3MeYvs7ObdeCWYQ=
 github.com/queensaver/packages/config v0.0.0-20210928200107-01353cfc816a h1:zQSbixzNOALkyWuUCX+BG2NxAmAxUyQOCb6WchkYgzk=
 github.com/queensaver/packages/config v0.0.0-20210928200107-01353cfc816a/go.mod h1:VaPBiKxDjzKwA9RjjInLBhVYFolkVV9yX2qv6fmyDxM=
+github.com/queensaver/packages/config v0.0.0-20210929054635-954a86633ecc h1:09gp+z1vTsqKYXtWZFz2G2iZQc3puheJ/DRR0S2KCdA=
+github.com/queensaver/packages/config v0.0.0-20210929054635-954a86633ecc/go.mod h1:VaPBiKxDjzKwA9RjjInLBhVYFolkVV9yX2qv6fmyDxM=
 github.com/queensaver/packages/logger v0.0.0-20210916132612-288150d2df97 h1:EroKfRcYiO/mi/PW+ZcJEYtVt+o4BpvsviDZPw87bKQ=
 github.com/queensaver/packages/logger v0.0.0-20210916132612-288150d2df97/go.mod h1:qNN+/mRJF9maC1BjR+mdTLRx9N6giam6hUgB9Y0YAic=
 github.com/queensaver/packages/logger v0.0.0-20210924194626-eecb7227e71c/go.mod h1:qNN+/mRJF9maC1BjR+mdTLRx9N6giam6hUgB9Y0YAic=

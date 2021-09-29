@@ -33,6 +33,14 @@ func (f *FakeFileOperator) SaveValues(p string, v []SensorValuer) []SensorValuer
 func (f *FakeFileOperator) DeleteValues(string, []SensorValuer) {
 }
 
+func (f *FakeFileOperator) RemountRO() error {
+	return nil
+}
+
+func (f *FakeFileOperator) RemountRW() error {
+	return nil
+}
+
 func (f *FakeFileOperator) NewFiler(p string) Filer {
 	return &FakeFile{p}
 }

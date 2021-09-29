@@ -23,12 +23,13 @@ var apiServerAddr = flag.String("api_server_addr", "https://api.queensaver.com",
 var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
 var httpServerHiveFile = flag.String("http_server_bhive_file", "/home/pi/bOS/bhive", "HTTP server directory to serve bHive file")
 var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
-var cachePath = flag.String("cache_path", "~/bCache", "Cache directory where data will be stored that can't be sent to the cloud.")
+var cachePath = flag.String("cache_path", "bCache", "Cache directory where data will be stored that can't be sent to the cloud.")
 var tokenFile = flag.String("token_file", fmt.Sprintf("%s/.queensaver_token",
 	os.Getenv("HOME")), "Path to the file containing the token")
 
 var bBuffer buffer.Buffer
 var bConfig *config.Config
+var token string
 
 func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
@@ -71,7 +72,6 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 
 // Initiates a flush to cloud. This will hold a lock so that no other values will be accepted from bHIves.
 func flushHandler(w http.ResponseWriter, req *http.Request) {
-	token := os.Getenv("TOKEN")
 	poster := buffer.HttpPostClient{ApiServer: *apiServerAddr, Token: token}
 	bBuffer.Flush(poster)
 }
@@ -90,7 +90,7 @@ func main() {
 	flag.Parse()
 	var err error
 
-	token := os.Getenv("TOKEN")
+	token = os.Getenv("TOKEN")
 	if token == "" {
 		content, err := ioutil.ReadFile(*tokenFile)
 		if err != nil {

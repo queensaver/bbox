@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -47,12 +48,15 @@ type HttpPostClient struct {
 }
 
 type FileSurgeon struct {
+	writeableFS bool
 }
 
 type FileOperator interface {
 	LoadValues(string, func() SensorValuer) []SensorValuer
 	SaveValues(string, []SensorValuer) []SensorValuer
 	DeleteValues(string, []SensorValuer)
+	RemountRO() error
+	RemountRW() error
 	NewFiler(string) Filer
 }
 
@@ -123,6 +127,14 @@ func (f *FileSurgeon) NewFiler(p string) Filer {
 }
 
 func (f *FileSurgeon) DeleteValues(path string, values []SensorValuer) {
+
+	if !f.writeableFS {
+		err := f.RemountRW()
+		if err != nil {
+			return
+		}
+	}
+
 	for _, v := range values {
 		f := f.NewFiler(filepath.Join(path, v.GetUUID()+".json"))
 		err := f.Delete()
@@ -138,6 +150,19 @@ func (f *FileSurgeon) DeleteValues(path string, values []SensorValuer) {
 // SaveValues returns the values could NOT been saved to disk so we can keep them in memory - just in case the disk is full or whatever we're trying to make sure to not lose any data.
 func (f *FileSurgeon) SaveValues(path string, values []SensorValuer) []SensorValuer {
 	var unsavedValues []SensorValuer
+	if !f.writeableFS {
+		err := f.RemountRW()
+		if err != nil {
+			return values
+		}
+	}
+	err := os.MkdirAll(path, 0755)
+	if err != nil {
+		logger.Error("Could not create directory", 
+			"path", path, 
+			"error", err)
+		return values
+	}
 	for _, v := range values {
 		if u := v.GetUUID(); u == "" {
 			v.SetUUID()
@@ -202,12 +227,30 @@ func (b *Buffer) SetFileOperator(o FileOperator) {
 	b.FileOperator = o
 }
 
-func (b *Buffer) remountro() {
-	// os.exec("sudo mount -o remount,ro /")
+func (f *FileSurgeon) RemountRO() error {
+	if !f.writeableFS {
+		return nil
+	}
+	logger.Info("Remounting filesystem read-only")
+	cmd := exec.Command("/usr/bin/mount", "-o", "remount,ro", "/")
+	err := cmd.Run()
+	if err != nil {
+		logger.Error("Remount to read-only Erorr", "error", err)
+		return err
+	}
+	f.writeableFS = false
+	return nil
 }
 
-func (b *Buffer) remountrw() error {
-	// os.exec("sudo mount -o remount,rw /")
+func (f *FileSurgeon) RemountRW() error {
+	logger.Info("Remounting filesystem read-write")
+	cmd := exec.Command("/usr/bin/mount", "-o", "remount,rw", "/")
+	err := cmd.Run()
+	if err != nil {
+		logger.Error("Remount to read/write Erorr", "error", err)
+		return err
+	}
+	f.writeableFS = true
 	return nil
 }
 func (h HttpPostClient) PostData(request string, data interface{}) error {
@@ -306,9 +349,10 @@ func (b *Buffer) SendValues(
 }
 
 func (b *Buffer) Flush(poster HttpClientPoster) {
-	mu.Lock()
-	defer mu.Unlock()
 	logger.Debug("Flushing data")
+	mu.Lock()
+	defer b.FileOperator.RemountRO()
+	defer mu.Unlock()
 
 	var err error
 	temperaturePath := filepath.Join(b.path, "temperatures")
