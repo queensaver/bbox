@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -28,7 +27,6 @@ type Buffer struct {
 	schedule           *scheduler.Schedule
 	path               string //Path on disk to buffer the data if we can't push it out to the cloud.
 	FileOperator
-	DiskFlusher
 }
 
 type BufferError struct {
@@ -48,10 +46,7 @@ type HttpPostClient struct {
 	Token     string
 }
 
-type DiskFlusher interface {
-	Flush(HttpClientPoster) error
-	AppendTemperature(temperature.Temperature)
-	GetUnsentTemperatures() []temperature.Temperature
+type FileSurgeon struct {
 }
 
 type FileOperator interface {
@@ -121,15 +116,15 @@ func (f *File) Delete() error {
 	return os.Remove(f.path)
 }
 
-func (b *Buffer) NewFiler(p string) Filer {
+func (f *FileSurgeon) NewFiler(p string) Filer {
 	// return newFiler(p)
 	return &File{path: p}
 
 }
 
-func (b *Buffer) DeleteValues(path string, values []SensorValuer) {
+func (f *FileSurgeon) DeleteValues(path string, values []SensorValuer) {
 	for _, v := range values {
-		f := b.NewFiler(filepath.Join(path, v.GetUUID()+".json"))
+		f := f.NewFiler(filepath.Join(path, v.GetUUID()+".json"))
 		err := f.Delete()
 		if err != nil {
 			logger.Error("Delete error",
@@ -141,13 +136,13 @@ func (b *Buffer) DeleteValues(path string, values []SensorValuer) {
 }
 
 // SaveValues returns the values could NOT been saved to disk so we can keep them in memory - just in case the disk is full or whatever we're trying to make sure to not lose any data.
-func (b *Buffer) SaveValues(path string, values []SensorValuer) []SensorValuer {
+func (f *FileSurgeon) SaveValues(path string, values []SensorValuer) []SensorValuer {
 	var unsavedValues []SensorValuer
 	for _, v := range values {
 		if u := v.GetUUID(); u == "" {
 			v.SetUUID()
 		}
-		f := b.NewFiler(filepath.Join(path, v.GetUUID()+".json"))
+		f := f.NewFiler(filepath.Join(path, v.GetUUID()+".json"))
 		err := f.Save(v)
 		if err != nil {
 			logger.Error("could not save object.",
@@ -159,13 +154,11 @@ func (b *Buffer) SaveValues(path string, values []SensorValuer) []SensorValuer {
 	return unsavedValues
 }
 
-func (b *Buffer) LoadValues(path string, newObject func() SensorValuer) []SensorValuer {
-	log.Println("shit1: ", path)
+func (f *FileSurgeon) LoadValues(path string, newObject func() SensorValuer) []SensorValuer {
 	logger.Debug("Loading values from disk", "path", path)
 	r := []SensorValuer{}
-	if _, err := os.Stat("/path/to/whatever"); os.IsNotExist(err) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
 		logger.Debug("Path does not exist", "path", path)
-		log.Println("shit2")
 		return r
 	}
 	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
@@ -179,7 +172,7 @@ func (b *Buffer) LoadValues(path string, newObject func() SensorValuer) []Sensor
 			return nil
 		}
 		o := newObject()
-		f := b.NewFiler(p)
+		f := f.NewFiler(p)
 		err = f.Load(o)
 		if err != nil {
 			r = append(r, o)
@@ -199,6 +192,14 @@ func (b *Buffer) LoadValues(path string, newObject func() SensorValuer) []Sensor
 		)
 	}
 	return r
+}
+
+func (b *Buffer) SetPath(p string) {
+	b.path = p
+}
+
+func (b *Buffer) SetFileOperator(o FileOperator) {
+	b.FileOperator = o
 }
 
 func (b *Buffer) remountro() {
@@ -272,7 +273,6 @@ func (b *Buffer) SendValues(
 	newValues []SensorValuer,
 	poster HttpClientPoster,
 	newValue func() SensorValuer) ([]SensorValuer, error) {
-	log.Printf("still here, path: %v, newValue: %v", path, newValue())
 	valuesOnDisk := b.FileOperator.LoadValues(path, newValue)
 	// copy the temperatures from the buffer
 	var values = make([]SensorValuer, len(newValues)+len(valuesOnDisk))
@@ -286,7 +286,7 @@ func (b *Buffer) SendValues(
 	for _, v := range values {
 		err := poster.PostData(apiPath, v)
 		if err != nil {
-			logger.Debug("error", "err", err)
+			logger.Info("error posting data to the cloud", "err", err)
 			unsentValues = append(unsentValues, v)
 		} else {
 			// If there UUID is not empty this means that the temperature was loaded from disk, hence we have to delete it later in a batch when we remount the disk writeable.

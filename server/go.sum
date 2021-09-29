@@ -21,8 +21,15 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/queensaver/packages/config v0.0.0-20210811104314-ea61975ded70 h1:lEPGe7OAO9AwGT5ApHwlWkv0uGveli8ydTVhJ7lJEwc=
 github.com/queensaver/packages/config v0.0.0-20210811104314-ea61975ded70/go.mod h1:sGtlRPJOuYNiUMfxKNPf6e46PHYY3MeYvs7ObdeCWYQ=
+github.com/queensaver/packages/config v0.0.0-20210924194626-eecb7227e71c h1:Xk1NICHOHe8Xba09nbz1WeMweNDy41ElWOC8H7gFCi0=
+github.com/queensaver/packages/config v0.0.0-20210924194626-eecb7227e71c/go.mod h1:sGtlRPJOuYNiUMfxKNPf6e46PHYY3MeYvs7ObdeCWYQ=
+github.com/queensaver/packages/config v0.0.0-20210928200107-01353cfc816a h1:zQSbixzNOALkyWuUCX+BG2NxAmAxUyQOCb6WchkYgzk=
+github.com/queensaver/packages/config v0.0.0-20210928200107-01353cfc816a/go.mod h1:VaPBiKxDjzKwA9RjjInLBhVYFolkVV9yX2qv6fmyDxM=
 github.com/queensaver/packages/logger v0.0.0-20210916132612-288150d2df97 h1:EroKfRcYiO/mi/PW+ZcJEYtVt+o4BpvsviDZPw87bKQ=
 github.com/queensaver/packages/logger v0.0.0-20210916132612-288150d2df97/go.mod h1:qNN+/mRJF9maC1BjR+mdTLRx9N6giam6hUgB9Y0YAic=
+github.com/queensaver/packages/logger v0.0.0-20210924194626-eecb7227e71c/go.mod h1:qNN+/mRJF9maC1BjR+mdTLRx9N6giam6hUgB9Y0YAic=
+github.com/queensaver/packages/logger v0.0.0-20210928200107-01353cfc816a h1:3zvG8mN/MSgFCXd/0fXStJNPoXXhQiZzekiQ+44bA70=
+github.com/queensaver/packages/logger v0.0.0-20210928200107-01353cfc816a/go.mod h1:qNN+/mRJF9maC1BjR+mdTLRx9N6giam6hUgB9Y0YAic=
 github.com/queensaver/packages/scale v0.0.0-20210924194626-eecb7227e71c h1:hbJ5L7O3BWLt7CxQZ9CCDIisSlncyATKIxb4nMMBkZM=
 github.com/queensaver/packages/scale v0.0.0-20210924194626-eecb7227e71c/go.mod h1:Yfbk6Pmk4QUgKlOdBH6VRpTfQfP6KVBixHaDy0KCre4=
 github.com/queensaver/packages/temperature v0.0.0-20210924194626-eecb7227e71c h1:UloMdU8IZHcakk8q+ap84Vl1CdlHwAlQcD5lO4hUK3Y=

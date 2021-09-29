@@ -23,6 +23,7 @@ var apiServerAddr = flag.String("api_server_addr", "https://api.queensaver.com",
 var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
 var httpServerHiveFile = flag.String("http_server_bhive_file", "/home/pi/bOS/bhive", "HTTP server directory to serve bHive file")
 var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
+var cachePath = flag.String("cache_path", "~/bCache", "Cache directory where data will be stored that can't be sent to the cloud.")
 var tokenFile = flag.String("token_file", fmt.Sprintf("%s/.queensaver_token",
 	os.Getenv("HOME")), "Path to the file containing the token")
 
@@ -104,6 +105,10 @@ func main() {
 	}
 	s, _ := bConfig.String()
 	logger.Debug("bConfig content", "bconfig", s)
+
+	// Initiatlize the bBuffer
+	bBuffer.SetPath(*cachePath)
+	bBuffer.SetFileOperator(&buffer.FileSurgeon{})
 
 	var schedule scheduler.Schedule
 	// check if the bhive is a local instance, if so, skip the relay initialisation.
