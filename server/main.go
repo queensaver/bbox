@@ -73,7 +73,7 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 // Initiates a flush to cloud. This will hold a lock so that no other values will be accepted from bHIves.
 func flushHandler(w http.ResponseWriter, req *http.Request) {
 	poster := buffer.HttpPostClient{ApiServer: *apiServerAddr, Token: token}
-	bBuffer.Flush(poster)
+	go bBuffer.Flush(poster)
 }
 
 func configHandler(w http.ResponseWriter, req *http.Request) {

@@ -158,8 +158,8 @@ func (f *FileSurgeon) SaveValues(path string, values []SensorValuer) []SensorVal
 	}
 	err := os.MkdirAll(path, 0755)
 	if err != nil {
-		logger.Error("Could not create directory", 
-			"path", path, 
+		logger.Error("Could not create directory",
+			"path", path,
 			"error", err)
 		return values
 	}
@@ -269,7 +269,7 @@ func (h HttpPostClient) PostData(request string, data interface{}) error {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Q-Token", h.Token)
-	client := &http.Client{}
+	client := &http.Client{Timeout: 13 * time.Minute} // TODO: This needs tuning, some documents like images might take longer to upload.
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -349,7 +349,7 @@ func (b *Buffer) SendValues(
 }
 
 func (b *Buffer) Flush(poster HttpClientPoster) {
-	logger.Debug("Flushing data")
+	logger.Info("Flushing data to cloud")
 	mu.Lock()
 	defer b.FileOperator.RemountRO()
 	defer mu.Unlock()
