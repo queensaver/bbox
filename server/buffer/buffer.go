@@ -200,7 +200,7 @@ func (f *FileSurgeon) LoadValues(path string, newObject func() SensorValuer) []S
 		}
 		o := newObject()
 		f := f.NewFiler(p)
-		err = f.Load(o)
+		err = f.Load(&o)
 		if err != nil {
 			logger.Error("could not load object file from disk",
 				"path", p,
