@@ -340,9 +340,10 @@ func (b *Buffer) SendValues(
 			logger.Info("error posting data to the cloud", "err", err)
 			unsentValues = append(unsentValues, v)
 		} else {
-			// If there UUID is not empty this means that the temperature was loaded from disk, hence we have to delete it later in a batch when we remount the disk writeable.
+			// If there UUID is not empty this means that the value was loaded from disk, hence we have to delete it later in a batch when we remount the disk writeable.
 			if v.GetUUID() != "" {
 				postedValues = append(postedValues, v)
+				logger.Info("Planning to delete UUID.", "path", path, "uuid", v.GetUUID())
 			}
 		}
 	}
