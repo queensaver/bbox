@@ -202,13 +202,14 @@ func (f *FileSurgeon) LoadValues(path string, newObject func() SensorValuer) []S
 		f := f.NewFiler(p)
 		err = f.Load(o)
 		if err != nil {
-			r = append(r, o)
 			logger.Error("could not load object file from disk",
 				"path", p,
 				"error", err,
 				"object", o,
 			)
 			return err
+		} else {
+			r = append(r, o)
 		}
 		return nil
 	})
@@ -311,8 +312,9 @@ func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int)
 		b.Flush(poster)
 	}
 }
-// SendValues will send all []SensorValuer to the given apiServerAddr. 
-// SendValues will also load cached values from disk and try to send them all to the server in one batch. 
+
+// SendValues will send all []SensorValuer to the given apiServerAddr.
+// SendValues will also load cached values from disk and try to send them all to the server in one batch.
 // If values from disk are sent out successfully they will be deleted from disk.
 // If it can't connect to the apiServer, it will return the values that could neither be sent to the apiServer nor cached to disk.
 func (b *Buffer) SendValues(
@@ -321,6 +323,7 @@ func (b *Buffer) SendValues(
 	newValues []SensorValuer,
 	poster HttpClientPoster,
 	newValue func() SensorValuer) ([]SensorValuer, error) {
+
 	valuesOnDisk := b.FileOperator.LoadValues(path, newValue)
 	// copy the temperatures from the buffer
 	var values = make([]SensorValuer, len(newValues)+len(valuesOnDisk))
@@ -340,7 +343,7 @@ func (b *Buffer) SendValues(
 			logger.Info("error posting data to the cloud", "err", err)
 			unsentValues = append(unsentValues, v)
 		} else {
-			// If there UUID is not empty this means that the value was loaded from disk, hence we have to delete it later in a batch when we remount the disk writeable.
+			// If the UUID is not empty this means that the value was loaded from disk, hence we have to delete it later in a batch when we remount the disk writeable.
 			if v.GetUUID() != "" {
 				postedValues = append(postedValues, v)
 				logger.Info("Planning to delete UUID.", "path", path, "uuid", v.GetUUID())
@@ -387,7 +390,7 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 	if err != nil {
 		logger.Error("Could not send scale values", "error", err)
 	}
-	
+
 	if b.ShutdownDesired() && (len(b.unsentScaleValues) == 0) && (len(b.unsentTemperatures) == 0) {
 		logger.Info("Shutdown is desired, all data was flushed, attempting to shut down now")
 		b.schedule.Shutdown()
