@@ -117,6 +117,7 @@ func (f *File) Path() string {
 func (f *File) Delete() error {
 	f.lock.Lock()
 	defer f.lock.Unlock()
+	logger.Debug("Deleting file", "filename", f.Path())
 	return os.Remove(f.path)
 }
 
@@ -127,6 +128,7 @@ func (f *FileSurgeon) NewFiler(p string) Filer {
 }
 
 func (f *FileSurgeon) DeleteValues(path string, values []SensorValuer) {
+	logger.Debug("Deleting Values from Disk")
 
 	if !f.writeableFS {
 		err := f.RemountRW()
@@ -309,7 +311,10 @@ func (b *Buffer) FlushSchedule(apiServerAddr *string, token string, seconds int)
 		b.Flush(poster)
 	}
 }
-
+// SendValues will send all []SensorValuer to the given apiServerAddr. 
+// SendValues will also load cached values from disk and try to send them all to the server in one batch. 
+// If values from disk are sent out successfully they will be deleted from disk.
+// If it can't connect to the apiServer, it will return the values that could neither be sent to the apiServer nor cached to disk.
 func (b *Buffer) SendValues(
 	path string,
 	apiPath string,
@@ -327,6 +332,9 @@ func (b *Buffer) SendValues(
 	var postedValues []SensorValuer
 	var unsentValues []SensorValuer
 	for _, v := range values {
+		logger.Debug("Sending value",
+			"value", v,
+			"api_path", apiPath)
 		err := poster.PostData(apiPath, v)
 		if err != nil {
 			logger.Info("error posting data to the cloud", "err", err)
@@ -350,6 +358,7 @@ func (b *Buffer) SendValues(
 
 func (b *Buffer) Flush(poster HttpClientPoster) {
 	logger.Info("Flushing data to cloud")
+	defer logger.Info("Flushing data to cloud done")
 	mu.Lock()
 	defer b.FileOperator.RemountRO()
 	defer mu.Unlock()
@@ -377,10 +386,10 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 	if err != nil {
 		logger.Error("Could not send scale values", "error", err)
 	}
-	if b.ShutdownDesired() && b.Flushed() {
+	
+	if b.ShutdownDesired() && (len(b.unsentScaleValues) == 0) && (len(b.unsentTemperatures) == 0) {
 		logger.Info("Shutdown is desired, all data was flushed, attempting to shut down now")
 		b.schedule.Shutdown()
-
 	}
 }
 
@@ -470,10 +479,4 @@ func (b *Buffer) GetUnsentTemperatures() []SensorValuer {
 	mu.Lock()
 	defer mu.Unlock()
 	return b.unsentTemperatures
-}
-
-func (b *Buffer) Flushed() bool {
-	mu.Lock()
-	defer mu.Unlock()
-	return (len(b.unsentScaleValues) == 0) && (len(b.unsentTemperatures) == 0)
 }

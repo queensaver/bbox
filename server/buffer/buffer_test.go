@@ -1,6 +1,7 @@
 package buffer
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -45,6 +46,56 @@ func (f *FakeFileOperator) NewFiler(p string) Filer {
 	return &FakeFile{p}
 }
 
+type FakeFileLoadOperator struct {
+	values        []SensorValuer
+	deletedValues []SensorValuer
+}
+
+func (f *FakeFileLoadOperator) LoadValues(path string, newValue func() SensorValuer) []SensorValuer {
+	r := []SensorValuer{}
+	val1 := newValue()
+	val1.SetUUID()
+	val2 := newValue()
+	val2.SetUUID()
+	r = append(r, val1)
+	r = append(r, val2)
+	fmt.Printf("Loaded the following values: %v\n", r)
+	return r
+}
+
+func (f *FakeFileLoadOperator) SaveValues(p string, v []SensorValuer) []SensorValuer {
+	f.values = v
+	return []SensorValuer{}
+}
+
+func (f *FakeFileLoadOperator) GetValues() []SensorValuer {
+	return f.values
+}
+func (f *FakeFileLoadOperator) GetDeletedValues() []SensorValuer {
+	return f.deletedValues
+}
+
+func (f *FakeFileLoadOperator) DeleteValues(path string, values []SensorValuer) {
+	fmt.Printf("I'm going to delete the following values: %v\n", f.GetValues())
+	for _, v := range values {
+		if v.GetUUID() != "" {
+			f.deletedValues = append(f.deletedValues, v)
+		}
+	}
+}
+
+func (f *FakeFileLoadOperator) RemountRO() error {
+	return nil
+}
+
+func (f *FakeFileLoadOperator) RemountRW() error {
+	return nil
+}
+
+func (f *FakeFileLoadOperator) NewFiler(p string) Filer {
+	return &FakeFile{p}
+}
+
 type FakeFile struct {
 	path string
 }
@@ -83,7 +134,27 @@ func TestBufferAppend(t *testing.T) {
 		t.Errorf("Unexpected result after adding Temperature: %s", diff)
 	}
 }
-
+func TestBufferDeleteFromDisk(t *testing.T) {
+	f := &FakeFileLoadOperator{}
+	bBuffer := Buffer{
+		FileOperator: f,
+		path:         "temperatures",
+	}
+	temp := temperature.Temperature{
+		Temperature: 31.0,
+		BHiveID:     "1234asdf",
+		SensorID:    "1234asdf",
+	}
+	bBuffer.AppendTemperature(temp)
+	c := HttpClientMock{"200", nil}
+	bBuffer.Flush(&c)
+	t.Logf(fmt.Sprintf("%s", f.GetValues()))
+	deletedValues := f.GetDeletedValues()
+	t.Logf("hi %v", deletedValues)
+	if len(deletedValues) == 0 {
+		t.Errorf("The values should have been deleted")
+	}
+}
 func TestBufferSuccessfulFlush(t *testing.T) {
 	bBuffer := Buffer{
 		FileOperator: &FakeFileOperator{},

@@ -48,7 +48,9 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	t.Timestamp = int64(time.Now().Unix())
 	bBuffer.AppendTemperature(t)
-	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received temperature from bHive %s", t.BHiveID))
+	logger.Debug("Successfully received temperature from bHive",
+		"ip", req.RemoteAddr,
+		"bhive_id", t.BHiveID)
 }
 
 func scaleHandler(w http.ResponseWriter, req *http.Request) {
@@ -56,17 +58,21 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	var s scale.Scale
 	err := decoder.Decode(&s)
 	if err != nil {
-		log.Println(err)
+		logger.Error("Scale decode error", "error", err)
 		return
 	}
 	if s.Error != "" {
-		log.Printf("Scale measurement error received from BHive %s: %s", s.BhiveId, s.Error)
+		logger.Error("Scale measurement error received",
+			"bhive_id", s.BhiveId,
+			"error", s.Error)
 		// TODO: Saving the erorr is not implemetend on the cloud side, hence we just log the error and null it here.
 		s.Error = ""
 	}
 
 	s.Epoch = int64(time.Now().Unix())
-	logger.Debug(req.RemoteAddr, fmt.Sprintf("successfully received weight from bHive %s", s.BhiveId))
+	logger.Debug("Successfully received temperature from bHive",
+		"ip", req.RemoteAddr,
+		"bhive_id", s.BhiveId)
 	bBuffer.AppendScale(s)
 }
 
@@ -89,19 +95,20 @@ func configHandler(w http.ResponseWriter, req *http.Request) {
 func main() {
 	flag.Parse()
 	var err error
+	logger.Debug("bbox starting up")
 
 	token = os.Getenv("TOKEN")
 	if token == "" {
 		content, err := ioutil.ReadFile(*tokenFile)
 		if err != nil {
-			log.Fatal("can't bootstrap without authentication token (set TOKEN environment variable):", err)
+			logger.Fatal("can't bootstrap without authentication token (set TOKEN environment variable):", err)
 		}
 		token = string(content)
 	}
 	bConfig, err = config.Get(*apiServerAddr+"/v1/config", token)
 	// TODO: this needs to be downloaded before every scheduler run
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("Could not get config", "error", err)
 	}
 	s, _ := bConfig.String()
 	logger.Debug("bConfig content", "bconfig", s)
