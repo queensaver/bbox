@@ -13,7 +13,7 @@ type HttpClientMock struct {
 	Error  error
 }
 
-func (h *HttpClientMock) PostData(string, interface{}) error {
+func (h *HttpClientMock) PostData(string, SensorValuer) error {
 	return h.Error
 }
 
@@ -54,9 +54,9 @@ type FakeFileLoadOperator struct {
 func (f *FakeFileLoadOperator) LoadValues(path string, newValue func() SensorValuer) []SensorValuer {
 	r := []SensorValuer{}
 	val1 := newValue()
-	val1.SetUUID()
+	val1.GenerateUUID()
 	val2 := newValue()
-	val2.SetUUID()
+	val2.GenerateUUID()
 	r = append(r, val1)
 	r = append(r, val2)
 	fmt.Printf("Loaded the following values: %v\n", r)
@@ -236,4 +236,8 @@ func TestBufferFailedFlushMultiAppend(t *testing.T) {
 	if diff := cmp.Diff(expected, result); diff != "" {
 		t.Errorf("%v", diff)
 	}
+}
+
+func passByReference(data SensorValuer) {
+  data.ClearUUID()
 }

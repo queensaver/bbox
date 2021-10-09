@@ -1,3 +1,8 @@
+- name: install alsa-packages
+  apt:
+    name:
+    - alsa-utils
+    state: present
 
 - name: link updater systemd service
   file:

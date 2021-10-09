@@ -39,7 +39,7 @@ func (m *BufferError) Error() string {
 }
 
 type HttpClientPoster interface {
-	PostData(string, interface{}) error
+	PostData(string, SensorValuer) error
 }
 
 type HttpPostClient struct {
@@ -61,8 +61,10 @@ type FileOperator interface {
 }
 
 type SensorValuer interface {
-	SetUUID()
+  ClearUUID()
+	SetUUID(string)
 	GetUUID() string
+  GenerateUUID()
 }
 
 type File struct {
@@ -167,7 +169,7 @@ func (f *FileSurgeon) SaveValues(path string, values []SensorValuer) []SensorVal
 	}
 	for _, v := range values {
 		if u := v.GetUUID(); u == "" {
-			v.SetUUID()
+			v.GenerateUUID()
 		}
 		f := f.NewFiler(filepath.Join(path, v.GetUUID()+".json"))
 		err := f.Save(v)
@@ -256,11 +258,14 @@ func (f *FileSurgeon) RemountRW() error {
 	f.writeableFS = true
 	return nil
 }
-func (h HttpPostClient) PostData(request string, data interface{}) error {
+func (h HttpPostClient) PostData(request string, data SensorValuer) error {
+  uuid := data.GetUUID()
+  data.ClearUUID()
 	j, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
+  data.SetUUID(uuid)
 	if !strings.HasSuffix(h.ApiServer, "/") {
 		h.ApiServer = h.ApiServer + "/"
 	}
@@ -396,76 +401,6 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 		b.schedule.Shutdown()
 	}
 }
-
-/*func (b *Buffer) Flush(ip string, poster HttpClientPoster) error {
-	mu.Lock()
-	defer mu.Unlock()
-	logger.Debug(ip, "Flushing")
-	temperaturePath := filepath.Join(b.path, "temperatures")
-	temperaturesOnDisk, err := b.FileOperator.LoadValues(temperaturePath, func() SensorValuer { return &temperature.Temperature{} })
-	if err != nil {
-		logger.Error("Could not load data from disk", "error", err)
-	}
-	// copy the temperatures from the buffer
-	var temperatures = make([]temperature.Temperature, len(b.temperatures)+len(temperaturesOnDisk))
-	var postedTemperatures []temperature.Temperature
-	for i, t := range append(b.temperatures, temperaturesOnDisk...) {
-		temperatures[i] = t
-	}
-	// empty the slice.
-	b.temperatures = make([]temperature.Temperature, 0)
-	var last_err error
-	for _, t := range temperatures {
-		err := poster.PostData("v1/temperature", t)
-		if err != nil {
-			last_err = err
-			b.temperatures = append(b.temperatures, t)
-		} else {
-			// If there UUID is not empty this means that the temperature was loaded from disk, hence we have to delete it later in a batch when we remount the disk writeable.
-			if t.GetUUID() != "" {
-				postedTemperatures = append(postedTemperatures, t)
-			}
-		}
-		if b.shutdownDesired {
-			b.temperatureFlushed = true
-		}
-	}
-	err = b.remountrw()
-	if err == nil && (len(b.temperatures) > 0 || (len(postedTemperatures)) > 0) {
-		b.temperatures = b.FileOperator.SaveValues(temperaturePath, b.temperatures)
-		b.FileOperator.DeleteValues(temperaturePath, postedTemperatures)
-	}
-	b.remountro()
-
-	// Repeat the same thing as above with scale.
-	// While we could write a function to DRY I think it's OK if I copy this.
-	var scales = make([]scale.Scale, len(b.scales))
-	for i, s := range b.scales {
-		scales[i] = s
-	}
-	// empty the slice.
-	b.scales = make([]scale.Scale, 0)
-	for _, s := range scales {
-		err := poster.PostData("v1/scale", s)
-		if err != nil {
-			last_err = err
-			b.scales = append(b.scales, s)
-		}
-		if b.shutdownDesired {
-			b.scaleFlushed = true
-		}
-	}
-	if b.shutdownDesired && b.temperatureFlushed && b.scaleFlushed {
-		res := b.schedule.Shutdown()
-		if !res {
-			b.scaleFlushed = false
-			b.temperatureFlushed = false
-		}
-	}
-
-	return last_err
-}
-*/
 
 func (b *Buffer) AppendScale(s scale.Scale) {
 	mu.Lock()
