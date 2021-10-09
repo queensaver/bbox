@@ -194,7 +194,8 @@ func (f *FileSurgeon) LoadValues(path string, newObject func() SensorValuer) []S
 		if err != nil {
 			return err
 		}
-		if filepath.Ext(path) != ".json" {
+		if filepath.Ext(p) != ".json" {
+			logger.Debug("Skipping non-json file", "path", p)
 			return nil
 		}
 		if info.IsDir() {
@@ -330,6 +331,7 @@ func (b *Buffer) SendValues(
 	newValue func() SensorValuer) ([]SensorValuer, error) {
 
 	valuesOnDisk := b.FileOperator.LoadValues(path, newValue)
+	logger.Debug("Loaded values from disk", "path", path, "values", valuesOnDisk)
 	// copy the temperatures from the buffer
 	var values = make([]SensorValuer, len(newValues)+len(valuesOnDisk))
 
