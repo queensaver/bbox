@@ -16,7 +16,9 @@ import (
 	"github.com/queensaver/packages/config"
 	"github.com/queensaver/packages/logger"
 	"github.com/queensaver/packages/scale"
+	"github.com/queensaver/packages/sound"
 	"github.com/queensaver/packages/temperature"
+	"github.com/queensaver/protos/common/sound"
 )
 
 var apiServerAddr = flag.String("api_server_addr", "https://api.queensaver.com", "API Server Address")
@@ -53,6 +55,26 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 		"bhive_id", t.BHiveID)
 }
 
+func soundHandler(w http.ResponseWriter, req *http.Request) {
+	decoder := json.NewDecoder(req.Body)
+	var s sound.Sound
+	err := decoder.Decode(&s)
+	if err != nil {
+		logger.Error("Sound decode error", "error", err)
+		return
+	}
+	if s.Error != "" {
+		logger.Error("Sound measurement error received",
+			"bhive_id", s.BhiveId,
+			"error", s.Error)
+	}
+
+	s.Epoch = int64(time.Now().Unix())
+	logger.Debug("Successfully received sound from bHive",
+		"ip", req.RemoteAddr,
+		"bhive_id", s.BhiveId)
+	bBuffer.AppendSound(s)
+}
 func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var s scale.Scale
@@ -150,6 +172,7 @@ func main() {
 
 	http.HandleFunc("/scale", scaleHandler)
 	http.HandleFunc("/temperature", temperatureHandler)
+	http.HandleFunc("/sound", soundHandler)
 	http.HandleFunc("/config", configHandler)
 	http.HandleFunc("/flush", flushHandler)
 	http.HandleFunc("/bhive", func(res http.ResponseWriter, req *http.Request) {
