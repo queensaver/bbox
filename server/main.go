@@ -18,7 +18,6 @@ import (
 	"github.com/queensaver/packages/scale"
 	"github.com/queensaver/packages/sound"
 	"github.com/queensaver/packages/temperature"
-	"github.com/queensaver/protos/common/sound"
 )
 
 var apiServerAddr = flag.String("api_server_addr", "https://api.queensaver.com", "API Server Address")

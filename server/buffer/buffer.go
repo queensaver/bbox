@@ -18,12 +18,14 @@ import (
 	"github.com/queensaver/bbox/server/scheduler"
 	"github.com/queensaver/packages/logger"
 	"github.com/queensaver/packages/scale"
+	"github.com/queensaver/packages/sound"
 	"github.com/queensaver/packages/temperature"
 )
 
 type Buffer struct {
 	unsentTemperatures []SensorValuer
 	unsentScaleValues  []SensorValuer
+	unsentSoundValues  []SensorValuer
 	shutdownDesired    bool // If true it will actually physically shutdown the raspberry pi after all data is flushed. It will use the wittypi module to wake up the raspberry pi afterwards.
 	schedule           *scheduler.Schedule
 	path               string //Path on disk to buffer the data if we can't push it out to the cloud.
@@ -386,6 +388,19 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 	if err != nil {
 		logger.Error("Could not send temperature values", "error", err)
 	}
+
+	soundPath := filepath.Join(b.path, "sounds")
+	newSound := func() SensorValuer { return &sound.Sound{} }
+	b.unsentSoundValues, err = b.SendValues(
+		soundPath,
+		"v1/sound",
+		b.unsentSoundValues,
+		poster,
+		newSound)
+	if err != nil {
+		logger.Error("Could not send sound values", "error", err)
+	}
+
 	scalePath := filepath.Join(b.path, "scale-values")
 	newScale := func() SensorValuer { return &scale.Scale{} }
 	b.unsentScaleValues, err = b.SendValues(
@@ -402,6 +417,12 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 		logger.Info("Shutdown is desired, all data was flushed, attempting to shut down now")
 		b.schedule.Shutdown()
 	}
+}
+
+func (b *Buffer) AppendSound(s sound.Sound) {
+	mu.Lock()
+	defer mu.Unlock()
+	b.unsentSoundValues = append(b.unsentSoundValues, &s)
 }
 
 func (b *Buffer) AppendScale(s scale.Scale) {
