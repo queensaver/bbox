@@ -4,8 +4,8 @@ go 1.15
 
 require (
 	github.com/google/go-cmp v0.5.4
-	github.com/queensaver/packages/config v0.0.0-20210929054635-954a86633ecc
-	github.com/queensaver/packages/logger v0.0.0-20210930150643-4a50b289ebea
+	github.com/queensaver/packages/config v0.0.0-20211009192843-e15a0fff039b
+	github.com/queensaver/packages/logger v0.0.0-20211009192843-e15a0fff039b
 	github.com/queensaver/packages/scale v0.0.0-20211009192843-e15a0fff039b
 	github.com/queensaver/packages/sound v0.0.0-20211009192843-e15a0fff039b // indirect
 	github.com/queensaver/packages/temperature v0.0.0-20211009192843-e15a0fff039b
