@@ -18,11 +18,13 @@ import (
 	"github.com/queensaver/bbox/server/scheduler"
 	"github.com/queensaver/packages/logger"
 	"github.com/queensaver/packages/scale"
+	"github.com/queensaver/packages/varroa"
 	"github.com/queensaver/packages/temperature"
 )
 
 type Buffer struct {
 	unsentTemperatures []SensorValuer
+	unsentVarroaImages []SensorValuer
 	unsentScaleValues  []SensorValuer
 	shutdownDesired    bool // If true it will actually physically shutdown the raspberry pi after all data is flushed. It will use the wittypi module to wake up the raspberry pi afterwards.
 	schedule           *scheduler.Schedule
@@ -65,6 +67,8 @@ type SensorValuer interface {
 	SetUUID(string)
 	GetUUID() string
   GenerateUUID()
+  Send(string, string) error
+  IsMultipart() bool
 }
 
 type File struct {
@@ -272,21 +276,25 @@ func (h HttpPostClient) PostData(request string, data SensorValuer) error {
 	}
 	url := h.ApiServer + url.PathEscape(request)
 	logger.Debug("Post Request for API Server", "url", url)
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(j))
-	if err != nil {
-		return err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Q-Token", h.Token)
-	client := &http.Client{Timeout: 13 * time.Minute} // TODO: This needs tuning, some documents like images might take longer to upload.
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		return &BufferError{fmt.Sprintf("HTTP return code: %s; URL: %s", resp.Status, url)}
-	}
+  if data.IsMultipart() {
+    return data.Send(url, h.Token)
+  } else {
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(j))
+    if err != nil {
+      return err
+    }
+    req.Header.Set("Content-Type", "application/json")
+    req.Header.Set("Q-Token", h.Token)
+    client := &http.Client{Timeout: 13 * time.Minute} // TODO: This needs tuning, some documents like images might take longer to upload.
+    resp, err := client.Do(req)
+    if err != nil {
+      return err
+    }
+    defer resp.Body.Close()
+    if resp.StatusCode != 200 {
+      return &BufferError{fmt.Sprintf("HTTP return code: %s; URL: %s", resp.Status, url)}
+    }
+  }
 	return nil
 }
 
@@ -376,7 +384,7 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 
 	var err error
 	temperaturePath := filepath.Join(b.path, "temperatures")
-	newTemperature := func() SensorValuer { return &scale.Scale{} }
+	newTemperature := func() SensorValuer { return &temperature.Temperature{} }
 	b.unsentTemperatures, err = b.SendValues(
 		temperaturePath,
 		"v1/temperature",
@@ -396,6 +404,18 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 		newScale)
 	if err != nil {
 		logger.Error("Could not send scale values", "error", err)
+	}
+
+	varroaPath := filepath.Join(b.path, "varroa-images")
+	newImage := func() SensorValuer { return &varroa.Varroa{} }
+	b.unsentVarroaImages, err = b.SendValues(
+		varroaPath,
+		"v1/varroa-scan-image",
+		b.unsentVarroaImages,
+		poster,
+		newImage)
+	if err != nil {
+		logger.Error("Could not send varroa images", "error", err)
 	}
 
 	if b.ShutdownDesired() && (len(b.unsentScaleValues) == 0) && (len(b.unsentTemperatures) == 0) {
