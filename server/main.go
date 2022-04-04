@@ -54,6 +54,10 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 		"bhive_id", t.BHiveID)
 }
 
+func varroaHandler(w http.ResponseWriter, req *http.Request) {
+	// bBuffer.AppendVarroaImage(v)
+}
+
 func soundHandler(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var s sound.Sound
@@ -74,6 +78,7 @@ func soundHandler(w http.ResponseWriter, req *http.Request) {
 		"bhive_id", s.BhiveId)
 	bBuffer.AppendSound(s)
 }
+
 func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	var s scale.Scale
@@ -172,6 +177,7 @@ func main() {
 	http.HandleFunc("/scale", scaleHandler)
 	http.HandleFunc("/temperature", temperatureHandler)
 	http.HandleFunc("/sound", soundHandler)
+	http.HandleFunc("/varroa", varroaHandler)
 	http.HandleFunc("/config", configHandler)
 	http.HandleFunc("/flush", flushHandler)
 	http.HandleFunc("/bhive", func(res http.ResponseWriter, req *http.Request) {

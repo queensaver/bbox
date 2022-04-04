@@ -445,6 +445,12 @@ func (b *Buffer) AppendSound(s sound.Sound) {
 	b.unsentSoundValues = append(b.unsentSoundValues, &s)
 }
 
+func (b *Buffer) AppendVarroaImage(v varroa.Varroa) {
+	mu.Lock()
+	defer mu.Unlock()
+	b.unsentVarroaImages = append(b.unsentVarroaImages, &v)
+}
+
 func (b *Buffer) AppendScale(s scale.Scale) {
 	mu.Lock()
 	defer mu.Unlock()
