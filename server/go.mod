@@ -7,7 +7,7 @@ require (
 	github.com/queensaver/packages/config v0.0.0-20210929054635-954a86633ecc
 	github.com/queensaver/packages/logger v0.0.0-20210930150643-4a50b289ebea
 	github.com/queensaver/packages/scale v0.0.0-20220404192636-0b664c8252b7
-	github.com/queensaver/packages/sound v0.0.0-20220404192636-0b664c8252b7 // indirect
+	github.com/queensaver/packages/sound v0.0.0-20220404192636-0b664c8252b7
 	github.com/queensaver/packages/temperature v0.0.0-20220404192636-0b664c8252b7
 	github.com/queensaver/packages/varroa v0.0.0-20220404192636-0b664c8252b7
 	github.com/robfig/cron/v3 v3.0.1
