@@ -1,6 +1,6 @@
 module github.com/queensaver/bbox/server
 
-go 1.15
+go 1.17
 
 require (
 	github.com/google/go-cmp v0.5.5
@@ -13,9 +13,23 @@ require (
 	github.com/queensaver/packages/varroa v0.0.0-20220404192636-0b664c8252b7
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stianeikeland/go-rpio/v4 v4.4.0
-	go.uber.org/atomic v1.9.0 // indirect
-	go.uber.org/multierr v1.7.0 // indirect
-	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	periph.io/x/conn/v3 v3.6.8
 	periph.io/x/host/v3 v3.7.0
+)
+
+require (
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/queensaver/openapi/golang/proto/models v0.0.0-20220312200523-ad13c5c35d81 // indirect
+	github.com/sykesm/zap-logfmt v0.0.4 // indirect
+	go.uber.org/atomic v1.9.0 // indirect
+	go.uber.org/multierr v1.7.0 // indirect
+	go.uber.org/zap v1.19.1 // indirect
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
+	golang.org/x/sys v0.0.0-20220310020820-b874c991c1a5 // indirect
+	golang.org/x/text v0.3.7 // indirect
+	google.golang.org/genproto v0.0.0-20220310185008-1973136f34c6 // indirect
+	google.golang.org/grpc v1.45.0 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
+	periph.io/x/d2xx v0.0.1 // indirect
 )
