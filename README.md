@@ -12,3 +12,9 @@ Install the bbox software with the following command on your raspberry pi:
 ```bash
 curl https://raw.githubusercontent.com/queensaver/bbox/master/ansible/install.sh | bash
 ```
+
+To send a varroa image without the bhive: 
+
+```bash
+curl -v -F bhiveId=b827ebe6b396 -F epoch=1649171777 -F scan=@varroa.jpg http://localhost:8333/varroa
+```
