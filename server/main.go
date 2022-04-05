@@ -4,20 +4,24 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/queensaver/bbox/server/buffer"
 	"github.com/queensaver/bbox/server/relay"
 	"github.com/queensaver/bbox/server/scheduler"
+	"github.com/queensaver/openapi/golang/proto/services"
 	"github.com/queensaver/packages/config"
 	"github.com/queensaver/packages/logger"
 	"github.com/queensaver/packages/scale"
 	"github.com/queensaver/packages/sound"
 	"github.com/queensaver/packages/temperature"
+	"github.com/queensaver/packages/varroa"
 )
 
 var apiServerAddr = flag.String("api_server_addr", "https://api.queensaver.com", "API Server Address")
@@ -55,7 +59,50 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func varroaHandler(w http.ResponseWriter, req *http.Request) {
-	// bBuffer.AppendVarroaImage(v)
+	const maxSize = 32 << 20
+	err := req.ParseMultipartForm(maxSize) // maxMemory 32MB
+	if err != nil {
+		logger.Info("Could not parse MultiPartFrom in postVarroaImageHandler", "erro", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	bHiveID := req.PostFormValue("bhiveId")
+	epoch := req.PostFormValue("epoch")
+	ts, err := strconv.ParseInt(epoch, 10, 64)
+	if err != nil {
+		logger.Info("Invalid epoch posted", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if epoch == "" || bHiveID == "" {
+		logger.Info("Missing form values - epoch or bhiveId are empty.")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	f, _, err := req.FormFile("scan")
+	if err != nil {
+		logger.Info("Invalid file upload", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	image, err := io.ReadAll(f)
+	if err != nil {
+		logger.Info("Can't read image", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	v := varroa.Varroa{
+		// see https://github.com/golang/go/issues/9859 if this syntax below seems confusing. it's confusing me as well.
+		VarroaScanImagePostRequest: services.VarroaScanImagePostRequest{
+			BhiveId: bHiveID,
+			Epoch:   ts,
+			Scan:    image}}
+
+	bBuffer.AppendVarroaImage(v)
+	w.WriteHeader(http.StatusOK)
 }
 
 func soundHandler(w http.ResponseWriter, req *http.Request) {

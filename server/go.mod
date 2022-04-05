@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/google/go-cmp v0.5.5
+	github.com/queensaver/openapi/golang/proto/services v0.0.0-20220321063112-2e0f4b99d7d8
 	github.com/queensaver/packages/config v0.0.0-20210929054635-954a86633ecc
 	github.com/queensaver/packages/logger v0.0.0-20210930150643-4a50b289ebea
 	github.com/queensaver/packages/scale v0.0.0-20220404192636-0b664c8252b7
