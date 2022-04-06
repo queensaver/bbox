@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/queensaver/bbox/server/buffer"
@@ -67,16 +66,9 @@ func varroaHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	bHiveID := req.PostFormValue("bhiveId")
-	epoch := req.PostFormValue("epoch")
-	ts, err := strconv.ParseInt(epoch, 10, 64)
-	if err != nil {
-		logger.Info("Invalid epoch posted", "error", err)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
 
-	if epoch == "" || bHiveID == "" {
-		logger.Info("Missing form values - epoch or bhiveId are empty.")
+	if bHiveID == "" {
+		logger.Info("Missing form values - bhiveId is empty.")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -98,7 +90,7 @@ func varroaHandler(w http.ResponseWriter, req *http.Request) {
 		// see https://github.com/golang/go/issues/9859 if this syntax below seems confusing. it's confusing me as well.
 		VarroaScanImagePostRequest: services.VarroaScanImagePostRequest{
 			BhiveId: bHiveID,
-			Epoch:   ts,
+			Epoch:   int64(time.Now().Unix()),
 			Scan:    image}}
 
 	bBuffer.AppendVarroaImage(v)
