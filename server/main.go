@@ -45,16 +45,16 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	if t.Error != "" {
 		logger.Info("Temperature measurement error received from BHive",
-			"bhive_id", t.BHiveID,
+			"bhive_id", t.BhiveId,
 			"error", t.Error)
 		// TODO: Saving the error is not implemetend on the cloud side, hence we just log the error and null it here.
 		t.Error = ""
 	}
-	t.Timestamp = int64(time.Now().Unix())
+	t.Epoch = int64(time.Now().Unix())
 	bBuffer.AppendTemperature(t)
 	logger.Debug("Successfully received temperature from bHive",
 		"ip", req.RemoteAddr,
-		"bhive_id", t.BHiveID)
+		"bhive_id", t.BhiveId)
 }
 
 func varroaHandler(w http.ResponseWriter, req *http.Request) {
