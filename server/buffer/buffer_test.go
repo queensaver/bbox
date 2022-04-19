@@ -5,7 +5,9 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/queensaver/packages/temperature"
+	"github.com/queensaver/openapi/golang/proto/models"
 )
 
 type HttpClientMock struct {
@@ -16,6 +18,8 @@ type HttpClientMock struct {
 func (h *HttpClientMock) PostData(string, SensorValuer) error {
 	return h.Error
 }
+
+const constTemp float32 = 31.0
 
 type FakeFileOperator struct {
 	values []SensorValuer
@@ -121,16 +125,14 @@ func TestBufferAppend(t *testing.T) {
 	bBuffer := Buffer{
 		FileOperator: &FakeFileOperator{},
 	}
-	temp := temperature.Temperature{
-		Temperature: 31.0,
-		BHiveID:     "1234asdf",
-		SensorID:    "1234asdf",
-	}
+	temp := temperature.Temperature{}
+  temp.Temperature = models.Temperature{Temperature: constTemp}
+  temp.BhiveId = "1234asdf"
 	bBuffer.AppendTemperature(temp)
 	tempSlice := make([]SensorValuer, 1)
 	tempSlice[0] = SensorValuer(&temp)
 	te := bBuffer.GetUnsentTemperatures()
-	if diff := cmp.Diff(tempSlice, te); diff != "" {
+	if diff := cmp.Diff(tempSlice, te, cmpopts.IgnoreUnexported(models.Temperature{})); diff != "" {
 		t.Errorf("Unexpected result after adding Temperature: %s", diff)
 	}
 }
@@ -140,11 +142,9 @@ func TestBufferDeleteFromDisk(t *testing.T) {
 		FileOperator: f,
 		path:         "temperatures",
 	}
-	temp := temperature.Temperature{
-		Temperature: 31.0,
-		BHiveID:     "1234asdf",
-		SensorID:    "1234asdf",
-	}
+	temp := temperature.Temperature{}
+  temp.Temperature = models.Temperature{Temperature: constTemp}
+	temp.BhiveId = "1234asdf"
 	bBuffer.AppendTemperature(temp)
 	c := HttpClientMock{"200", nil}
 	bBuffer.Flush(&c)
@@ -160,16 +160,14 @@ func TestBufferSuccessfulFlush(t *testing.T) {
 		FileOperator: &FakeFileOperator{},
 		path:         "temperatures",
 	}
-	temp := temperature.Temperature{
-		Temperature: 31.0,
-		BHiveID:     "1234asdf",
-		SensorID:    "1234asdf",
-	}
+	temp := temperature.Temperature{}
+  temp.Temperature = models.Temperature{Temperature: constTemp}
+	temp.BhiveId = "1234asdf"
 	bBuffer.AppendTemperature(temp)
 	expected := make([]SensorValuer, 1)
 	expected[0] = SensorValuer(&temp)
 	result := bBuffer.GetUnsentTemperatures()
-	if !cmp.Equal(expected, result) {
+	if !cmp.Equal(expected, result, cmpopts.IgnoreUnexported(models.Temperature{})) {
 		t.Errorf("Unexpected result after adding Temperature; %v", cmp.Diff(result, expected))
 	}
 	c := HttpClientMock{"200", nil}
@@ -185,17 +183,15 @@ func TestBufferFailedFlush(t *testing.T) {
 		FileOperator: &FakeFileOperator{},
 		path:         "temperatures",
 	}
-	temp := temperature.Temperature{
-		Temperature: 31.0,
-		BHiveID:     "1234asdf",
-		SensorID:    "1234asdf",
-	}
+	temp := temperature.Temperature{}
+  temp.Temperature = models.Temperature{Temperature: constTemp}
+	temp.BhiveId = "1234asdf"
 	bBuffer.AppendTemperature(temp)
 	c := HttpClientMock{"501", &BufferError{}}
 	bBuffer.Flush(&c)
 	result := bBuffer.FileOperator.LoadValues("", func() SensorValuer { return &temperature.Temperature{} })
 	expected := []SensorValuer{&temp}
-	if !cmp.Equal(expected, result) {
+	if !cmp.Equal(expected, result, cmpopts.IgnoreUnexported(models.Temperature{})) {
 		t.Errorf(`Unexpected result after failing Flush(): %v`, cmp.Diff(result, expected))
 	}
 }
@@ -206,21 +202,18 @@ func TestBufferFailedFlushMultiAppend(t *testing.T) {
 		path:         "temperatures",
 	}
 
-	temp1 := temperature.Temperature{
-		Temperature: 31.0,
-		BHiveID:     "1234asdf",
-		SensorID:    "1234asdf",
-	}
-	temp2 := temperature.Temperature{
-		Temperature: 32.0,
-		BHiveID:     "1234asdf",
-		SensorID:    "1234asdf",
-	}
-	temp3 := temperature.Temperature{
-		Temperature: 33.0,
-		BHiveID:     "1234asdf",
-		SensorID:    "1234asdf",
-	}
+	temp1 := temperature.Temperature{}
+  temp1.Temperature = models.Temperature{Temperature: constTemp}
+	temp1.BhiveId = "1234asdf"
+
+	temp2 := temperature.Temperature{}
+  temp2.Temperature = models.Temperature{Temperature: constTemp + 1}
+	temp2.BhiveId = "1234asdf"
+
+	temp3 := temperature.Temperature{}
+  temp3.Temperature = models.Temperature{Temperature: constTemp + 2}
+	temp3.BhiveId = "1234asdf"
+
 	bBuffer.AppendTemperature(temp1)
 	c := HttpClientMock{"501", &BufferError{}}
 	bBuffer.Flush(&c)
@@ -233,7 +226,7 @@ func TestBufferFailedFlushMultiAppend(t *testing.T) {
 	expected[2] = SensorValuer(&temp1)
 	expected[1] = SensorValuer(&temp2)
 	expected[0] = SensorValuer(&temp3)
-	if diff := cmp.Diff(expected, result); diff != "" {
+	if diff := cmp.Diff(expected, result, cmpopts.IgnoreUnexported(models.Temperature{})); diff != "" {
 		t.Errorf("%v", diff)
 	}
 }
