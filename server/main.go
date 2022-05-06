@@ -161,7 +161,7 @@ func configHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func rootHandler(w http.ResponseWriter, req *http.Request) {
-  http.ServeFile(w, req, "index.html")
+  http.ServeFile(w, req, "/home/pi/index.html")
 }
 
 
