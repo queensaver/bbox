@@ -43,6 +43,12 @@
     path: /etc/hosts
     line: 127.0.0.1 bbox
 
+- name: install avahi-daemin
+  apt:
+    name:
+    - avahi-daemon
+    state: present
+
 - name: configure eth0
   copy:
     dest: /etc/systemd/network/eth0.network
