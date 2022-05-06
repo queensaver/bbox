@@ -18,3 +18,8 @@ To send a varroa image without the bhive:
 ```bash
 curl -v -F bhiveId=b827ebe6b396 -F epoch=1649171777 -F scan=@varroa.jpg http://localhost:8333/varroa
 ```
+
+To send a fake temperature to a local bhive
+```bash
+curl -X POST -d '{"temperature": 22.24, "BBoxID": "aa:bb:cc:dd:ee:ff"}' http://localhost:8333/temperature
+```

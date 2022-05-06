@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+  "os/exec"
+
 
 	"github.com/queensaver/bbox/server/buffer"
 	"github.com/queensaver/bbox/server/relay"
@@ -28,6 +30,7 @@ var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
 var httpServerHiveFile = flag.String("http_server_bhive_file", "/home/pi/bOS/bhive", "HTTP server directory to serve bHive file")
 var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
 var cachePath = flag.String("cache_path", "bCache", "Cache directory where data will be stored that can't be sent to the cloud.")
+var scanCmd = flag.String("scan_command", "/home/pi/capture.sh", "Command to execute for a varroa scan.")
 var tokenFile = flag.String("token_file", fmt.Sprintf("%s/.queensaver_token",
 	os.Getenv("HOME")), "Path to the file containing the token")
 
@@ -157,6 +160,33 @@ func configHandler(w http.ResponseWriter, req *http.Request) {
 	w.Write(js)
 }
 
+func rootHandler(w http.ResponseWriter, req *http.Request) {
+  http.ServeFile(w, req, "index.html")
+}
+
+
+func scanHandler(w http.ResponseWriter, req *http.Request) {
+  cmd := exec.Command(*scanCmd)
+  err := cmd.Run()
+
+  if err != nil {
+    logger.Error("Scan command failed", "error", err)
+    http.Error(w, "Internal Error", 500)
+    return
+  }
+
+  var path = "/home/pi/scan.jpg"
+  img, err := os.Open(path)
+  if err != nil {
+    logger.Error("could not find image", "error", err)
+    http.Error(w, "Internal Error", 500)
+    return
+  }
+  defer img.Close()
+  w.Header().Set("Content-Type", "image/jpeg")
+  io.Copy(w, img)
+}
+
 func main() {
 	flag.Parse()
 	var err error
@@ -219,6 +249,8 @@ func main() {
 	http.HandleFunc("/varroa", varroaHandler)
 	http.HandleFunc("/config", configHandler)
 	http.HandleFunc("/flush", flushHandler)
+	http.HandleFunc("/scan", scanHandler)
+	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/bhive", func(res http.ResponseWriter, req *http.Request) {
 		http.ServeFile(res, req, *httpServerHiveFile)
 	})
