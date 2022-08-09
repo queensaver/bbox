@@ -2,7 +2,7 @@
 Description=Hardware clock synchronization
 [Service]
 Type=oneshot
-ExecStartPre=/bin/echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
+ExecStartPre=/usr/local/sbin/setup_rtc.sh
 ExecStart=/sbin/hwclock --hctosys --utc 
 ExecStop=/sbin/hwclock --systohc --utc
 [Install]
