@@ -3,7 +3,7 @@ Description=Hardware clock synchronization
 [Service]
 Type=oneshot
 ExecStartPre=/usr/local/sbin/setup_rtc.sh
-ExecStart=/sbin/hwclock --hctosys --utc 
-ExecStop=/sbin/hwclock --systohc --utc
+ExecStart=/sbin/hwclock --hctosys --utc --adjfile /var/lib/systemd/timesync/adjfile
+ExecStop=/sbin/hwclock --systohc --utc --adjfile /var/lib/systemd/timesync/adjfile
 [Install]
 WantedBy=multi-user.target
