@@ -131,6 +131,16 @@
     path: /etc/modules-load.d/modules.conf
     line: i2c-dev
 
+- name: Copy hwclock init file
+  copy:
+    src: '{{item}}'
+    dest: '/usr/local/sbin'
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - setup_rtc.sh
+
 - name: link hwclock systemd service
   file:
     state: link
