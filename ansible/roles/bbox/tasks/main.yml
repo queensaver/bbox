@@ -109,11 +109,10 @@
     path: /boot/config.txt
     line: dtoverlay=w1-gpio,gpiopin=17
 
-- name: install i2c-tools and wiringpi
+- name: install i2c-tools
   apt:
     name:
     - i2c-tools
-    - wiringpi
     state: present
 
 - name: update config.txt
