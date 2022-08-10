@@ -131,3 +131,8 @@
   lineinfile:
     path: /etc/modules-load.d/modules.conf
     line: i2c-dev
+
+- name: set timezone to UTC
+  timezone:
+    name: Etc/UTC
+
