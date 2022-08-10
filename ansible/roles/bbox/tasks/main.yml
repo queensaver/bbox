@@ -120,6 +120,7 @@
     path: /boot/config.txt
     block: |
       dtparam=i2c_arm=on
+      dtoverlay=i2c-rtc-gpio,ds1339,i2c_gpio_sda=2,i2c_gpio_scl=3,wakeup-source
 
 - name: enable i2c module
   lineinfile:
@@ -130,25 +131,3 @@
   lineinfile:
     path: /etc/modules-load.d/modules.conf
     line: i2c-dev
-
-- name: Copy hwclock init file
-  copy:
-    src: '{{item}}'
-    dest: '/usr/local/sbin'
-    owner: root
-    group: root
-    mode: 0755
-  loop:
-    - setup_rtc.sh
-
-- name: link hwclock systemd service
-  file:
-    state: link
-    src: /home/pi/bbox/systemd/hwclock.service
-    dest: /etc/systemd/system/hwclock.service
-
-- name: enable hwclock systemd service
-  systemd:
-    state: stopped
-    enabled: yes
-    name: hwclock
