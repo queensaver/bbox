@@ -34,6 +34,12 @@
     enabled: yes
     name: updater
 
+- name: enable rtc systemd service
+  systemd:
+    state: stopped
+    enabled: yes
+    name: hwclock
+
 - name: enable server systemd service
   systemd:
     state: stopped
@@ -142,6 +148,7 @@
   copy:
     src: setup_rtc.sh
     dest: /usr/local/sbin/setup_rtc.sh
+    mode: '0755'
 
 - name: set timezone to UTC
   timezone:
