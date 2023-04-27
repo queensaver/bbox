@@ -267,6 +267,7 @@ func (f *FileSurgeon) RemountRW() error {
 	return nil
 }
 func (h HttpPostClient) PostData(request string, data SensorValuer) error {
+  // TODO: remove me. This disables TLS verification for the http client
   http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
   uuid := data.GetUUID()
