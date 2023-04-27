@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"crypto/tls"
 
 	"github.com/queensaver/bbox/server/scheduler"
 	"github.com/queensaver/packages/logger"
@@ -266,6 +267,8 @@ func (f *FileSurgeon) RemountRW() error {
 	return nil
 }
 func (h HttpPostClient) PostData(request string, data SensorValuer) error {
+  http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
   uuid := data.GetUUID()
   data.ClearUUID()
 	j, err := json.Marshal(data)
