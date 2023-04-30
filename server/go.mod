@@ -1,17 +1,17 @@
 module github.com/queensaver/bbox/server
 
-go 1.17
+go 1.20
 
 require (
 	github.com/google/go-cmp v0.5.9
 	github.com/queensaver/openapi/golang/proto/models v0.0.0-20230424192354-d09b5d87e3f4
 	github.com/queensaver/openapi/golang/proto/services v0.0.0-20230424192354-d09b5d87e3f4
-	github.com/queensaver/packages/config v0.0.0-20230429044413-81505b25c217
-	github.com/queensaver/packages/logger v0.0.0-20230429044413-81505b25c217
+	github.com/queensaver/packages/config v0.0.0-20230430045632-27567348859f
+	github.com/queensaver/packages/logger v0.0.0-20230430045632-27567348859f
 	github.com/queensaver/packages/scale v0.0.0-20220404192636-0b664c8252b7
 	github.com/queensaver/packages/sound v0.0.0-20220404192636-0b664c8252b7
 	github.com/queensaver/packages/temperature v0.0.0-20220419124946-ad044d863caf
-	github.com/queensaver/packages/varroa v0.0.0-20230429044413-81505b25c217
+	github.com/queensaver/packages/varroa v0.0.0-20230430045632-27567348859f
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stianeikeland/go-rpio/v4 v4.4.0
 	periph.io/x/conn/v3 v3.6.8

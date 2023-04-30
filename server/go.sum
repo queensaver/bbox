@@ -80,11 +80,15 @@ github.com/queensaver/packages/config v0.0.0-20210929054635-954a86633ecc h1:09gp
 github.com/queensaver/packages/config v0.0.0-20210929054635-954a86633ecc/go.mod h1:VaPBiKxDjzKwA9RjjInLBhVYFolkVV9yX2qv6fmyDxM=
 github.com/queensaver/packages/config v0.0.0-20230429044413-81505b25c217 h1:zTKIlbqN4DUqLQISUbu3gxidSf1YjTudEFgXRViKp+M=
 github.com/queensaver/packages/config v0.0.0-20230429044413-81505b25c217/go.mod h1:VaPBiKxDjzKwA9RjjInLBhVYFolkVV9yX2qv6fmyDxM=
+github.com/queensaver/packages/config v0.0.0-20230430045632-27567348859f h1:v93um/Kaahraeig/lB64yflPZfqNOt0MWDHjO6x6rD8=
+github.com/queensaver/packages/config v0.0.0-20230430045632-27567348859f/go.mod h1:VaPBiKxDjzKwA9RjjInLBhVYFolkVV9yX2qv6fmyDxM=
 github.com/queensaver/packages/logger v0.0.0-20210924194626-eecb7227e71c/go.mod h1:qNN+/mRJF9maC1BjR+mdTLRx9N6giam6hUgB9Y0YAic=
 github.com/queensaver/packages/logger v0.0.0-20220701184509-d3fa7e82d60f h1:HhjeUrnXL+WCwKg/7B6i86R1IGuwra2XIZb/ogZ1Ud8=
 github.com/queensaver/packages/logger v0.0.0-20220701184509-d3fa7e82d60f/go.mod h1:SxPE8EPZ4XKfGh+SrmMKt2ywAc2ZVcmL9psSUKgby00=
 github.com/queensaver/packages/logger v0.0.0-20230429044413-81505b25c217 h1:YoT7e8qDOu+zgtEh8lukqq0Fgg/+2gLYn1UGVrnaHNg=
 github.com/queensaver/packages/logger v0.0.0-20230429044413-81505b25c217/go.mod h1:SxPE8EPZ4XKfGh+SrmMKt2ywAc2ZVcmL9psSUKgby00=
+github.com/queensaver/packages/logger v0.0.0-20230430045632-27567348859f h1:PXZ+kfizgLGNcorOeTFVD30may2rSD+z3nNEa182RfQ=
+github.com/queensaver/packages/logger v0.0.0-20230430045632-27567348859f/go.mod h1:SxPE8EPZ4XKfGh+SrmMKt2ywAc2ZVcmL9psSUKgby00=
 github.com/queensaver/packages/scale v0.0.0-20220404192636-0b664c8252b7 h1://8UZBZAI10lY1PeKAEl/nFByazDIupklgf24XQDcN0=
 github.com/queensaver/packages/scale v0.0.0-20220404192636-0b664c8252b7/go.mod h1:Yfbk6Pmk4QUgKlOdBH6VRpTfQfP6KVBixHaDy0KCre4=
 github.com/queensaver/packages/sound v0.0.0-20220404192636-0b664c8252b7 h1:k1YmZ9UvS/hT5lXQDU2qEUWBtCWIEYGNOc5CmnsCZrA=
@@ -95,6 +99,8 @@ github.com/queensaver/packages/varroa v0.0.0-20220809200343-2612758634f6 h1:idjr
 github.com/queensaver/packages/varroa v0.0.0-20220809200343-2612758634f6/go.mod h1:5NoHkZC8uixJMBKIt4kZZ+/lUu+2NVzuz4L4cKEu/RE=
 github.com/queensaver/packages/varroa v0.0.0-20230429044413-81505b25c217 h1:SJqh49UGJkFjwt+YXYzhJzuTqR7XRQP+FzbLOzaJMEE=
 github.com/queensaver/packages/varroa v0.0.0-20230429044413-81505b25c217/go.mod h1:5NoHkZC8uixJMBKIt4kZZ+/lUu+2NVzuz4L4cKEu/RE=
+github.com/queensaver/packages/varroa v0.0.0-20230430045632-27567348859f h1:PRJkkT2oQdtUmObJteHri5UfjLcpAUmqbrJ9U1bvCsg=
+github.com/queensaver/packages/varroa v0.0.0-20230430045632-27567348859f/go.mod h1:5NoHkZC8uixJMBKIt4kZZ+/lUu+2NVzuz4L4cKEu/RE=
 github.com/robfig/cron/v3 v3.0.1 h1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=
 github.com/robfig/cron/v3 v3.0.1/go.mod h1:eQICP3HwyT7UooqI/z+Ov+PtYAWygg1TEWWzGIFLtro=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
