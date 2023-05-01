@@ -1,0 +1,25 @@
+# Todo: Run command to set filesystem read / write 
+- name: set permissions of tmp
+  file:
+    path: /tmp
+    state: directory
+    mode: 01777
+
+- name: aptget update and install some packages
+  apt: 
+    update_cache: yes
+    name:     
+      - libcamera
+
+- name: Copy socket files
+  copy:
+    src: '{{item}}'
+    dest: '/home/pi'
+    owner: pi
+    mode: 0755
+  loop:
+    - capture.sh
+    - hw.py
+    - light_off.sh
+    - light_on.sh
+    - move.sh
