@@ -1,15 +1,10 @@
 # Todo: Run command to set filesystem read / write 
+# sets up the smart socket for the system.
 - name: set permissions of tmp
   file:
     path: /tmp
     state: directory
     mode: 01777
-
-- name: aptget update and install some packages
-  apt: 
-    update_cache: yes
-    name:     
-      - libcamera
 
 - name: Copy socket files
   copy:
@@ -24,3 +19,21 @@
     - light_on.sh
     - move.sh
     - index.html
+
+- name: Copy socket files part 2
+  copy:
+    src: '{{item}}'
+    dest: '/etc/systemd/system'
+    owner: root
+  loop:
+    - server.service
+    - bhive.service
+
+- name: restart bbox service
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: true
+    name: server
+
+
+
