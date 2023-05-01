@@ -35,5 +35,9 @@
     daemon_reload: true
     name: server
 
+- name: set hostname
+  hostname:
+    name: smart-socket
+
 
 
