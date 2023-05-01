@@ -175,7 +175,7 @@ func scanHandler(w http.ResponseWriter, req *http.Request) {
     return
   }
 
-  var path = "/home/pi/scan.jpg"
+  var path = "/home/pi/bOS/scan.jpg"
   img, err := os.Open(path)
   if err != nil {
     logger.Error("could not find image", "error", err)
