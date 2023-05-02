@@ -14,7 +14,7 @@ import (
 
 
 	"github.com/queensaver/bbox/server/buffer"
-	"github.com/queensaver/bbox/server/relay"
+	// "github.com/queensaver/bbox/server/relay"
 	"github.com/queensaver/bbox/server/scheduler"
 	"github.com/queensaver/openapi/golang/proto/services"
 	"github.com/queensaver/packages/config"
@@ -214,19 +214,20 @@ func main() {
 
 	var schedule scheduler.Schedule
 	// check if the bhive is a local instance, if so, skip the relay initialisation.
-	if (len(bConfig.Bhive) == 1) && bConfig.Bhive[0].Local {
-		witty := bConfig.Bhive[0].WittyPi
-		schedule = scheduler.Schedule{Schedule: bConfig.Schedule,
-			Local:   true,
-			WittyPi: witty,
-			Token:   token}
+	//if (len(bConfig.Bhive) == 1) && bConfig.Bhive[0].Local {
+		//witty := bConfig.Bhive[0].WittyPi
+	schedule = scheduler.Schedule{Schedule: bConfig.Schedule,
+		Local:   true,
+		WittyPi: false,
+		Token:   token}
 
-		bBuffer.SetSchedule(&schedule)
-		if witty {
+	bBuffer.SetSchedule(&schedule)
+	/*	if witty {
 			bBuffer.SetShutdownDesired(true)
 		}
-		go bBuffer.FlushSchedule(apiServerAddr, token, *flushInterval)
-	} else {
+		*/
+	go bBuffer.FlushSchedule(apiServerAddr, token, *flushInterval)
+	/*} else {
 		var relaySwitches []relay.Switcher
 		for _, bhive := range bConfig.Bhive {
 			relaySwitches = append(relaySwitches, &relay.Switch{Gpio: bhive.RelayGpio})
@@ -239,7 +240,7 @@ func main() {
 
 		schedule = scheduler.Schedule{Schedule: bConfig.Schedule, RelayModule: myRelay, Token: token}
 		go bBuffer.FlushSchedule(apiServerAddr, token, *flushInterval)
-	}
+	}*/
 	c := make(chan bool)
 	go schedule.Start(c)
 
