@@ -19,6 +19,7 @@
     - light_on.sh
     - move.sh
     - index.html
+    - poweroff.py
 
 - name: Copy socket files part 2
   copy:
