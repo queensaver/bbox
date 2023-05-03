@@ -36,6 +36,11 @@
     daemon_reload: true
     name: server
 
+- name: restart avahi service
+  ansible.builtin.systemd:
+    state: restarted
+    name: avahi-daemon
+
 - name: set hostname
   hostname:
     name: smart-socket
