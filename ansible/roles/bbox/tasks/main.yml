@@ -1,3 +1,9 @@
+- name: install uuid-runtime
+  apt:
+    name:
+    - uuid-runtime
+    state: present
+
 - name: install alsa-packages
   apt:
     name:
