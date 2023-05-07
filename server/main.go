@@ -230,6 +230,7 @@ func main() {
 
 	token = os.Getenv("TOKEN")
 	if token == "" {
+		logger.Debug("reading registration id from file", "file", *registrationIdFile)
 		content, err := os.ReadFile(*registrationIdFile)
 		if err != nil {
 			logger.Fatal("can't bootstrap without authentication token (set TOKEN environment variable):", err)

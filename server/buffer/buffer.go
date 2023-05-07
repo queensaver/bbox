@@ -429,7 +429,7 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 
 	telemetryPath := filepath.Join(b.path, "telemetry")
 	newTelemetry := func() SensorValuer { return &telemetry.Telemetry{} }
-	b.unsentScaleValues, err = b.SendValues(
+	b.unsentTelemetry, err = b.SendValues(
 		telemetryPath,
 		"v1/telemetry",
 		b.unsentTelemetry,
