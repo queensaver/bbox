@@ -305,6 +305,8 @@ func main() {
 		bConfig.Schedule = fmt.Sprintf("0 0 */%d * *", conf.ScaleMeasureInterval / 86400)
 	}
 
+	logger.Debug("bConfig schedule", "schedule", bConfig.Schedule)
+
 	/* old code: get config from cloud 
 	bConfig, err = config.Get(*apiServerAddr+"/v1/config", token)
 	// TODO: this needs to be downloaded before every scheduler run
