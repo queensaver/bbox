@@ -334,7 +334,7 @@ func main() {
 			bBuffer.SetShutdownDesired(true)
 		}
 		*/
-	go bBuffer.FlushSchedule(apiServerAddr, token, int(conf.ScaleMeasureInterval))
+	go bBuffer.FlushSchedule(apiServerAddr, token, int(conf.BatchInterval))
 	/*} else {
 		var relaySwitches []relay.Switcher
 		for _, bhive := range bConfig.Bhive {
