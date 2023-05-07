@@ -32,7 +32,7 @@ import (
 var apiServerAddr = flag.String("api_server_addr", "https://api.queensaver.com", "API Server Address")
 var httpServerPort = flag.String("http_server_port", "8333", "HTTP server port")
 var httpServerHiveFile = flag.String("http_server_bhive_file", "/home/pi/bOS/bhive", "HTTP server directory to serve bHive file")
-var flushInterval = flag.Int("flush_interval", 60 * 5, "Interval in seconds when the data is flushed to the bCloud API")
+var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
 var cachePath = flag.String("cache_path", "bCache", "Cache directory where data will be stored that can't be sent to the cloud.")
 var scanCmd = flag.String("scan_command", "/home/pi/capture.sh", "Command to execute for a varroa scan.")
 var registrationIdFile = flag.String("registration_id_file", fmt.Sprintf("%s/.queensaver_registration_id",
@@ -332,7 +332,7 @@ func main() {
 			bBuffer.SetShutdownDesired(true)
 		}
 		*/
-	go bBuffer.FlushSchedule(apiServerAddr, token, *flushInterval)
+	go bBuffer.FlushSchedule(apiServerAddr, token, int(conf.ScaleMeasureInterval))
 	/*} else {
 		var relaySwitches []relay.Switcher
 		for _, bhive := range bConfig.Bhive {
