@@ -2,6 +2,7 @@ package buffer
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,18 +15,19 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"crypto/tls"
 
 	"github.com/queensaver/bbox/server/scheduler"
 	"github.com/queensaver/packages/logger"
 	"github.com/queensaver/packages/scale"
-	"github.com/queensaver/packages/varroa"
 	"github.com/queensaver/packages/sound"
+	"github.com/queensaver/packages/telemetry"
 	"github.com/queensaver/packages/temperature"
+	"github.com/queensaver/packages/varroa"
 )
 
 type Buffer struct {
 	unsentTemperatures []SensorValuer
+	unsentTelemetry []SensorValuer
 	unsentVarroaImages []SensorValuer
 	unsentScaleValues  []SensorValuer
 	unsentSoundValues  []SensorValuer
@@ -290,7 +292,7 @@ func (h HttpPostClient) PostData(request string, data SensorValuer) error {
       return err
     }
     req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Q-Token", h.Token)
+    req.Header.Set("registrationId", h.Token)
     client := &http.Client{Timeout: 13 * time.Minute} // TODO: This needs tuning, some documents like images might take longer to upload.
     resp, err := client.Do(req)
     if err != nil {
@@ -425,6 +427,18 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 		logger.Error("Could not send scale values", "error", err)
 	}
 
+	telemetryPath := filepath.Join(b.path, "telemetry")
+	newTelemetry := func() SensorValuer { return &telemetry.Telemetry{} }
+	b.unsentScaleValues, err = b.SendValues(
+		telemetryPath,
+		"v1/telemetry",
+		b.unsentTelemetry,
+		poster,
+		newTelemetry)
+	if err != nil {
+		logger.Error("Could not send scale values", "error", err)
+	}
+
 	varroaPath := filepath.Join(b.path, "varroa-images")
 	newImage := func() SensorValuer { return &varroa.Varroa{} }
 	b.unsentVarroaImages, err = b.SendValues(
@@ -437,7 +451,7 @@ func (b *Buffer) Flush(poster HttpClientPoster) {
 		logger.Error("Could not send varroa images", "error", err)
 	}
 
-	if b.ShutdownDesired() && (len(b.unsentScaleValues) == 0) && (len(b.unsentTemperatures) == 0) {
+	if b.ShutdownDesired() && (len(b.unsentScaleValues) == 0) && (len(b.unsentTemperatures) == 0) && (len(b.unsentTelemetry) == 0) && (len(b.unsentSoundValues) == 0) && (len(b.unsentVarroaImages) == 0) {
 		logger.Info("Shutdown is desired, all data was flushed, attempting to shut down now")
 		b.schedule.Shutdown()
 	}
@@ -465,6 +479,12 @@ func (b *Buffer) AppendTemperature(t temperature.Temperature) {
 	mu.Lock()
 	defer mu.Unlock()
 	b.unsentTemperatures = append(b.unsentTemperatures, &t)
+}
+
+func (b *Buffer) AppendTelemetry(t telemetry.Telemetry) {
+	mu.Lock()
+	defer mu.Unlock()
+	b.unsentTelemetry = append(b.unsentTelemetry, &t)
 }
 
 func (b *Buffer) GetUnsentTemperatures() []SensorValuer {

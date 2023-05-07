@@ -1,26 +1,30 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
+	"crypto/tls"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"os"
+	"os/exec"
+	"strings"
 	"time"
-  "os/exec"
-
 
 	"github.com/queensaver/bbox/server/buffer"
 	// "github.com/queensaver/bbox/server/relay"
 	"github.com/queensaver/bbox/server/scheduler"
+	"github.com/queensaver/openapi/golang/proto/models"
 	"github.com/queensaver/openapi/golang/proto/services"
 	"github.com/queensaver/packages/config"
 	"github.com/queensaver/packages/logger"
 	"github.com/queensaver/packages/scale"
 	"github.com/queensaver/packages/sound"
+	"github.com/queensaver/packages/telemetry"
 	"github.com/queensaver/packages/temperature"
 	"github.com/queensaver/packages/varroa"
 )
@@ -31,12 +35,26 @@ var httpServerHiveFile = flag.String("http_server_bhive_file", "/home/pi/bOS/bhi
 var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
 var cachePath = flag.String("cache_path", "bCache", "Cache directory where data will be stored that can't be sent to the cloud.")
 var scanCmd = flag.String("scan_command", "/home/pi/capture.sh", "Command to execute for a varroa scan.")
-var tokenFile = flag.String("token_file", fmt.Sprintf("%s/.queensaver_token",
+var registrationIdFile = flag.String("registration_id_file", fmt.Sprintf("%s/.queensaver_registration_id",
 	os.Getenv("HOME")), "Path to the file containing the token")
 
 var bBuffer buffer.Buffer
 var bConfig *config.Config
 var token string
+
+func getMacAddress() (string, error) {   
+	interfaces, err := net.Interfaces()
+	if err != nil {        
+			return "", err                                                   
+	}              
+	a := interfaces[1].HardwareAddr.String()                                 
+	if a != "" {                                                                
+			r := strings.Replace(a, ":", "", -1)
+			return r, nil
+	}                      
+	return "", nil                
+}                                                                                
+
 
 func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
@@ -54,7 +72,15 @@ func temperatureHandler(w http.ResponseWriter, req *http.Request) {
 		t.Error = ""
 	}
 	t.Epoch = int64(time.Now().Unix())
-	bBuffer.AppendTemperature(t)
+	telemetry := telemetry.Telemetry{}
+	telemetry.Values = []*models.Telemetry{
+		{
+			T: t.Temperature.Temperature,
+			M: t.BhiveId,
+			E: t.Epoch,
+		},
+	}
+	bBuffer.AppendTelemetry(telemetry)
 	logger.Debug("Successfully received temperature from bHive",
 		"ip", req.RemoteAddr,
 		"bhive_id", t.BhiveId)
@@ -141,7 +167,16 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 	logger.Debug("Successfully received temperature from bHive",
 		"ip", req.RemoteAddr,
 		"bhive_id", s.BhiveId)
-	bBuffer.AppendScale(s)
+	telemetry := telemetry.Telemetry{}
+	telemetry.Values = []*models.Telemetry{
+		{
+			W: float32(s.Weight),
+			M: s.BhiveId,
+			E: s.Epoch,
+		},
+	}
+	bBuffer.AppendTelemetry(telemetry)
+
 }
 
 // Initiates a flush to cloud. This will hold a lock so that no other values will be accepted from bHIves.
@@ -189,17 +224,87 @@ func scanHandler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	flag.Parse()
-	var err error
 	logger.Debug("bbox starting up")
+
+  	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
 	token = os.Getenv("TOKEN")
 	if token == "" {
-		content, err := ioutil.ReadFile(*tokenFile)
+		content, err := os.ReadFile(*registrationIdFile)
 		if err != nil {
 			logger.Fatal("can't bootstrap without authentication token (set TOKEN environment variable):", err)
 		}
-		token = string(content)
+		// remove trailing newline
+		token = strings.TrimSuffix(string(content), "\n")
 	}
+	// register the bbox with the cloud
+	url := *apiServerAddr + "/v1/configs/bbox/register"
+
+	mac, err := getMacAddress()
+	if err != nil {
+		logger.Fatal("can't get mac address:", "error", err)
+	}
+	body := models.Bbox{
+		RegistrationId: token,
+		HardwareType: "smart-socket",
+		HardwareRevision: 1,
+		BboxId: mac,
+	}
+	// convert the body to json
+	b, err := json.Marshal(body)
+	if err != nil {
+		logger.Fatal("can't marshal body:", "error", err)
+	}
+	// create new reader from json
+
+	bodyReader := bytes.NewReader(b)
+	
+	r, err := http.NewRequest("POST", url, bodyReader)
+	if err != nil {
+		logger.Fatal("Can't post bbox registration parameters", "error", err)
+	}
+
+	r.Header.Add("Content-Type", "application/json")
+	r.Header.Add("registrationId", token)
+	// ignore the TLS certificate
+
+
+	client := &http.Client{}
+	// set client timeout
+	client.Timeout = time.Second * 120
+	res, err := client.Do(r)
+	if err != nil {
+		panic(err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusCreated {
+		logger.Fatal("can't register bbox:", "status code", res.StatusCode)
+	}
+
+	conf := &models.BboxConfigResponse{}
+	err = json.NewDecoder(res.Body).Decode(conf)
+	if err != nil {
+		logger.Fatal("can't decode bbox config:", "error", err)
+	}
+	logger.Debug("Successfully registered bbox with cloud", "config", conf.String())
+	
+
+	// This is a hack until we have reimplemented the client side / bhive side of the config
+	bConfig = &config.Config{}
+	if conf.ScaleMeasureInterval < 60 {
+		conf.ScaleMeasureInterval = 60 * 60 * 4
+	}
+
+	if conf.ScaleMeasureInterval < 3600 {
+		bConfig.Schedule = fmt.Sprintf("*/%d * * * *", conf.ScaleMeasureInterval / 60)
+	} else if conf.ScaleMeasureInterval < 86400 {
+		bConfig.Schedule = fmt.Sprintf("0 */%d * * *", conf.ScaleMeasureInterval / 3600)
+	} else {
+		bConfig.Schedule = fmt.Sprintf("0 0 */%d * *", conf.ScaleMeasureInterval / 86400)
+	}
+
+	/* old code: get config from cloud 
 	bConfig, err = config.Get(*apiServerAddr+"/v1/config", token)
 	// TODO: this needs to be downloaded before every scheduler run
 	if err != nil {
@@ -207,16 +312,16 @@ func main() {
 	}
 	s, _ := bConfig.String()
 	logger.Debug("bConfig content", "bconfig", s)
+	*/
 
 	// Initiatlize the bBuffer
 	bBuffer.SetPath(*cachePath)
 	bBuffer.SetFileOperator(&buffer.FileSurgeon{})
 
-	var schedule scheduler.Schedule
 	// check if the bhive is a local instance, if so, skip the relay initialisation.
 	//if (len(bConfig.Bhive) == 1) && bConfig.Bhive[0].Local {
 		//witty := bConfig.Bhive[0].WittyPi
-	schedule = scheduler.Schedule{Schedule: bConfig.Schedule,
+	schedule := scheduler.Schedule{Schedule: bConfig.Schedule,
 		Local:   true,
 		WittyPi: false,
 		Token:   token}
@@ -258,3 +363,4 @@ func main() {
 
 	log.Fatal(http.ListenAndServe(":"+*httpServerPort, nil))
 }
+
