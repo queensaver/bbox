@@ -161,8 +161,14 @@
     name: Etc/UTC
 
 - name: create uuid
-  ansible.builtin.command: "uuidgen | tee /home/pi/.queensaver_registration_id"
+  ansible.builtin.command: "uuidgen"
   register: uuid
+  tags: uuid
+
+- name: write uuid
+  copy:
+    content: "{{uuid}}"
+    dest: /home/pi/.queensaver_registration_id
   tags: uuid
 
 - name: output uuid
