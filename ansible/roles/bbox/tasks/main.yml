@@ -163,7 +163,9 @@
 - name: create uuid
   ansible.builtin.command: "uuidgen | tee /home/pi/.queensaver_registration_id"
   register: uuid
+  tags: uuid
 
 - name: output uuid
   debug:
     var: uuid.stdout_lines
+  tags: uuid
