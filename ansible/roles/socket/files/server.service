@@ -6,7 +6,7 @@ After=network-online.target
 
 [Service]
 ExecStartPre=/usr/bin/test -f /home/pi/bOS/server
-ExecStart=/home/pi/bOS/server --token_file=/home/pi/.queensaver_token --http_server_port=80
+ExecStart=/home/pi/bOS/server --http_server_port=80 --registration_id_file=/home/pi/.queensaver_registration_id
 Restart=always
 RestartSec=60
 

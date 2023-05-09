@@ -10,8 +10,9 @@ require (
 	github.com/queensaver/packages/logger v0.0.0-20230430045632-27567348859f
 	github.com/queensaver/packages/scale v0.0.0-20220404192636-0b664c8252b7
 	github.com/queensaver/packages/sound v0.0.0-20220404192636-0b664c8252b7
+	github.com/queensaver/packages/telemetry v0.0.0-20230506205713-471de9c78e5f
 	github.com/queensaver/packages/temperature v0.0.0-20220419124946-ad044d863caf
-	github.com/queensaver/packages/varroa v0.0.0-20230430045632-27567348859f
+	github.com/queensaver/packages/varroa v0.0.0-20230506103758-c95d5b3de027
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/stianeikeland/go-rpio/v4 v4.4.0
 	periph.io/x/conn/v3 v3.6.8
@@ -26,10 +27,10 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
 	golang.org/x/net v0.9.0 // indirect
-	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
-	google.golang.org/grpc v1.54.0 // indirect
+	google.golang.org/grpc v1.55.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	periph.io/x/d2xx v0.0.1 // indirect
 )
