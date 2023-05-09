@@ -173,5 +173,5 @@
 
 - name: output uuid
   debug:
-    var: uuid.stdout_lines
+    var: uuid.stdout
   tags: uuid
