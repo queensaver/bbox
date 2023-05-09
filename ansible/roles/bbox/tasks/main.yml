@@ -167,7 +167,7 @@
 
 - name: write uuid
   copy:
-    content: "{{uuid}}"
+    content: "{{uuid.stdout}}"
     dest: /home/pi/.queensaver_registration_id
   tags: uuid
 
