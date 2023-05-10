@@ -16,6 +16,7 @@ ansible-playbook bbox/ansible/bbox.yml
 ansible-playbook bbox/ansible/read_only.yml
 ansible-playbook bbox/ansible/smart-socket.yml
 
+sudo mount -o remount,rw /
 /home/pi/calibration.py
 
 echo "rebooting now"
