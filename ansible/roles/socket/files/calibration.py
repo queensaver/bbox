@@ -115,5 +115,5 @@ if __name__ == "__main__":
 
     setup()
     calibrate()
-    while True:
-        loop()
+    #while True:
+        #loop()
