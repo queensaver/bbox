@@ -18,6 +18,3 @@ ansible-playbook bbox/ansible/smart-socket.yml
 
 sudo mount -o remount,rw /
 /home/pi/calibration.py
-
-echo "rebooting now"
-sudo reboot
