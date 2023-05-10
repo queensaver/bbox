@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 HX711 Load cell amplifier Python Library
 Original source: https://gist.github.com/underdoeg/98a38b54f889fce2b237
@@ -87,7 +88,7 @@ def calibrate():
     hx.set_scale(scale)
     print("Scale adjusted for grams: {}".format(scale))
     scale_config = {'offset': hx.get_offset(), 'scale': hx.get_scale()}
-    with open('/home/pi/.queensaver_scale_config') as fp:
+    with open('/home/pi/.queensaver_scale_config', 'w') as fp:
         json.dump(scale_config, fp)
 
 def loop():
