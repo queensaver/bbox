@@ -1,5 +1,9 @@
 # Todo: Run command to set filesystem read / write 
 # sets up the smart socket for the system.
+
+- name: remount fs rw
+  command: "mount -o remount,rw /"
+
 - name: set permissions of tmp
   file:
     path: /tmp
@@ -20,6 +24,7 @@
     - move.sh
     - index.html
     - poweroff.py
+    - calibration.py
 
 - name: Copy socket files part 2
   copy:
@@ -50,5 +55,6 @@
     path: /etc/hosts
     line: 127.0.0.1 smart-socket
 
-
-
+# DONE!
+- name: remount fs ro
+  command: "mount -o remount,ro /"
