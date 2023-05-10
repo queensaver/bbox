@@ -25,6 +25,7 @@
     - index.html
     - poweroff.py
     - calibration.py
+    - hx711.py
 
 - name: Copy socket files part 2
   copy:

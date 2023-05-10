@@ -37,6 +37,7 @@ of the offset and scale values!
 import RPi.GPIO as GPIO
 import time
 import sys
+import json
 from hx711 import HX711
 
 # Force Python 3 ###########################################################
@@ -85,7 +86,9 @@ def calibrate():
     scale = int(measured_weight)/int(item_weight)
     hx.set_scale(scale)
     print("Scale adjusted for grams: {}".format(scale))
-
+    scale_config = {'offset': hx.get_offset(), 'scale': hx.get_scale()}
+    with open('/home/pi/.queensaver_scale_config') as fp:
+        json.dump(scale_config, fp)
 
 def loop():
     """
@@ -93,25 +96,14 @@ def loop():
     """
     try:
         prompt_handled = False
-        while not prompt_handled:
-            val = hx.get_grams()
-            hx.power_down()
-            time.sleep(.001)
-            hx.power_up()
-            print("Item weighs {} grams.\n".format(val))
-            choice = input("Please choose:\n"
-                           "[1] Recalibrate.\n"
-                           "[2] Display offset and scale and weigh an item!\n"
-                           "[0] Clean and exit.\n>")
-            if choice == "1":
-                calibrate()
-            elif choice == "2":
-                print("\nOffset: {}\nScale: {}".format(hx.get_offset(), hx.get_scale()))
-            elif choice == "0":
-                prompt_handled = True
-                cleanAndExit()
-            else:
-                print("Invalid selection.\n")
+        val = hx.get_grams()
+        hx.power_down()
+        time.sleep(.001)
+        hx.power_up()
+        time.sleep(.001)
+        calibrate()
+        print("\nOffset: {}\nScale: {}".format(hx.get_offset(), hx.get_scale()))
+        cleanAndExit()
     except (KeyboardInterrupt, SystemExit):
         cleanAndExit()
 
