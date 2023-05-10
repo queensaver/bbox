@@ -1,8 +1,8 @@
 # Todo: Run command to set filesystem read / write 
 # sets up the smart socket for the system.
 
-- name: remount fs rw
-  command: "mount -o remount,rw /"
+#- name: remount fs rw
+#  command: "mount -o remount,rw /"
 
 - name: set permissions of tmp
   file:
@@ -57,5 +57,5 @@
     line: 127.0.0.1 smart-socket
 
 # DONE!
-- name: remount fs ro
-  command: "mount -o remount,ro /"
+#- name: remount fs ro
+#command: "mount -o remount,ro /"
