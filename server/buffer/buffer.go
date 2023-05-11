@@ -359,7 +359,6 @@ func (b *Buffer) SendValues(
 	var unsentValues []SensorValuer
 	for _, v := range values {
 		logger.Debug("Sending value",
-			"value", v,
 			"api_path", apiPath)
 		err := poster.PostData(apiPath, v)
 		if err != nil {
