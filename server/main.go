@@ -124,6 +124,10 @@ func varroaHandler(w http.ResponseWriter, req *http.Request) {
 
 	bBuffer.AppendVarroaImage(v)
 	w.WriteHeader(http.StatusOK)
+	logger.Debug("Successfully received varroa image from bHive",
+		"ip", req.RemoteAddr,
+		"bhive_id", bHiveID)
+
 }
 
 func soundHandler(w http.ResponseWriter, req *http.Request) {
@@ -176,6 +180,10 @@ func scaleHandler(w http.ResponseWriter, req *http.Request) {
 		},
 	}
 	bBuffer.AppendTelemetry(telemetry)
+	logger.Debug("Successfully received scale values from bHive",
+		"ip", req.RemoteAddr,
+		"bhive_id", s.BhiveId,
+		"weight", s.Weight)
 
 }
 
