@@ -138,6 +138,7 @@
     path: /boot/config.txt
     block: |
       dtparam=i2c_arm=on
+      gpio=5=op,dh
 #       dtoverlay=i2c-rtc-gpio,ds1339,i2c_gpio_sda=2,i2c_gpio_scl=3,wakeup-source
 
 - name: enable i2c module
