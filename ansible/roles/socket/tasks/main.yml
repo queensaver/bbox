@@ -1,5 +1,9 @@
 # Todo: Run command to set filesystem read / write 
 # sets up the smart socket for the system.
+
+#- name: remount fs rw
+#  command: "mount -o remount,rw /"
+
 - name: set permissions of tmp
   file:
     path: /tmp
@@ -20,6 +24,8 @@
     - move.sh
     - index.html
     - poweroff.py
+    - calibration.py
+    - hx711.py
 
 - name: Copy socket files part 2
   copy:
@@ -29,12 +35,6 @@
   loop:
     - server.service
     - bhive.service
-
-- name: restart bbox service
-  ansible.builtin.systemd:
-    state: restarted
-    daemon_reload: true
-    name: server
 
 - name: restart avahi service
   ansible.builtin.systemd:
@@ -50,5 +50,6 @@
     path: /etc/hosts
     line: 127.0.0.1 smart-socket
 
-
-
+# DONE!
+#- name: remount fs ro
+#command: "mount -o remount,ro /"

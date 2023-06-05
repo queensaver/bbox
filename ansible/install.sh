@@ -14,4 +14,6 @@ fi
 
 ansible-playbook bbox/ansible/bbox.yml
 ansible-playbook bbox/ansible/read_only.yml
-sudo reboot
+ansible-playbook bbox/ansible/smart-socket.yml
+
+echo to calibrate the scale, please run: ./calibration.py 
