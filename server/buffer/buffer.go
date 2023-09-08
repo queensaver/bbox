@@ -181,7 +181,7 @@ func (f *FileSurgeon) SaveValues(path string, values []SensorValuer) []SensorVal
 			v.GenerateUUID()
 		}
 		f := f.NewFiler(filepath.Join(path, v.GetUUID()+".json"))
-		err := f.Save(&v)
+		err := f.Save(v)
 		if err != nil {
 			logger.Error("could not save object.",
 				"error", err,
