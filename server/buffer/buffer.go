@@ -27,7 +27,7 @@ import (
 
 type Buffer struct {
 	unsentTemperatures []SensorValuer
-	unsentTelemetry []SensorValuer
+	unsentTelemetry    []SensorValuer
 	unsentVarroaImages []SensorValuer
 	unsentScaleValues  []SensorValuer
 	unsentSoundValues  []SensorValuer
@@ -68,12 +68,12 @@ type FileOperator interface {
 }
 
 type SensorValuer interface {
-  ClearUUID()
+	ClearUUID()
 	SetUUID(string)
 	GetUUID() string
-  GenerateUUID()
-  Send(string, string) error
-  IsMultipart() bool
+	GenerateUUID()
+	Send(string, string) error
+	IsMultipart() bool
 }
 
 type File struct {
@@ -269,40 +269,40 @@ func (f *FileSurgeon) RemountRW() error {
 	return nil
 }
 func (h HttpPostClient) PostData(request string, data SensorValuer) error {
-  // TODO: remove me. This disables TLS verification for the http client
-  http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	// TODO: remove me. This disables TLS verification for the http client
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
-  uuid := data.GetUUID()
-  data.ClearUUID()
+	uuid := data.GetUUID()
+	data.ClearUUID()
 	j, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
-  data.SetUUID(uuid)
+	data.SetUUID(uuid)
 	if !strings.HasSuffix(h.ApiServer, "/") {
 		h.ApiServer = h.ApiServer + "/"
 	}
 	url := h.ApiServer + url.PathEscape(request)
 	logger.Debug("Post Request for API Server", "url", url)
-  if data.IsMultipart() {
-    return data.Send(url, h.Token)
-  } else {
-    req, err := http.NewRequest("POST", url, bytes.NewBuffer(j))
-    if err != nil {
-      return err
-    }
-    req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("registrationId", h.Token)
-    client := &http.Client{Timeout: 13 * time.Minute} // TODO: This needs tuning, some documents like images might take longer to upload.
-    resp, err := client.Do(req)
-    if err != nil {
-      return err
-    }
-    defer resp.Body.Close()
-    if resp.StatusCode != 200 {
-      return &BufferError{fmt.Sprintf("HTTP return code: %s; URL: %s", resp.Status, url)}
-    }
-  }
+	if data.IsMultipart() {
+		return data.Send(url, h.Token)
+	} else {
+		req, err := http.NewRequest("POST", url, bytes.NewBuffer(j))
+		if err != nil {
+			return err
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("registrationId", h.Token)
+		client := &http.Client{Timeout: 13 * time.Minute} // TODO: This needs tuning, some documents like images might take longer to upload.
+		resp, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != 200 {
+			return &BufferError{fmt.Sprintf("HTTP return code: %s; URL: %s", resp.Status, url)}
+		}
+	}
 	return nil
 }
 
