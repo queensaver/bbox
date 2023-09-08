@@ -181,7 +181,7 @@ func (f *FileSurgeon) SaveValues(path string, values []SensorValuer) []SensorVal
 			v.GenerateUUID()
 		}
 		f := f.NewFiler(filepath.Join(path, v.GetUUID()+".json"))
-		err := f.Save(v)
+		err := f.Save(&v)
 		if err != nil {
 			logger.Error("could not save object.",
 				"error", err,
@@ -221,6 +221,10 @@ func (f *FileSurgeon) LoadValues(path string, newObject func() SensorValuer) []S
 			)
 			return err
 		} else {
+			filename := filepath.Base(p)
+			// strip the .json extension
+			filename = filename[:len(filename)-5]
+			o.SetUUID(filename)
 			r = append(r, o)
 		}
 		return nil
