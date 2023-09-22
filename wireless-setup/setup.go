@@ -6,6 +6,7 @@ import (
 	"os"
 	"gopkg.in/yaml.v3"
 	"text/template"
+	"os/exec"
 )
 
 var wpaSupplicantTemplate = `ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -60,8 +61,14 @@ func main () {
 	if err != nil {
 		panic(err)
 	}
+
 	f, err := os.Create(*wpaSupplicantFile)
 	if err != nil {
+		cmd := exec.Command("mount", "-o", "remount,rw", "/")
+		err = cmd.Run()
+		if err != nil {
+			panic(err)
+		}
 		panic(err)
 	}
 	defer f.Close()
