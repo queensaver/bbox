@@ -25,7 +25,7 @@ network={
 }
 `
 
-var configFile = flag.String("config", "boot/wlan.txt", "path to the config file")
+var configFile = flag.String("config", "/boot/wlan.txt", "path to the config file")
 var wpaSupplicantFile = flag.String("wpa_supplicant_file", "/etc/wpa_supplicant/wpa_supplicant.conf", "path to the wpa_supplicant.conf file")
 
 type WlanConfig struct {
