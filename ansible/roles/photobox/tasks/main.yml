@@ -37,4 +37,4 @@
     line: 127.0.0.1 photobox
 
 - name: remount fs ro
-command: "mount -o remount,ro /"
+  command: "mount -o remount,ro /"
