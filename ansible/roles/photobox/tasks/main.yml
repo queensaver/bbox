@@ -1,0 +1,40 @@
+# Todo: Run command to set filesystem read / write 
+# sets up the photobox for the system.
+
+- name: remount fs rw
+  command: "mount -o remount,rw /"
+
+- name: set permissions of tmp
+  file:
+    path: /tmp
+    state: directory
+    mode: 01777
+
+- name: Copy socket files
+  copy:
+    src: '{{item}}'
+    dest: '/home/pi'
+    owner: pi
+    mode: 0755
+  loop:
+    - wireless-setup
+
+- name: Copy socket files part 2
+  copy:
+    src: '{{item}}'
+    dest: '/etc/systemd/system'
+    owner: root
+  loop:
+    - photobox-wirless-setup.service
+
+- name: set hostname
+  hostname:
+    name: photobox
+
+- name: make hostname resolvable
+  lineinfile:
+    path: /etc/hosts
+    line: 127.0.0.1 photobox
+
+- name: remount fs ro
+command: "mount -o remount,ro /"
