@@ -18,6 +18,22 @@ jobs:
       with:
         go-version: "1.20"
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./webapp
+
+    - name: install angular cli
+      run: npm install -g @angular/cli
+
+    - name: Build Tar file
+      run: make tar
+      working-directory: ./webapp
+
     - name: Test
       run: go test -v ./...
       working-directory: ./server
