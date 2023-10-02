@@ -6,3 +6,8 @@ update_cli:
 
 update_everything:
 	ncu -u
+
+tar:
+	ng build
+	tar cjf webapp.tar.bz2 dist/webapp
+	cp webapp.tar.bz2 ../server
