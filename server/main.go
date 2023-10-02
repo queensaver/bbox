@@ -37,7 +37,7 @@ var httpServerHiveFile = flag.String("http_server_bhive_file", "/home/pi/bOS/bhi
 var flushInterval = flag.Int("flush_interval", 60, "Interval in seconds when the data is flushed to the bCloud API")
 var cachePath = flag.String("cache_path", "bCache", "Cache directory where data will be stored that can't be sent to the cloud.")
 var scanCmd = flag.String("scan_command", "/home/pi/capture.sh", "Command to execute for a varroa scan.")
-var staticFilePath = flag.String("static_file_path", "./webapp", "The path for serving static files")
+var staticFilePath = flag.String("static_file_path", "/home/pi/bOS/webapp", "The path for serving static files")
 var registrationIdFile = flag.String("registration_id_file", fmt.Sprintf("%s/.queensaver_registration_id",
 	os.Getenv("HOME")), "Path to the file containing the token")
 
