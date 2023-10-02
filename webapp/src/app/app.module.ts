@@ -9,14 +9,18 @@ import { HttpClientModule } from '@angular/common/http';
 
 import {MatButtonModule} from '@angular/material/button';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatDialogModule} from '@angular/material/dialog';
+
 
 import { HomeComponent } from './home/home.component';
+import { ImageDialogComponent } from './image-dialog/image-dialog.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    ImageDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -25,6 +29,7 @@ import { HomeComponent } from './home/home.component';
     BrowserAnimationsModule,
     MatButtonModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

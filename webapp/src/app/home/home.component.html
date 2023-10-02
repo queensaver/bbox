@@ -4,4 +4,7 @@
 
 <div class="content-area">
     <mat-progress-spinner *ngIf="loading" mode="indeterminate"></mat-progress-spinner>
+    <div [hidden]="!loaded">
+        <button mat-button (click)="show_scan()">Scan anzeigen</button>
+    </div>
 </div>

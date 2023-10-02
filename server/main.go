@@ -45,7 +45,7 @@ var bBuffer buffer.Buffer
 var bConfig *config.Config
 var token string
 
-// go:embed webapp.tar.bz2
+//go:embed webapp.tar.bz2
 var webApp []byte
 
 func getMacAddress() (string, error) {
@@ -338,6 +338,19 @@ func main() {
 	}
 
 	logger.Debug("bConfig schedule", "schedule", bConfig.Schedule)
+	logger.Debug("tar file", "size", len(webApp))
+	if len(webApp) > 0 {
+		// write webapp to disk
+		err = os.WriteFile("/home/pi/bOS/webapp.tar.bz2", webApp, 0644)
+		if err != nil {
+			logger.Fatal("can't write webapp to disk", "error", err)
+		}
+		cmd := exec.Command("tar", "-xjf", "/home/pi/bOS/webapp.tar.bz2", "-C", "/home/pi/bOS", "--strip-components=1")
+		err = cmd.Run()
+		if err != nil {
+			logger.Fatal("can't unpack webapp", "error", err)
+		}
+	}
 
 	/* old code: get config from cloud
 	bConfig, err = config.Get(*apiServerAddr+"/v1/config", token)
