@@ -127,11 +127,15 @@ func varroaHandler(w http.ResponseWriter, req *http.Request) {
 			Epoch:   int64(time.Now().Unix()),
 			Scan:    image}}
 
+	logger.Debug("Successfully received varroa image from bHive")
 	bBuffer.AppendVarroaImage(v)
 	w.WriteHeader(http.StatusOK)
 	logger.Debug("Successfully received varroa image from bHive",
 		"ip", req.RemoteAddr,
 		"bhive_id", bHiveID)
+	logger.Debug("Flushing varroa image to cloud", "api_server_address", *apiServerAddr)
+	poster := buffer.HttpPostClient{ApiServer: *apiServerAddr, Token: token}
+	bBuffer.Flush(poster)
 
 }
 
