@@ -1,5 +1,14 @@
 # bbox
+
 bbox is the server component to the bhive
+
+## install
+
+```bash
+curl https://raw.githubusercontent.com/queensaver/bbox/master/ansible/install.sh | bash
+```
+
+## info
 
 Authenticate against the server by getting a token and saving it in a file called `~/.queensaver_token` (just the token, without the linefeed): 
 
