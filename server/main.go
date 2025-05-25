@@ -11,6 +11,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"math/rand"
 	"os"
 	"os/exec"
 	"path"
@@ -338,7 +339,9 @@ func main() {
 	} else if conf.ScaleMeasureInterval < 86400 {
 		bConfig.Schedule = fmt.Sprintf("0 */%d * * *", conf.ScaleMeasureInterval/3600)
 	} else {
-		bConfig.Schedule = ("0 0 3 * * *")
+		// generate a random number between 0 and 59 for the minute field
+		randomMinute := rand.Intn(59)
+		bConfig.Schedule = fmt.Sprintf("0 %d 3 * * *", randomMinute)
 	}
 
 	logger.Debug("bConfig schedule", "schedule", bConfig.Schedule)
