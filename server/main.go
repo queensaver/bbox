@@ -338,7 +338,7 @@ func main() {
 	} else if conf.ScaleMeasureInterval < 86400 {
 		bConfig.Schedule = fmt.Sprintf("0 */%d * * *", conf.ScaleMeasureInterval/3600)
 	} else {
-		bConfig.Schedule = fmt.Sprintf("0 0 */%d * *", conf.ScaleMeasureInterval/86400)
+		bConfig.Schedule = ("0 0 3 * * *")
 	}
 
 	logger.Debug("bConfig schedule", "schedule", bConfig.Schedule)
