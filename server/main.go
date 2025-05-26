@@ -341,7 +341,8 @@ func main() {
 	} else {
 		// generate a random number between 0 and 59 for the minute field
 		randomMinute := rand.Intn(59)
-		bConfig.Schedule = fmt.Sprintf("0 %d 3 * * *", randomMinute)
+		bConfig.Schedule = fmt.Sprintf("%d 3 * * *", randomMinute)
+    logger.Info("Using daily schedule for scale measurements", "schedule", bConfig.Schedule)
 	}
 
 	logger.Debug("bConfig schedule", "schedule", bConfig.Schedule)
